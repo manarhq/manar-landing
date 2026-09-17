@@ -32,7 +32,13 @@ async function readBoundedText(request: Request, limit: number): Promise<string 
 }
 
 function clientKey(request: Request): string {
-  // Only meaningful behind a proxy that sets these headers; see README.
+  // In the K3s deployment Traefik rewrites X-Forwarded-For, so the edge passes the
+  // client IP in a dedicated header named by TRUSTED_CLIENT_IP_HEADER. Only set that
+  // variable when every request reaches the pod through an edge that overwrites it.
+  const trustedHeader = process.env.TRUSTED_CLIENT_IP_HEADER
+  if (trustedHeader) {
+    return request.headers.get(trustedHeader)?.trim() || "unknown"
+  }
   const forwarded = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim()
   return forwarded || request.headers.get("x-real-ip") || "unknown"
 }
