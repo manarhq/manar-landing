@@ -1,0 +1,22 @@
+# Application resources that GitLab CI re-applies on every release (see .gitlab-ci.yml).
+# Namespace and NetworkPolicies stay operator-managed in ../ so the CI identity cannot change them.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: manar-landing
+labels:
+  - includeSelectors: false
+    pairs:
+      app.kubernetes.io/name: manar-landing
+      app.kubernetes.io/part-of: manar
+resources:
+  - service-account.yaml
+  - deployment.yaml
+  - service.yaml
+  - ingress.yaml
+  - pod-disruption-budget.yaml
+  - horizontal-pod-autoscaler.yaml
+# Bootstrap digest for the first manual install only. CI replaces the image with the digest it just
+# built. Applying this directory by hand after CI has released would roll production back.
+images:
+  - name: registry.gitlab.vax.sh/manar/landing
+    digest: sha256:6af8b0ac846dce63f9ffd0e345e73b5c079ffac88a4bb520666cea57ec1caa55

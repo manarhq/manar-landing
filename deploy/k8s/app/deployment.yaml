@@ -1,0 +1,165 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: manar-landing
+  labels:
+    app.kubernetes.io/component: web
+spec:
+  # No replicas field: the HPA owns the count (min 2), so re-applying on each release
+  # does not reset a scaled-out Deployment.
+  revisionHistoryLimit: 5
+  minReadySeconds: 5
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: manar-landing
+      app.kubernetes.io/component: web
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: manar-landing
+        app.kubernetes.io/part-of: manar
+        app.kubernetes.io/component: web
+    spec:
+      serviceAccountName: manar-landing
+      automountServiceAccountToken: false
+      enableServiceLinks: false
+      terminationGracePeriodSeconds: 30
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+        runAsGroup: 10001
+        fsGroup: 10001
+        fsGroupChangePolicy: OnRootMismatch
+        seccompProfile:
+          type: RuntimeDefault
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  # Same exclusions as the other sites on this cluster (topology audit
+                  # 2026-08-16). Reassess once k3s-worker-2 and k3s-wnx are confirmed healthy.
+                  - key: kubernetes.io/hostname
+                    operator: NotIn
+                    values:
+                      - k3s-worker-2
+                      - k3s-wnx
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                topologyKey: kubernetes.io/hostname
+                labelSelector:
+                  matchLabels:
+                    app.kubernetes.io/name: manar-landing
+                    app.kubernetes.io/component: web
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: DoNotSchedule
+          # Honor taints so a NotReady node (currently ctf) does not count as an
+          # empty domain and block scale-out beyond one pod per healthy node.
+          nodeTaintsPolicy: Honor
+          labelSelector:
+            matchLabels:
+              app.kubernetes.io/name: manar-landing
+              app.kubernetes.io/component: web
+      containers:
+        - name: web
+          image: registry.gitlab.vax.sh/manar/landing
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 3000
+              protocol: TCP
+          env:
+            - name: NODE_ENV
+              value: production
+            - name: NEXT_TELEMETRY_DISABLED
+              value: "1"
+            - name: HOSTNAME
+              value: 0.0.0.0
+            - name: PORT
+              value: "3000"
+            # Informational: canonical/OG URLs are baked in at build time and must match.
+            - name: SITE_URL
+              value: https://manar.vax.sh
+            # Traefik rewrites X-Forwarded-For, so the edge Nginx sends the Cloudflare-verified
+            # client IP in this header. The NetworkPolicy only admits traffic from Traefik.
+            - name: TRUSTED_CLIENT_IP_HEADER
+              value: x-edge-client-ip
+            # Optional so the site still serves if the secret is absent; the demo form then
+            # reports a visible failure instead of pretending to succeed.
+            - name: RESEND_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: manar-landing-email
+                  key: resend-api-key
+                  optional: true
+            - name: DEMO_FROM_EMAIL
+              valueFrom:
+                secretKeyRef:
+                  name: manar-landing-email
+                  key: demo-from-email
+                  optional: true
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+          resources:
+            requests:
+              cpu: 50m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 384Mi
+          startupProbe:
+            httpGet:
+              path: /api/health
+              port: http
+            periodSeconds: 2
+            timeoutSeconds: 2
+            failureThreshold: 30
+          readinessProbe:
+            httpGet:
+              path: /api/health
+              port: http
+            periodSeconds: 5
+            timeoutSeconds: 2
+            failureThreshold: 3
+          livenessProbe:
+            httpGet:
+              path: /api/health
+              port: http
+            periodSeconds: 10
+            timeoutSeconds: 2
+            failureThreshold: 3
+          lifecycle:
+            preStop:
+              exec:
+                command:
+                  - /bin/sh
+                  - -c
+                  - sleep 5
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+            - name: next-cache
+              mountPath: /app/.next/cache
+          terminationMessagePolicy: FallbackToLogsOnError
+      volumes:
+        - name: tmp
+          emptyDir:
+            medium: Memory
+            sizeLimit: 32Mi
+        - name: next-cache
+          emptyDir:
+            medium: Memory
+            sizeLimit: 64Mi

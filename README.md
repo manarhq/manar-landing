@@ -76,8 +76,11 @@ The client key comes from `x-forwarded-for` / `x-real-ip`; only trust these behi
 
 ## Deployment requirements
 
-The site needs a Node.js server runtime (`next start`, a container, or a platform with Node functions) because the
-demo endpoint runs server-side. Do not configure `output: "export"`; a static export removes the endpoint.
+The site needs a Node.js server runtime because the demo endpoint runs server-side. Do not configure
+`output: "export"`; a static export removes the endpoint. Production runs as a container on K3s behind Traefik,
+an edge Nginx, and Cloudflare: see [`deploy/README.md`](deploy/README.md) and the `Dockerfile`.
+`/api/health` serves liveness and readiness probes. `TRUSTED_CLIENT_IP_HEADER` names a proxy-set header to use as
+the client IP for rate limiting; set it only when every request passes a proxy that overwrites that header.
 
 ## Editing content and translations
 
