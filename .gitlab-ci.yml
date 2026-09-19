@@ -1,0 +1,212 @@
+# manar/landing: validate every push, and release every push to the protected default branch
+# (main) to production on K3s.
+#
+#   any branch / MR : quality + source scan
+#   main            : quality + source scan -> image build (rootless BuildKit) -> image scan
+#                     -> rolling update of manar.vax.sh through the GitLab agent
+#
+# The release swaps pods with zero downtime (maxUnavailable: 0) a few minutes after the push.
+# Setup and permissions: deploy/README.md, section "Continuous deployment".
+
+stages:
+  - validate
+  - build
+  - scan
+  - deploy
+
+workflow:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    # Avoid duplicate branch + MR pipelines.
+    - if: $CI_COMMIT_BRANCH && $CI_OPEN_MERGE_REQUESTS
+      when: never
+    - if: $CI_COMMIT_BRANCH
+
+default:
+  interruptible: true
+  tags: [stack-validation]
+
+variables:
+  SITE_URL: "https://manar.vax.sh"
+  EXPECTED_REGISTRY_IMAGE: "registry.gitlab.vax.sh/manar/landing"
+  KUBE_CONTEXT: "manar/landing:manar-landing-production"
+  KUBE_NAMESPACE: "manar-landing"
+  KUBE_DEPLOYMENT: "manar-landing"
+  NPM_CONFIG_CACHE: "$CI_PROJECT_DIR/.npm"
+  NODE_IMAGE: "docker.io/library/node:24.18.0-bookworm-slim@sha256:6f7b03f7c2c8e2e784dcf9295400527b9b1270fd37b7e9a7285cf83b6951452d"
+  TRIVY_IMAGE: "docker.io/aquasec/trivy:0.74.0@sha256:62b1e65e8869bc4b4c6aa4fa2b21595256c7c2f6018a9d9ad61caf87187c1969"
+
+.release-rules:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_REF_PROTECTED == "true"
+
+quality:
+  stage: validate
+  image: $NODE_IMAGE
+  cache:
+    key:
+      files: [package-lock.json]
+      prefix: npm
+    paths: [.npm/]
+  script:
+    - npm ci --cache "$NPM_CONFIG_CACHE" --prefer-offline --no-audit --no-fund
+    - npm run lint
+    - npm run typecheck
+    - npm test
+    - npm audit --omit=dev --audit-level=high
+
+source-scan:
+  stage: validate
+  image:
+    name: $TRIVY_IMAGE
+    entrypoint: [""]
+  script:
+    - >-
+      trivy filesystem --scanners secret,misconfig,vuln --severity HIGH,CRITICAL --ignore-unfixed
+      --exit-code 1 --no-progress --skip-version-check
+      --skip-dirs node_modules --skip-dirs .next --skip-dirs .git --skip-dirs .npm --skip-dirs design
+      .
+
+container:
+  stage: build
+  image:
+    name: docker.io/moby/buildkit:v0.31.2-rootless@sha256:0eeb84626c0cd01aecae7848c5ed8f095aec279dd936d0cdb5a64110f42ca65b
+    entrypoint: [""]
+  needs: [quality, source-scan]
+  tags: [stack-production]
+  variables:
+    BUILDKITD_FLAGS: --oci-worker-no-process-sandbox
+  before_script:
+    - test "$CI_REGISTRY_IMAGE" = "$EXPECTED_REGISTRY_IMAGE"
+    - mkdir -p "$HOME/.docker" && chmod 700 "$HOME/.docker"
+    - umask 077
+    # Job-scoped registry credentials; they expire with the job.
+    - AUTH="$(printf '%s:%s' "$CI_REGISTRY_USER" "$CI_REGISTRY_PASSWORD" | base64 | tr -d '\n')"
+    - printf '{"auths":{"%s":{"auth":"%s"}}}' "$CI_REGISTRY" "$AUTH" > "$HOME/.docker/config.json"
+    - unset AUTH
+  script:
+    - IMAGE_TAG="$CI_REGISTRY_IMAGE:$CI_COMMIT_SHA"
+    - >-
+      buildctl-daemonless.sh build
+      --progress plain
+      --frontend dockerfile.v0
+      --local context=.
+      --local dockerfile=.
+      --opt filename=Dockerfile
+      --opt platform=linux/amd64
+      --opt build-arg:SITE_URL="$SITE_URL"
+      --opt build-arg:BUILD_DATE="$CI_COMMIT_TIMESTAMP"
+      --opt build-arg:VCS_REF="$CI_COMMIT_SHA"
+      --opt build-arg:IMAGE_VERSION="$CI_COMMIT_SHORT_SHA"
+      --import-cache type=registry,ref="$CI_REGISTRY_IMAGE:buildcache"
+      --export-cache type=registry,ref="$CI_REGISTRY_IMAGE:buildcache",mode=max
+      --output type=image,name="$IMAGE_TAG",push=true
+      --metadata-file build-metadata.json
+    - DIGEST="$(awk -F'"' '/"containerimage.digest"/ {print $4; exit}' build-metadata.json)"
+    - printf '%s\n' "$DIGEST" | grep -Eq '^sha256:[0-9a-f]{64}$'
+    # Everything downstream uses this immutable digest, never the tag.
+    - printf 'IMAGE_REF=%s@%s\nIMAGE_DIGEST=%s\n' "$CI_REGISTRY_IMAGE" "$DIGEST" "$DIGEST" > release.env
+  after_script:
+    - rm -f "$HOME/.docker/config.json"
+  artifacts:
+    reports:
+      dotenv: release.env
+    paths: [build-metadata.json]
+    expire_in: 30 days
+  rules: !reference [.release-rules, rules]
+
+image-scan:
+  stage: scan
+  image:
+    name: $TRIVY_IMAGE
+    entrypoint: [""]
+  needs: [container]
+  tags: [stack-production]
+  variables:
+    TRIVY_USERNAME: $CI_REGISTRY_USER
+    TRIVY_PASSWORD: $CI_REGISTRY_PASSWORD
+  script:
+    - case "$IMAGE_REF" in "$EXPECTED_REGISTRY_IMAGE"@sha256:*) ;; *) echo "unexpected IMAGE_REF" >&2; exit 1 ;; esac
+    - trivy image --format cyclonedx --output sbom.cdx.json --no-progress --skip-version-check "$IMAGE_REF"
+    - trivy image --scanners vuln --severity HIGH,CRITICAL --ignore-unfixed --exit-code 1 --no-progress --skip-version-check "$IMAGE_REF"
+  artifacts:
+    when: always
+    expire_in: 30 days
+    reports:
+      cyclonedx: sbom.cdx.json
+    paths: [sbom.cdx.json]
+  rules: !reference [.release-rules, rules]
+
+deploy-production:
+  stage: deploy
+  image: $NODE_IMAGE
+  needs: [container, image-scan]
+  tags: [stack-production]
+  interruptible: false
+  # One release at a time; set process_mode=newest_ready_first so a burst of pushes ships the latest.
+  resource_group: manar-landing-production
+  timeout: 15 minutes
+  environment:
+    name: production
+    url: https://manar.vax.sh
+    deployment_tier: production
+  before_script:
+    - node deploy/ci/install-kubectl.mjs
+    - export PATH="$CI_PROJECT_DIR/.ci-bin:$PATH"
+    - kubectl config use-context "$KUBE_CONTEXT"
+    - case "$IMAGE_REF" in "$EXPECTED_REGISTRY_IMAGE"@sha256:*) ;; *) echo "unexpected IMAGE_REF" >&2; exit 1 ;; esac
+  script:
+    # Optional: keep the cluster's pull secret in sync with a read_registry deploy token stored as
+    # protected, masked CI variables. Skipped when the variables are not set.
+    - |
+      if [ -n "${REGISTRY_DEPLOY_USER:-}" ] && [ -n "${REGISTRY_DEPLOY_PASSWORD:-}" ]; then
+        kubectl create secret docker-registry gitlab-registry -n "$KUBE_NAMESPACE" \
+          --docker-server="$CI_REGISTRY" \
+          --docker-username="$REGISTRY_DEPLOY_USER" \
+          --docker-password="$REGISTRY_DEPLOY_PASSWORD" \
+          --dry-run=client -o yaml | kubectl apply -f -
+      fi
+    # Release overlay: the reviewed app manifests with this pipeline's image digest.
+    - mkdir -p .release
+    - |
+      cat > .release/kustomization.yaml <<EOF
+      apiVersion: kustomize.config.k8s.io/v1beta1
+      kind: Kustomization
+      resources:
+        - ../deploy/k8s/app
+      images:
+        - name: $EXPECTED_REGISTRY_IMAGE
+          digest: $IMAGE_DIGEST
+      commonAnnotations:
+        app.gitlab.com/commit: "$CI_COMMIT_SHA"
+        app.gitlab.com/pipeline: "$CI_PIPELINE_URL"
+      EOF
+    - kubectl apply --dry-run=server -k .release
+    - kubectl apply -k .release
+    - kubectl rollout status "deployment/$KUBE_DEPLOYMENT" -n "$KUBE_NAMESPACE" --timeout=10m
+    # Prove the running pods use exactly the image this pipeline built and scanned.
+    # Old pods can linger briefly while terminating, so retry for up to a minute.
+    - |
+      for attempt in $(seq 1 12); do
+        running="$(kubectl get pods -n "$KUBE_NAMESPACE" -l app.kubernetes.io/name=manar-landing,app.kubernetes.io/component=web \
+          -o jsonpath='{range .items[?(@.metadata.deletionTimestamp)]}{"terminating\n"}{end}{range .items[*]}{.spec.containers[0].image}{"\n"}{end}' | sort -u)"
+        [ "$running" = "$IMAGE_REF" ] && break
+        sleep 5
+      done
+      echo "$running"
+      test "$running" = "$IMAGE_REF"
+    # Public smoke test once the edge is live: set PRODUCTION_SMOKE_URL=https://manar.vax.sh (project variable).
+    - |
+      if [ -n "${PRODUCTION_SMOKE_URL:-}" ]; then
+        node -e '
+          const base = process.env.PRODUCTION_SMOKE_URL;
+          (async () => {
+            for (const path of ["/api/health", "/en", "/ar", "/en/demo", "/ar/demo"]) {
+              const r = await fetch(base + path, { redirect: "manual" });
+              if (r.status !== 200) throw new Error(`${path} returned ${r.status}`);
+              console.log(`${path} 200`);
+            }
+          })().catch((e) => { console.error(e.message); process.exit(1) });
+        '
+      fi
+  rules: !reference [.release-rules, rules]
