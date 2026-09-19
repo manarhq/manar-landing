@@ -1,6 +1,6 @@
 # Release permissions for CI jobs using the manar-landing-production agent.
 # Update-only on the named application objects (they must already exist from the operator's
-# first `kubectl apply -k deploy/k8s`). No create/delete, no Namespace, NetworkPolicy, RBAC,
+# first `kubectl apply -k deploy/k8s`). No create/delete, no Namespace, NetworkPolicy, Service, Ingress, RBAC,
 # pod exec, or access to any Secret except the registry pull secret it refreshes.
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
@@ -19,16 +19,12 @@ rules:
     resources: [pods]
     verbs: [get, list, watch]
   - apiGroups: [""]
-    resources: [services, serviceaccounts]
+    resources: [serviceaccounts]
     resourceNames: [manar-landing]
     verbs: [get, update, patch]
   - apiGroups: [""]
     resources: [secrets]
     resourceNames: [gitlab-registry]
-    verbs: [get, update, patch]
-  - apiGroups: [networking.k8s.io]
-    resources: [ingresses]
-    resourceNames: [manar-landing]
     verbs: [get, update, patch]
   - apiGroups: [autoscaling]
     resources: [horizontalpodautoscalers]
