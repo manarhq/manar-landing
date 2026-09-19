@@ -13,6 +13,13 @@ config:
   operational_container_scanning:
     enabled: false
 
+# agentk version matched to the GitLab server (same as the other agents on this cluster).
+# Installed 2026-09-19 with chart gitlab/gitlab-agent 2.32.0:
+#   helm upgrade --install manar-landing-production gitlab/gitlab-agent --version 2.32.0 \
+#     -n gitlab-agent-manar-landing-production -f deploy/gitlab-agent/values.yaml
+image:
+  tag: v19.3.0
+
 replicas: 2
 
 podSecurityContext:
