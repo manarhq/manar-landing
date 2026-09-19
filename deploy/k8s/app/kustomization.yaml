@@ -15,8 +15,8 @@ resources:
   - ingress.yaml
   - pod-disruption-budget.yaml
   - horizontal-pod-autoscaler.yaml
-# Bootstrap digest for the first manual install only. CI replaces the image with the digest it just
+# Bootstrap digest (image of commit 6d9920c, Trivy-clean) for the first manual install only. CI replaces the image with the digest it just
 # built. Applying this directory by hand after CI has released would roll production back.
 images:
   - name: registry.gitlab.vax.sh/manar/landing
-    digest: sha256:6af8b0ac846dce63f9ffd0e345e73b5c079ffac88a4bb520666cea57ec1caa55
+    digest: sha256:e9d850ef5ed8835760cecb0ae6e9f6b1ab2f8763dc413d4fdbccd693a5a71318
