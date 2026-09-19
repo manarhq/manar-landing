@@ -1,5 +1,6 @@
 # Application resources that GitLab CI re-applies on every release (see .gitlab-ci.yml).
-# Namespace and NetworkPolicies stay operator-managed in ../ so the CI identity cannot change them.
+# Namespace, NetworkPolicies, Service, and Ingress stay operator-managed in ../ so the CI identity cannot
+# change what receives traffic or how it is filtered.
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 namespace: manar-landing
@@ -11,8 +12,6 @@ labels:
 resources:
   - service-account.yaml
   - deployment.yaml
-  - service.yaml
-  - ingress.yaml
   - pod-disruption-budget.yaml
   - horizontal-pod-autoscaler.yaml
 # Bootstrap digest (image of commit 6d9920c, Trivy-clean) for the first manual install only. CI replaces the image with the digest it just
