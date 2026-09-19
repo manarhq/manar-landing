@@ -14,7 +14,7 @@ export function Faq({ dict }: { dict: Dictionary }) {
           </h2>
         </div>
 
-        <Accordion className="border-t border-border lg:col-span-8">
+        <Accordion keepMounted className="border-t border-border lg:col-span-8">
           {f.items.map((item, i) => (
             <AccordionItem key={item.question} value={`faq-${i}`} className="border-b border-border">
               <AccordionTrigger className="gap-6 rounded-none py-6 text-lg leading-snug font-semibold text-foreground hover:text-link focus-visible:ring-0 focus-visible:outline-2 focus-visible:outline-offset-2 sm:text-xl **:data-[slot=accordion-trigger-icon]:mt-1 **:data-[slot=accordion-trigger-icon]:size-5">

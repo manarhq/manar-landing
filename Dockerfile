@@ -15,8 +15,8 @@ RUN --mount=type=cache,target=/root/.npm npm ci --no-audit --no-fund
 FROM ${NODE_IMAGE} AS builder
 WORKDIR /app
 
-# SITE_URL is read at build time: canonical, hreflang, and Open Graph URLs are
-# prerendered into the HTML. Changing it at runtime has no effect.
+# SITE_URL is read at build time: metadata URLs, robots.txt, and sitemap.xml are
+# prerendered. Changing it at runtime has no effect.
 ARG SITE_URL
 ENV NEXT_TELEMETRY_DISABLED=1 \
     SITE_URL=${SITE_URL}
