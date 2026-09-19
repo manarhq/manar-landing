@@ -26,9 +26,11 @@ npm run dev                  # http://localhost:3000 → redirects to /en
 
 | Route                | Description                                            |
 | -------------------- | ------------------------------------------------------ |
-| `/`                  | Redirects (307) to `/en`                               |
+| `/`                  | Permanently redirects (308) to `/en`                   |
 | `/en`, `/ar`         | Homepage (statically prerendered)                      |
 | `/en/demo`, `/ar/demo` | Demo request page (statically prerendered)           |
+| `/sitemap.xml`       | Public XML sitemap for the four canonical pages and their language alternates |
+| `/robots.txt`        | Public crawler rules and absolute sitemap location    |
 | `POST /api/demo-request` | Validates a demo request and emails it (Node.js runtime) |
 
 Unsupported locales return 404 (`dynamicParams = false`).
@@ -37,9 +39,42 @@ Unsupported locales return 404 (`dynamicParams = false`).
 
 | Variable          | Required for          | Notes |
 | ----------------- | --------------------- | ----- |
-| `SITE_URL`        | Canonical/hreflang/OG | Public origin, e.g. `https://manar.example`. Read at **build time**. When unset, canonical, language-alternate URLs and OG images are omitted rather than pointing at a guessed domain. |
+| `SITE_URL`        | Sitemap/robots/metadata | Public origin; defaults to `https://manar.vax.sh`. Read at **build time**. Overrides must be absolute HTTP(S) origins with no credentials, path, query, or fragment. Invalid values fail the build. Docker requires an explicit build argument; CI already supplies it. |
 | `RESEND_API_KEY`  | Sending demo requests | Server-only. |
 | `DEMO_FROM_EMAIL` | Sending demo requests | Sender on a domain verified in Resend, e.g. `Manar <demo@mail.your-domain>`. |
+
+## Search indexing
+
+Next.js generates `/robots.txt` and `/sitemap.xml` as public, static metadata routes at the domain root;
+they require no login, cookies, or locale prefix. The sitemap contains `/en`, `/ar`, `/en/demo`, and
+`/ar/demo`, with reciprocal English/Arabic alternates and an English `x-default`. It excludes the root
+redirect and operational endpoints. `lastmod` is omitted because content modification dates are not
+tracked; do not substitute build time for the date of a real content update.
+
+Robots rules allow public pages and rendering assets, and disallow crawling `/api/` and `/_edge-health`.
+These rules are crawler hints, not access controls or a guarantee that an endpoint cannot be indexed.
+Every public page has a self-referencing canonical, localized title/description, language alternates,
+and `index, follow` metadata. Both homepages include consistent `WebSite` structured data. FAQ answers
+remain in server-rendered HTML even when collapsed. No keyword stuffing, invented reviews, or ratings
+are needed.
+
+After deploying:
+
+1. Open `https://manar.vax.sh/robots.txt` and `https://manar.vax.sh/sitemap.xml` without signing in.
+   Both must return HTTP 200 with plain-text/XML content, not a challenge or HTML error page. If
+   Cloudflare still serves an earlier cached 404, purge those two URLs and check again. Keep Googlebot
+   able to access pages, CSS, JavaScript, and images through any Cloudflare bot/access rules.
+2. Verify the `manar.vax.sh` property in [Google Search Console](https://search.google.com/search-console)
+   (DNS verification works without application changes), and submit `https://manar.vax.sh/sitemap.xml`
+   in **Sitemaps**.
+3. Use **URL Inspection → Test live URL** on `/en` and `/ar`, then **Request indexing**. Follow the
+   Page indexing report for exclusions and the Performance report for actual search queries.
+
+CI's optional public smoke check (`PRODUCTION_SMOKE_URL=https://manar.vax.sh`) validates both discovery
+files after release. Google decides whether and when to index and rank a page; a valid sitemap does
+not guarantee either. Reference: [Google sitemap guidance](https://developers.google.com/search/docs/crawling-indexing/sitemaps/build-sitemap),
+[localized pages](https://developers.google.com/search/docs/specialty/international/localized-versions),
+and [technical requirements](https://developers.google.com/search/docs/essentials/technical).
 
 ## Demo request email
 
