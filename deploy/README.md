@@ -24,7 +24,10 @@ Internet
 
 ## 1. Build and push the image
 
-`SITE_URL` is baked into prerendered HTML (canonical, hreflang, Open Graph), so it is a build argument.
+`SITE_URL` is baked into prerendered HTML (canonical, hreflang, structured data, Open Graph) and the
+public `/robots.txt` and `/sitemap.xml` routes, so it is a build argument. Use `https://manar.vax.sh`.
+Changing it at runtime requires a rebuild to update these URLs. After release, follow the
+[search indexing checks](../README.md#search-indexing), including clearing any cached 404s for the two new routes.
 All nodes are `amd64`.
 
 ```bash

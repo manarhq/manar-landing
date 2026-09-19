@@ -1,29 +1,43 @@
 import type { Metadata } from "next"
 
-import { localeTag, locales, ogLocale, otherLocale, type Locale } from "./i18n/config"
+import { defaultLocale, localeTag, locales, ogLocale, otherLocale, type Locale } from "./i18n/config"
 
 export const CONTACT_EMAIL = "nofal@vax.sh"
 export const VAX_URL = "https://vax.sh"
 export const THEME_STORAGE_KEY = "manar-theme"
 
 /**
- * Public origin from SITE_URL (for example https://manar.example). Read at build
- * time for prerendered pages. When unset, canonical and hreflang URLs are omitted
- * rather than pointing at an invented domain.
+ * Shared build-time origin for metadata, robots, and the sitemap. The default is
+ * the deployed public domain; an override must be an HTTP(S) origin, not a path.
  */
-export function siteOrigin(): URL | undefined {
-  const raw = process.env.SITE_URL
-  if (!raw) return undefined
+export function siteOrigin(): URL {
+  const raw = process.env.SITE_URL?.trim() || "https://manar.vax.sh"
   try {
     const url = new URL(raw)
-    return url.protocol === "https:" || url.protocol === "http:" ? url : undefined
+    if (
+      (url.protocol === "https:" || url.protocol === "http:") &&
+      !url.username && !url.password && url.pathname === "/" && !url.search && !url.hash
+    ) {
+      return new URL(url.origin)
+    }
   } catch {
-    return undefined
+    // Fail the build instead of publishing invalid canonical or sitemap URLs.
   }
+  throw new Error("SITE_URL must be an absolute HTTP(S) origin without credentials, a path, query, or fragment")
 }
 
 export function localizedPath(locale: Locale, path = ""): string {
   return `/${locale}${path}`
+}
+
+export function localizedAlternates(path: "" | "/demo"): Record<string, string> {
+  const origin = siteOrigin()
+  return {
+    ...Object.fromEntries(
+      locales.map((locale) => [localeTag[locale], new URL(localizedPath(locale, path), origin).href]),
+    ),
+    "x-default": new URL(localizedPath(defaultLocale, path), origin).href,
+  }
 }
 
 export function pageMetadata({
@@ -40,18 +54,26 @@ export function pageMetadata({
   siteName: string
 }): Metadata {
   const origin = siteOrigin()
-  const languages = Object.fromEntries(locales.map((l) => [localeTag[l], localizedPath(l, path)]))
 
   return {
     title,
     description,
     metadataBase: origin,
-    alternates: origin
-      ? {
-          canonical: localizedPath(locale, path),
-          languages: { ...languages, "x-default": localizedPath("en", path) },
-        }
-      : undefined,
+    alternates: {
+      canonical: localizedPath(locale, path),
+      languages: localizedAlternates(path),
+    },
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: {
+        index: true,
+        follow: true,
+        "max-image-preview": "large",
+        "max-snippet": -1,
+        "max-video-preview": -1,
+      },
+    },
     openGraph: {
       type: "website",
       title,
@@ -59,13 +81,11 @@ export function pageMetadata({
       siteName,
       locale: ogLocale[locale],
       alternateLocale: [ogLocale[otherLocale(locale)]],
-      ...(origin ? { url: localizedPath(locale, path) } : {}),
-      images: origin
-        ? [{ url: `/og/manar-${locale}.png`, width: 1200, height: 630, alt: siteName }]
-        : undefined,
+      url: localizedPath(locale, path),
+      images: [{ url: `/og/manar-${locale}.png`, width: 1200, height: 630, alt: siteName }],
     },
     twitter: {
-      card: origin ? "summary_large_image" : "summary",
+      card: "summary_large_image",
       title,
       description,
     },
