@@ -4,7 +4,10 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: manar-landing
+  namespace: manar-landing
   labels:
+    app.kubernetes.io/name: manar-landing
+    app.kubernetes.io/part-of: manar
     app.kubernetes.io/component: web
 spec:
   ingressClassName: traefik
