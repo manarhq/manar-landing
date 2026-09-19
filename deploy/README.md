@@ -120,6 +120,12 @@ scp deploy/nginx/manar.conf deploy/nginx/snippets/manar-*.conf deploy/nginx/appl
 ssh -t admin@edge.example.internal 'cd ~/manar-edge && sudo bash apply-edge.sh'
 ```
 
+The router/firewall source-NATs the 80/443 port-forward, so nginx sees every inbound connection as coming from the
+WAN address `94.59.233.241`, never from Cloudflare. `snippets/manar-realip.conf` and the `geo` block in `manar.conf`
+trust that address so the visitor IP is restored from `CF-Connecting-IP`. Preserving the source address on the
+port-forward is the proper fix (it would also give real visitor IPs to the other sites on this edge); after that,
+remove `94.59.233.241` from both places.
+
 Recommended once for all sites on this edge (certbot has no reload hook, so renewed certificates are not picked
 up until nginx is reloaded):
 
