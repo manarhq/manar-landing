@@ -37,7 +37,7 @@ affinity:
         - matchExpressions:
             - key: kubernetes.io/hostname
               operator: NotIn
-              values: [k3s-worker-2, node-b]
+              values: [node-b]
   podAntiAffinity:
     preferredDuringSchedulingIgnoredDuringExecution:
       - weight: 100
