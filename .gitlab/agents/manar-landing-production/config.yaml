@@ -1,0 +1,10 @@
+# GitLab agent for Kubernetes: manar-landing-production.
+# Only jobs from this project, on protected branches, declaring the production environment
+# get a Kubernetes context. What that context may do is limited by
+# deploy/gitlab-agent/release-rbac.yaml.
+ci_access:
+  projects:
+    - id: manar/landing
+      protected_branches_only: true
+      environments:
+        - production

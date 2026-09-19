@@ -1,0 +1,21 @@
+# HTTP only inside the cluster: TLS terminates at the edge Nginx (Cloudflare Origin CA),
+# which forwards to Traefik's ServiceLB on the K3s nodes, port 8080.
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: manar-landing
+  labels:
+    app.kubernetes.io/component: web
+spec:
+  ingressClassName: traefik
+  rules:
+    - host: manar.vax.sh
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: manar-landing
+                port:
+                  name: http
