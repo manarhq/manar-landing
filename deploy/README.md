@@ -3,7 +3,7 @@
 ```text
 Internet
   -> Cloudflare (DNS manar.vax.sh proxied, SSL/TLS mode Full (strict))
-  -> edge Nginx :443 (Cloudflare Origin CA cert, Cloudflare-only peers, real IP restore, edge rate limit)
+  -> edge Nginx :443 on webserver-vax (Let's Encrypt wildcard, Cloudflare/LAN-only peers, real IP restore, edge rate limit)
   -> K3s ServiceLB / Traefik on 192.168.0.46 / .32 / .138 :8080 (HTTP)
   -> Ingress manar.vax.sh (namespace manar-landing)
   -> Service manar-landing :80
@@ -18,8 +18,9 @@ Internet
 | `.gitlab-ci.yml` | Validate every push; build, scan, and deploy every push to protected `main`. |
 | `.gitlab/agents/manar-landing-production/` | GitLab agent authorization (this project, protected branches, `production` environment only). |
 | `deploy/gitlab-agent/` | Agent namespace/ServiceAccount, Helm values, and the namespaced release Role. |
-| `deploy/nginx/manar.vax.sh.conf` | Edge vhost (http context): upstream, Cloudflare `geo` allowlist, `limit_req_zone`, :80 and :443 servers. |
-| `deploy/nginx/snippets/` | `manar-realip.conf`, `manar-proxy.conf`, `manar-security-headers.conf` → `/etc/nginx/snippets/`. |
+| `deploy/nginx/manar.conf` | Edge vhost → `/etc/nginx/conf.d/manar.conf`: upstream, origin allowlist, `limit_req_zone`, servers. |
+| `deploy/nginx/snippets/` | `manar-proxy.conf`, `manar-security-headers.conf` → `/etc/nginx/snippets/`. |
+| `deploy/nginx/apply-edge.sh` | Backup, install, `nginx -t`, reload, auto-restore on failure. |
 
 ## 1. Build and push the image
 
@@ -89,8 +90,9 @@ kubectl -n manar-landing rollout status deploy/manar-landing
 kubectl -n manar-landing get pods -o wide
 ```
 
-Scheduling mirrors the other sites on this cluster: `k3s-worker-2` and `k3s-wnx` are excluded by node affinity.
-`nodeTaintsPolicy: Honor` stops the NotReady `ctf` node from blocking scale-out.
+Pods spread across the three live nodes (`k3s-cp1`, `k3s-worker-1`, `k3s-worker-2`). `k3s-wnx` stays excluded until it
+re-joins on the control plane's k3s version. `ctf` and `k3s-wnx` were removed from the cluster on 2026-09-19.
+`nodeTaintsPolicy: Honor` keeps any future NotReady node from blocking scale-out.
 
 Verify from inside the LAN before touching the edge:
 
@@ -98,22 +100,40 @@ Verify from inside the LAN before touching the edge:
 curl -s -H 'Host: manar.vax.sh' http://192.168.0.46:8080/api/health
 ```
 
-## 4. Edge Nginx
+## 4. Edge Nginx (webserver-vax, 192.168.0.12)
 
-1. Cloudflare → SSL/TLS → Origin Server → create an Origin CA certificate for `manar.vax.sh`.
-   Install it as `/etc/nginx/ssl/cloudflare/manar.vax.sh.pem` and `.key` (key mode `0600`, owner root).
-2. Copy `deploy/nginx/snippets/*` to `/etc/nginx/snippets/` and `deploy/nginx/manar.vax.sh.conf` to
-   `/etc/nginx/conf.d/` (or your sites-enabled include directory inside `http {}`).
-3. `sudo nginx -t && sudo systemctl reload nginx`
-4. Confirm the edge VM can reach `192.168.0.46`, `.32`, `.138` on TCP 8080.
-5. Firewall: allow inbound 80/443 only from Cloudflare ranges (the config also drops non-Cloudflare peers with 444).
-6. Cloudflare DNS: `manar.vax.sh` → edge public IP, **proxied**. SSL/TLS mode **Full (strict)**.
-   Optional: enable Authenticated Origin Pulls and uncomment `ssl_verify_client` in the vhost.
+The edge already has what this site needs:
+- a Let's Encrypt certificate for `manar.vax.sh` and `*.manar.vax.sh` at `/etc/letsencrypt/live/manar.vax.sh/`
+  (certbot, dns-cloudflare, auto-renewed by `certbot.timer`);
+- `conf.d/00-cloudflare-real-ip.conf`, which restores the visitor IP from `CF-Connecting-IP` for Cloudflare peers.
+
+`deploy/nginx/manar.conf` replaces the retired Manar console config (`manar.vax.sh`, `api.`, `auth.` pointing at the
+App VM 192.168.0.109). It proxies `manar.vax.sh` to Traefik, drops non-Cloudflare/non-LAN peers with 444, and closes
+every other `*.manar.vax.sh` name with 444. `apply-edge.sh` also removes the old agent mTLS passthrough
+(`stream-conf.d/agents-mtls.conf`, port 3443).
+
+Install (backs up, installs, tests, reloads, and restores automatically if `nginx -t` fails):
+
+```bash
+scp deploy/nginx/manar.conf deploy/nginx/snippets/manar-*.conf deploy/nginx/apply-edge.sh \
+  vaxadmin@web.vax.internal:manar-edge/
+ssh -t vaxadmin@web.vax.internal 'cd ~/manar-edge && sudo bash apply-edge.sh'
+```
+
+Recommended once for all sites on this edge (certbot has no reload hook, so renewed certificates are not picked
+up until nginx is reloaded):
+
+```bash
+ssh -t vaxadmin@web.vax.internal "printf '#!/bin/sh\nsystemctl reload nginx\n' | sudo tee /etc/letsencrypt/renewal-hooks/deploy/reload-nginx >/dev/null && sudo chmod 755 /etc/letsencrypt/renewal-hooks/deploy/reload-nginx"
+```
+
+Cloudflare: `manar.vax.sh` proxied (orange cloud), SSL/TLS mode **Full (strict)**. Delete the DNS records of retired
+hosts (`api.manar.vax.sh`, `auth.manar.vax.sh`, and the agents mTLS hostname if one exists).
 
 Checks after go-live:
 
 ```bash
-curl -sI https://manar.vax.sh/en | grep -iE 'HTTP/|cache-control|x-frame'
+curl -sI https://manar.vax.sh/en | grep -iE 'HTTP/|cache-control|x-frame|strict-transport'
 curl -s https://manar.vax.sh/api/health
 curl -s -o /dev/null -w '%{http_code}\n' https://manar.vax.sh/api/demo-request   # 403 (POST only)
 ```
@@ -131,7 +151,7 @@ Two layers limit demo requests:
 
 ## Maintenance
 
-- Cloudflare IP ranges appear in both `manar.vax.sh.conf` (`geo`) and `snippets/manar-realip.conf`; refresh both from
+- Cloudflare IP ranges appear in `manar.conf` (`geo`) and the edge's `conf.d/00-cloudflare-real-ip.conf`; refresh both from
   https://www.cloudflare.com/ips-v4 and /ips-v6.
 - Upstream node list and node affinity reflect cluster state on 2026-09-17; update both when nodes change.
 - Unknown locale paths (e.g. `/xx`) return 404 and Next logs an internal `NoFallbackError` line; it is harmless.
