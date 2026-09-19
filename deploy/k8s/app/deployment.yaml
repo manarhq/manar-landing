@@ -42,12 +42,12 @@ spec:
           requiredDuringSchedulingIgnoredDuringExecution:
             nodeSelectorTerms:
               - matchExpressions:
-                  # Same exclusions as the other sites on this cluster (topology audit
-                  # 2026-08-16). Reassess once k3s-worker-2 and node-b are confirmed healthy.
+                  # node-b ran k3s v1.35 against a v1.34 control plane before it went offline;
+                  # keep it excluded if it re-joins before being brought back to v1.34.
+                  # (k3s-worker-2's old inode-pressure exclusion was lifted 2026-09-19: node healthy.)
                   - key: kubernetes.io/hostname
                     operator: NotIn
                     values:
-                      - k3s-worker-2
                       - node-b
         podAntiAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
@@ -62,8 +62,8 @@ spec:
         - maxSkew: 1
           topologyKey: kubernetes.io/hostname
           whenUnsatisfiable: DoNotSchedule
-          # Honor taints so a NotReady node (currently node-c) does not count as an
-          # empty domain and block scale-out beyond one pod per healthy node.
+          # Honor taints so a NotReady node does not count as an empty domain
+          # and block scale-out beyond one pod per healthy node.
           nodeTaintsPolicy: Honor
           labelSelector:
             matchLabels:

@@ -90,8 +90,9 @@ kubectl -n manar-landing rollout status deploy/manar-landing
 kubectl -n manar-landing get pods -o wide
 ```
 
-Scheduling mirrors the other sites on this cluster: `k3s-worker-2` and `node-b` are excluded by node affinity.
-`nodeTaintsPolicy: Honor` stops the NotReady `node-c` node from blocking scale-out.
+Pods spread across the three live nodes (`k3s-cp1`, `k3s-worker-1`, `k3s-worker-2`). `node-b` stays excluded until it
+re-joins on the control plane's k3s version. `node-c` and `node-b` were removed from the cluster on 2026-09-19.
+`nodeTaintsPolicy: Honor` keeps any future NotReady node from blocking scale-out.
 
 Verify from inside the LAN before touching the edge:
 
