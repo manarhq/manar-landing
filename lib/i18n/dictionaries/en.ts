@@ -1,9 +1,9 @@
 const en = {
   meta: {
-    homeTitle: "Manar — AI governance and runtime oversight",
+    homeTitle: "Manar — AI Governance Platform & Runtime Oversight",
     homeDescription:
-      "Manar brings AI systems, owners, risks, policies, approvals, and evidence into one workspace, with configured controls for connected AI actions.",
-    demoTitle: "Book a demo — Manar",
+      "Manage AI inventory, risks, policies, approvals, and audit evidence in one workspace. Manar adds runtime oversight for connected AI agents and actions.",
+    demoTitle: "Book an AI Governance Platform Demo — Manar",
     demoDescription:
       "Request a Manar demo. Tell us about the AI systems you need to govern and we will arrange a session around your workflow and deployment needs.",
     siteName: "Manar",

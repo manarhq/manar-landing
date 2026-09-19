@@ -14,7 +14,7 @@ import { SiteFooter } from "@/components/site/site-footer"
 import { SiteHeader } from "@/components/site/site-header"
 import { isLocale } from "@/lib/i18n/config"
 import { getDictionary } from "@/lib/i18n/dictionaries"
-import { pageMetadata } from "@/lib/site"
+import { pageMetadata, siteOrigin } from "@/lib/site"
 
 export async function generateMetadata({ params }: PageProps<"/[lang]">): Promise<Metadata> {
   const { lang } = await params
@@ -36,6 +36,18 @@ export default async function HomePage({ params }: PageProps<"/[lang]">) {
 
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            name: "Manar",
+            alternateName: "منار",
+            url: siteOrigin().href,
+          }).replace(/</g, "\\u003c"),
+        }}
+      />
       <SiteHeader locale={lang} dict={dict} />
       <main id="main" tabIndex={-1} className="outline-none">
         <Hero locale={lang} dict={dict} />

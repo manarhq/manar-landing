@@ -199,13 +199,37 @@ deploy-production:
     - |
       if [ -n "${PRODUCTION_SMOKE_URL:-}" ]; then
         node -e '
-          const base = process.env.PRODUCTION_SMOKE_URL;
+          const base = new URL(process.env.PRODUCTION_SMOKE_URL).origin;
+          const publicPages = ["/en", "/ar", "/en/demo", "/ar/demo"];
           (async () => {
-            for (const path of ["/api/health", "/en", "/ar", "/en/demo", "/ar/demo"]) {
+            for (const path of ["/api/health", ...publicPages]) {
               const r = await fetch(base + path, { redirect: "manual" });
               if (r.status !== 200) throw new Error(`${path} returned ${r.status}`);
               console.log(`${path} 200`);
             }
+            const robots = await fetch(base + "/robots.txt", { redirect: "manual" });
+            if (robots.status !== 200) throw new Error(`/robots.txt returned ${robots.status}`);
+            if (!robots.headers.get("content-type")?.startsWith("text/plain")) {
+              throw new Error("/robots.txt must be plain text");
+            }
+            const robotsText = await robots.text();
+            if (!/^User-Agent:\s*\*\s*$/im.test(robotsText) || !/^Allow:\s*\/\s*$/im.test(robotsText)
+                || !robotsText.split(/\r?\n/).some((line) => line.trim() === `Sitemap: ${base}/sitemap.xml`)) {
+              throw new Error("/robots.txt must allow public crawling and advertise the absolute sitemap URL");
+            }
+            console.log("/robots.txt 200; public crawling and sitemap verified");
+
+            const sitemap = await fetch(base + "/sitemap.xml", { redirect: "manual" });
+            if (sitemap.status !== 200) throw new Error(`/sitemap.xml returned ${sitemap.status}`);
+            if (!/^(application|text)\/xml\b/i.test(sitemap.headers.get("content-type") ?? "")) {
+              throw new Error("/sitemap.xml must be XML");
+            }
+            const sitemapText = await sitemap.text();
+            if (!sitemapText.includes("http://www.sitemaps.org/schemas/sitemap/0.9")
+                || !publicPages.every((path) => sitemapText.includes(`<loc>${base}${path}</loc>`))) {
+              throw new Error("/sitemap.xml must list all four canonical public pages");
+            }
+            console.log("/sitemap.xml 200; canonical public pages verified");
           })().catch((e) => { console.error(e.message); process.exit(1) });
         '
       fi
