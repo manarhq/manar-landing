@@ -13,8 +13,8 @@ Internet
 | Path | Contents |
 | --- | --- |
 | `Dockerfile` | Multi-stage build; Next.js standalone runtime on pinned `node:24.18.0-bookworm-slim`, uid 10001. Unit tests run during build. |
-| `deploy/k8s/` | Operator kustomization: Namespace (PSS restricted), NetworkPolicies, plus `app/`. |
-| `deploy/k8s/app/` | Application resources CI re-applies on each release: ServiceAccount, Deployment, Service, Ingress, PDB, HPA. |
+| `deploy/k8s/` | Operator kustomization: Namespace (PSS restricted), NetworkPolicies, Service, Ingress, plus `app/`. |
+| `deploy/k8s/app/` | Application resources CI re-applies on each release: ServiceAccount, Deployment, PDB, HPA. |
 | `.gitlab-ci.yml` | Validate every push; build, scan, and deploy every push to protected `main`. |
 | `.gitlab/agents/manar-landing-production/` | GitLab agent authorization (this project, protected branches, `production` environment only). |
 | `deploy/gitlab-agent/` | Agent namespace/ServiceAccount, Helm values, and the namespaced release Role. |
@@ -172,7 +172,7 @@ dependency scan. Every push to the protected default branch (`main`) additionall
 
 1. builds the image with rootless BuildKit and pushes `registry.gitlab.vax.sh/manar/landing:<commit-sha>`;
 2. scans that exact digest (fails on fixed HIGH/CRITICAL) and stores a CycloneDX SBOM;
-3. applies `deploy/k8s/app` with that digest through the GitLab agent, waits for the rollout, and checks the running
+3. applies `deploy/k8s/app` (ServiceAccount, Deployment, PDB, HPA) with that digest through the GitLab agent, waits for the rollout, and checks the running
    pods use the new digest (plus an optional public smoke test).
 
 A release is a zero-downtime rolling update, typically live a few minutes after the push. Other branches never deploy.
@@ -247,6 +247,7 @@ next push does not reintroduce the bad version.
 
 ### What CI does not change
 
-Namespace, NetworkPolicies, the email secret, the agent itself, and the edge Nginx stay operator-managed. The
+Namespace, NetworkPolicies, Service, Ingress, the email secret, the agent itself, and the edge Nginx stay
+operator-managed (the Service and Ingress decide where traffic goes, so the CI identity may not change them). The
 release Role can only update the named application objects, read pods/ReplicaSets for rollout status, and update
 the `gitlab-registry` pull secret.
