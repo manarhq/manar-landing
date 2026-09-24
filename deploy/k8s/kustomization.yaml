@@ -1,9 +1,12 @@
 # Full stack, applied by an operator for first install and for infrastructure changes:
 #   kubectl apply -k deploy/k8s
 # Day-to-day releases are done by GitLab CI, which applies only ./app with the new image digest.
+# The Service and Ingress live here, not in ./app: they route traffic, so the CI identity may not change them.
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
   - namespace.yaml
   - network-policy.yaml
+  - service.yaml
+  - ingress.yaml
   - app
