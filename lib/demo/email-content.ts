@@ -1,3 +1,4 @@
+import type { Utm } from "../consent.ts"
 import type { DemoRequestInput } from "./validation.ts"
 
 export type DemoEmailContent = {
@@ -29,7 +30,7 @@ function headerSafe(value: string, max: number): string {
 
 export function buildDemoRequestEmail(
   input: DemoRequestInput,
-  context: { locale: string; submittedAt: Date }
+  context: { locale: string; submittedAt: Date; utm?: Utm }
 ): DemoEmailContent {
   const submitted = context.submittedAt.toISOString()
   const rows: Array<[string, string]> = [
@@ -40,6 +41,7 @@ export function buildDemoRequestEmail(
     ["Deployment interest", input.deployment ? deploymentLabels[input.deployment] : "Not provided"],
     ["Site language", context.locale === "ar" ? "Arabic (ar)" : "English (en)"],
     ["Submitted (UTC)", submitted],
+    ...Object.entries(context.utm ?? {}).map(([key, value]): [string, string] => [`Campaign ${key.slice(4)}`, value]),
   ]
   const message = input.message || "Not provided"
 
@@ -59,7 +61,7 @@ export function buildDemoRequestEmail(
   const htmlRows = rows
     .map(
       ([label, value]) =>
-        `<tr><th align="left" style="padding:6px 16px 6px 0;color:#52635a;font-weight:600;vertical-align:top;white-space:nowrap">${escapeHtml(label)}</th><td style="padding:6px 0;color:#18231e">${escapeHtml(value)}</td></tr>`
+        `<tr><th align="left" style="padding:6px 16px 6px 0;color:#4b5866;font-weight:600;vertical-align:top;white-space:nowrap">${escapeHtml(label)}</th><td style="padding:6px 0;color:#0f1720">${escapeHtml(value)}</td></tr>`
     )
     .join("")
 

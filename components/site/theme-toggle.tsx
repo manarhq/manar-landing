@@ -1,58 +1,103 @@
 "use client"
 
-import { MoonIcon, SunIcon } from "lucide-react"
-import { useLayoutEffect, useSyncExternalStore } from "react"
+import { Menu } from "@base-ui/react/menu"
+import { CheckIcon, DesktopIcon, MoonIcon, SunIcon } from "@phosphor-icons/react"
+import { useEffect, useSyncExternalStore } from "react"
 
 import { Button } from "@/components/ui/button"
+import type { Dictionary } from "@/lib/i18n/dictionaries"
 import { THEME_STORAGE_KEY } from "@/lib/site"
 
-type Theme = "dark" | "light"
+type Preference = "system" | "light" | "dark"
 
-function subscribe(onChange: () => void) {
-  const observer = new MutationObserver(onChange)
-  observer.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] })
-  return () => observer.disconnect()
-}
+const EVENT = "manar:theme"
+const media = () => window.matchMedia("(prefers-color-scheme: dark)")
 
-const readTheme = (): Theme => (document.documentElement.classList.contains("dark") ? "dark" : "light")
-
-function readStored(): Theme | null {
+function readPreference(): Preference {
   try {
     const stored = localStorage.getItem(THEME_STORAGE_KEY)
-    return stored === "light" || stored === "dark" ? stored : null
+    return stored === "light" || stored === "dark" ? stored : "system"
   } catch {
-    return null
+    return "system"
   }
 }
 
-function apply(theme: Theme) {
-  document.documentElement.classList.toggle("dark", theme === "dark")
+function apply(preference: Preference) {
+  const dark = preference === "dark" || (preference === "system" && media().matches)
+  document.documentElement.classList.toggle("dark", dark)
 }
 
-export function ThemeToggle({ toDark, toLight }: { toDark: string; toLight: string }) {
-  const theme = useSyncExternalStore(subscribe, readTheme, () => "dark" as Theme)
+function subscribe(onChange: () => void) {
+  window.addEventListener(EVENT, onChange)
+  window.addEventListener("storage", onChange)
+  return () => {
+    window.removeEventListener(EVENT, onChange)
+    window.removeEventListener("storage", onChange)
+  }
+}
 
-  // React resets <html> attributes on the development Strict Mode remount; re-apply the stored choice.
-  useLayoutEffect(() => {
-    const stored = readStored()
-    if (stored) apply(stored)
-  }, [])
+/** W01: Light, Dark, or System (the default). The pre-paint script in the layout prevents a flash. */
+export function ThemeToggle({ labels }: { labels: Dictionary["site"]["theme"] }) {
+  const preference = useSyncExternalStore(subscribe, readPreference, () => "system" as Preference)
 
-  function toggle() {
-    const next: Theme = theme === "dark" ? "light" : "dark"
-    apply(next)
+  // Re-apply on mount (React resets <html> attributes on remount) and follow the OS while on System.
+  useEffect(() => {
+    apply(preference)
+    if (preference !== "system") return
+    const query = media()
+    const onChange = () => apply("system")
+    query.addEventListener("change", onChange)
+    return () => query.removeEventListener("change", onChange)
+  }, [preference])
+
+  function choose(next: Preference) {
     try {
-      localStorage.setItem(THEME_STORAGE_KEY, next)
+      if (next === "system") localStorage.removeItem(THEME_STORAGE_KEY)
+      else localStorage.setItem(THEME_STORAGE_KEY, next)
     } catch {
-      // Storage unavailable: the change still applies for this page view.
+      // Storage unavailable: the change still applies to this page view.
     }
+    apply(next)
+    window.dispatchEvent(new Event(EVENT))
   }
 
-  const label = theme === "dark" ? toLight : toDark
+  const options = [
+    { value: "system", label: labels.system, Icon: DesktopIcon },
+    { value: "light", label: labels.light, Icon: SunIcon },
+    { value: "dark", label: labels.dark, Icon: MoonIcon },
+  ] as const
 
   return (
-    <Button variant="ghost" size="icon" onClick={toggle} aria-label={label} title={label}>
-      {theme === "dark" ? <SunIcon aria-hidden /> : <MoonIcon aria-hidden />}
-    </Button>
+    <Menu.Root>
+      <Menu.Trigger
+        render={<Button variant="ghost" size="icon" />}
+        aria-label={`${labels.label}: ${options.find((o) => o.value === preference)!.label}`}
+      >
+        <SunIcon aria-hidden className="dark:hidden" />
+        <MoonIcon aria-hidden className="hidden dark:block" />
+      </Menu.Trigger>
+      <Menu.Portal>
+        <Menu.Positioner sideOffset={8} align="end" className="z-(--z-overlay)">
+          <Menu.Popup className="min-w-40 origin-(--transform-origin) rounded-md border border-border bg-popover p-1 text-popover-foreground shadow-[0_24px_60px_-24px_rgb(5_8_12/0.55)] transition-[opacity,transform] duration-150 outline-none data-ending-style:scale-95 data-ending-style:opacity-0 data-starting-style:scale-95 data-starting-style:opacity-0">
+            <Menu.RadioGroup value={preference} onValueChange={(value) => choose(value as Preference)} aria-label={labels.label}>
+              {options.map(({ value, label, Icon }) => (
+                <Menu.RadioItem
+                  key={value}
+                  value={value}
+                  closeOnClick
+                  className="flex min-h-10 cursor-default items-center gap-2.5 rounded-sm px-2.5 text-sm text-foreground outline-none select-none data-highlighted:bg-elevated"
+                >
+                  <Icon aria-hidden className="size-4 text-muted-foreground" />
+                  <span className="flex-1">{label}</span>
+                  <Menu.RadioItemIndicator>
+                    <CheckIcon aria-hidden className="size-4 text-link" />
+                  </Menu.RadioItemIndicator>
+                </Menu.RadioItem>
+              ))}
+            </Menu.RadioGroup>
+          </Menu.Popup>
+        </Menu.Positioner>
+      </Menu.Portal>
+    </Menu.Root>
   )
 }

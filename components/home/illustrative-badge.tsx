@@ -5,11 +5,10 @@ export function IllustrativeBadge({ label, className }: { label: string; classNa
   return (
     <span
       className={cn(
-        "inline-flex shrink-0 items-center gap-1.5 rounded-full border border-info/35 bg-info/10 px-2.5 py-1 text-xs font-semibold text-info",
+        "inline-flex shrink-0 items-center rounded-full border border-border bg-elevated px-2.5 py-1 text-xs font-medium text-muted-foreground",
         className
       )}
     >
-      <span aria-hidden className="size-1.5 rounded-full bg-current" />
       {label}
     </span>
   )

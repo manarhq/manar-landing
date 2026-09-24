@@ -1,7 +1,8 @@
 "use client"
 
-import { MenuIcon } from "lucide-react"
+import { ListIcon } from "@phosphor-icons/react"
 import Link from "next/link"
+import { usePathname } from "next/navigation"
 import { useState } from "react"
 
 import { Button, buttonVariants } from "@/components/ui/button"
@@ -21,11 +22,19 @@ export function MobileNav({
   labels: { open: string; close: string; title: string; bookDemo: string; endorsement: string; navLabel: string }
 }) {
   const [open, setOpen] = useState(false)
+  const pathname = usePathname()
+  const [lastPath, setLastPath] = useState(pathname)
+
+  // W05: close on route change (render-time reset, no effect needed).
+  if (pathname !== lastPath) {
+    setLastPath(pathname)
+    setOpen(false)
+  }
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger render={<Button variant="ghost" size="icon" aria-label={labels.open} className="lg:hidden" />}>
-        <MenuIcon aria-hidden />
+        <ListIcon aria-hidden />
       </SheetTrigger>
       <SheetContent
         side={locale === "ar" ? "left" : "right"}

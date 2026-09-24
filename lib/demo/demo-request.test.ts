@@ -121,6 +121,16 @@ describe("handleDemoRequest", () => {
     assert.ok(!JSON.stringify(sent[0]).includes("attacker@example.com"))
   })
 
+  it("keeps only allowlisted campaign fields in the email", async () => {
+    const { sent, transport } = recordingTransport()
+    await handleDemoRequest(
+      request({ ...valid, utm: { utm_source: "linkedin", utm_evil: "x", utm_term: "<b>", utm_medium: 7 } }),
+      deps({ transport })
+    )
+    assert.match(sent[0].text, /Campaign source: linkedin/)
+    assert.doesNotMatch(sent[0].text, /evil|<b>|Campaign medium/)
+  })
+
   it("does not send invalid submissions", async () => {
     const { sent, transport } = recordingTransport()
     const response = await handleDemoRequest(request({ ...valid, email: "nope" }), deps({ transport }))

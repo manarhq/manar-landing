@@ -18,8 +18,11 @@ WORKDIR /app
 # SITE_URL is read at build time: metadata URLs, robots.txt, and sitemap.xml are
 # prerendered. Changing it at runtime has no effect.
 ARG SITE_URL
+# Optional: inlined into the client bundle at build time (see .env.example).
+ARG NEXT_PUBLIC_CF_BEACON_TOKEN=""
 ENV NEXT_TELEMETRY_DISABLED=1 \
-    SITE_URL=${SITE_URL}
+    SITE_URL=${SITE_URL} \
+    NEXT_PUBLIC_CF_BEACON_TOKEN=${NEXT_PUBLIC_CF_BEACON_TOKEN}
 
 COPY --from=dependencies /app/node_modules ./node_modules
 COPY . .

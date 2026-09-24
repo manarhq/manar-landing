@@ -1,4 +1,4 @@
-import { BanIcon, CheckIcon, ClockIcon, FlagIcon } from "lucide-react"
+import { CheckIcon, ClockIcon, FlagIcon, ProhibitIcon } from "@phosphor-icons/react/ssr"
 
 import { cn } from "@/lib/utils"
 
@@ -8,7 +8,7 @@ const toneClasses: Record<Tone, string> = {
   success: "border-success/35 bg-success/10 text-success",
   warning: "border-warning/40 bg-warning/10 text-warning",
   danger: "border-danger/40 bg-danger/10 text-danger",
-  info: "border-info/35 bg-info/10 text-info",
+  info: "border-control/60 bg-elevated text-foreground",
   neutral: "border-border bg-elevated text-muted-foreground",
 }
 
@@ -25,11 +25,11 @@ export function StatusPill({
   className?: string
 }) {
   const Icon =
-    icon === "allow" ? CheckIcon : icon === "approval" ? ClockIcon : icon === "block" ? BanIcon : icon === "flag" ? FlagIcon : null
+    icon === "allow" ? CheckIcon : icon === "approval" ? ClockIcon : icon === "block" ? ProhibitIcon : icon === "flag" ? FlagIcon : null
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1 rounded-sm border px-1.5 py-0.5 text-xs leading-4 font-semibold whitespace-nowrap",
+        "inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-xs leading-4 font-semibold whitespace-nowrap",
         toneClasses[tone],
         className
       )}
