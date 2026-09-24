@@ -42,6 +42,7 @@ Unsupported locales return 404 (`dynamicParams = false`).
 | `SITE_URL`        | Sitemap/robots/metadata | Public origin; defaults to `https://manar.vax.sh`. Read at **build time**. Overrides must be absolute HTTP(S) origins with no credentials, path, query, or fragment. Invalid values fail the build. Docker requires an explicit build argument; CI already supplies it. |
 | `RESEND_API_KEY`  | Sending demo requests | Server-only. |
 | `DEMO_FROM_EMAIL` | Sending demo requests | Sender on a domain verified in Resend, e.g. `Manar <demo@mail.your-domain>`. |
+| `NEXT_PUBLIC_CF_BEACON_TOKEN` | Optional analytics | Cloudflare Web Analytics token, read at **build time** (Docker build argument). Enables the consent banner; the beacon loads only after opt-in. |
 
 ## Search indexing
 

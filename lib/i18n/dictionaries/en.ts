@@ -1,9 +1,9 @@
 const en = {
   meta: {
-    homeTitle: "Manar — AI Governance Platform & Runtime Oversight",
+    homeTitle: "Manar | AI Governance Platform and Runtime Oversight",
     homeDescription:
       "Manage AI inventory, risks, policies, approvals, and audit evidence in one workspace. Manar adds runtime oversight for connected AI agents and actions.",
-    demoTitle: "Book an AI Governance Platform Demo — Manar",
+    demoTitle: "Book an AI Governance Platform Demo | Manar",
     demoDescription:
       "Request a Manar demo. Tell us about the AI systems you need to govern and we will arrange a session around your workflow and deployment needs.",
     siteName: "Manar",
@@ -28,6 +28,46 @@ const en = {
     illustrativeExample: "Illustrative example",
   },
 
+  site: {
+    theme: { label: "Theme", system: "System", light: "Light", dark: "Dark" },
+    search: {
+      open: "Search",
+      title: "Search the site",
+      label: "Search pages, sections, and questions",
+      placeholder: "Search approvals, deployment, privacy...",
+      hint: "Type to search. Use the arrow keys to move and Enter to open.",
+      empty: "Nothing matches \u201c{q}\u201d. Try a broader word such as policy or deployment.",
+      results: "{n} results",
+      close: "Close search",
+      groups: { section: "Section", faq: "Question", page: "Page" },
+    },
+    backToTop: "Back to top",
+    contact: {
+      open: "Contact Manar",
+      title: "Talk to the team",
+      body: "Email us directly or request a demo session.",
+      copy: "Copy email address",
+      copied: "Email address copied.",
+      copyFailed: "Copying is blocked in this browser. Select the address above to copy it.",
+      close: "Close contact panel",
+    },
+    consent: {
+      title: "Your privacy choices",
+      body: "We use optional, cookie-free analytics to understand which pages help visitors. It loads only if you allow it.",
+      accept: "Allow analytics",
+      reject: "Reject",
+      preferences: "Preferences",
+      save: "Save choices",
+      necessaryTitle: "Necessary",
+      necessaryBody: "Remembers your theme and your privacy choice on this device. Always on.",
+      analyticsTitle: "Analytics",
+      analyticsBody: "Cloudflare Web Analytics: page views and loading performance. No cookies, no advertising.",
+      policy: "Cookie policy",
+      saved: "Your privacy choices were saved.",
+      dialogClose: "Close privacy preferences",
+    },
+  },
+
   nav: {
     platform: "Platform",
     howItWorks: "How it works",
@@ -38,7 +78,7 @@ const en = {
   hero: {
     eyebrow: "AI governance and runtime oversight",
     title: "Clarity for every AI decision.",
-    body: "Bring AI systems, risks, policies, approvals, and evidence into one workspace. Give your teams a clear view of what needs attention and control over connected AI actions.",
+    body: "Register your AI systems, put policy on consequential actions, and keep every decision on record. One workspace.",
     primaryCta: "Book a demo",
     secondaryCta: "Explore the workspace",
     card: {
@@ -416,6 +456,13 @@ const en = {
   faq: {
     eyebrow: "FAQ",
     title: "Questions we are asked most.",
+    searchLabel: "Search the questions",
+    searchPlaceholder: "Filter by a word, such as pricing",
+    count: "{n} of {total} questions",
+    empty: "No question matches \u201c{q}\u201d.",
+    reset: "Clear filter",
+    copyLink: "Copy a link to this question",
+    linkCopied: "Link copied.",
     items: [
       {
         question: "What does Manar govern?",
@@ -457,6 +504,17 @@ const en = {
     contactTitle: "Contact",
     demoLink: "Request a demo",
     rights: "All rights reserved.",
+    legalTitle: "Legal",
+    privacy: "Privacy notice",
+    cookies: "Cookie policy",
+    terms: "Terms of use",
+    cookieSettings: "Cookie settings",
+  },
+
+  notFound: {
+    title: "This page is off the chart.",
+    body: "The address may be mistyped, or the page has moved. The homepage and the demo request are still where they were.",
+    home: "Go to the homepage",
   },
 
   demo: {

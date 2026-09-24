@@ -1,6 +1,6 @@
 "use client"
 
-import { AlertCircleIcon, CheckCircle2Icon, Loader2Icon } from "lucide-react"
+import { CheckCircleIcon, CircleNotchIcon, WarningCircleIcon } from "@phosphor-icons/react"
 import Link from "next/link"
 import { useEffect, useRef, useState } from "react"
 
@@ -9,6 +9,7 @@ import { Field, FieldError, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
+import { readStoredUtm } from "@/lib/consent"
 import type { DemoApiBody } from "@/lib/demo/handle-request"
 import {
   deploymentOptions,
@@ -92,7 +93,7 @@ export function DemoForm({ locale, t }: { locale: Locale; t: FormText }) {
       const response = await fetch("/api/demo-request", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...result.value, locale, website: honeypot }),
+        body: JSON.stringify({ ...result.value, locale, website: honeypot, utm: readStoredUtm() }),
       })
       const body = (await response.json().catch(() => null)) as DemoApiBody | null
 
@@ -120,7 +121,7 @@ export function DemoForm({ locale, t }: { locale: Locale; t: FormText }) {
     return (
       <div className="rounded-xl border border-border bg-card p-6 sm:p-10" role="status">
         <span className="flex size-12 items-center justify-center rounded-lg border border-success/40 bg-success/10 text-success">
-          <CheckCircle2Icon aria-hidden className="size-6" />
+          <CheckCircleIcon aria-hidden className="size-6" />
         </span>
         <h2 ref={successHeading} tabIndex={-1} className="mt-6 text-2xl font-semibold text-foreground outline-none sm:text-3xl">
           {t.success.title}
@@ -157,7 +158,7 @@ export function DemoForm({ locale, t }: { locale: Locale; t: FormText }) {
       <div ref={feedbackRef} tabIndex={-1} aria-live="assertive" className="outline-none">
         {status === "failure" || status === "rate_limited" ? (
           <div className="mt-6 flex gap-3 rounded-lg border border-danger/40 bg-danger/10 p-4 text-sm">
-            <AlertCircleIcon aria-hidden className="mt-0.5 size-5 shrink-0 text-danger" />
+            <WarningCircleIcon aria-hidden className="mt-0.5 size-5 shrink-0 text-danger" />
             <div>
               <p className="font-semibold text-foreground">
                 {status === "failure" ? t.failure.title : t.rateLimited.title}
@@ -289,7 +290,7 @@ export function DemoForm({ locale, t }: { locale: Locale; t: FormText }) {
       <div className="mt-8 flex flex-col gap-4 border-t border-border pt-6 sm:flex-row sm:items-center sm:justify-between">
         <p className="max-w-sm text-sm leading-relaxed text-muted-foreground">{t.notice}</p>
         <Button type="submit" size="lg" disabled={submitting} className="w-full sm:w-auto">
-          {submitting ? <Loader2Icon aria-hidden className="animate-spin" /> : null}
+          {submitting ? <CircleNotchIcon aria-hidden className="animate-spin" /> : null}
           {submitting ? t.submitting : status === "failure" ? t.failure.retry : t.submit}
         </Button>
       </div>
