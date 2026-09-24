@@ -1,12 +1,6 @@
 "use client"
 
-import {
-  ChevronDownIcon,
-  FileClockIcon,
-  LayoutGridIcon,
-  ListIcon,
-  UserRoundCheckIcon,
-} from "lucide-react"
+import { CaretDownIcon, ClockCounterClockwiseIcon, ListIcon, SquaresFourIcon, UserCheckIcon } from "@phosphor-icons/react"
 import { useId, useState } from "react"
 
 import { BrandMark } from "@/components/site/brand"
@@ -20,10 +14,10 @@ import { lifecycleTone, outcomeTone, riskTone, StatusPill } from "./status"
 type Workspace = Dictionary["workspace"]
 
 const tabIcons = {
-  overview: LayoutGridIcon,
+  overview: SquaresFourIcon,
   inventory: ListIcon,
-  approvals: UserRoundCheckIcon,
-  evidence: FileClockIcon,
+  approvals: UserCheckIcon,
+  evidence: ClockCounterClockwiseIcon,
 } as const
 
 export function WorkspacePreview({ w, brandName }: { w: Workspace; brandName: string }) {
@@ -289,7 +283,7 @@ function Disclosure({
         className="inline-flex min-h-10 items-center gap-2 rounded-md border border-control/60 px-3 text-sm font-semibold text-foreground transition-colors hover:border-control hover:bg-elevated"
       >
         {open ? hideLabel : showLabel}
-        <ChevronDownIcon aria-hidden className={cn("size-4 transition-transform", open && "rotate-180")} />
+        <CaretDownIcon aria-hidden className={cn("size-4 transition-transform", open && "rotate-180")} />
       </button>
       <div id={panelId} hidden={!open} className="mt-3">
         {children}

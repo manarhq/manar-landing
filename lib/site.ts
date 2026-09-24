@@ -6,6 +6,11 @@ export const CONTACT_EMAIL = "nofal@vax.sh"
 export const VAX_URL = "https://vax.sh"
 export const THEME_STORAGE_KEY = "manar-theme"
 
+/** Cloudflare Web Analytics token. Analytics and the consent banner exist only when it is set. */
+export const CF_BEACON_TOKEN = process.env.NEXT_PUBLIC_CF_BEACON_TOKEN?.trim() || ""
+
+export type SitePath = "" | "/demo" | "/privacy" | "/cookies" | "/terms"
+
 /**
  * Shared build-time origin for metadata, robots, and the sitemap. The default is
  * the deployed public domain; an override must be an HTTP(S) origin, not a path.
@@ -30,7 +35,7 @@ export function localizedPath(locale: Locale, path = ""): string {
   return `/${locale}${path}`
 }
 
-export function localizedAlternates(path: "" | "/demo"): Record<string, string> {
+export function localizedAlternates(path: SitePath): Record<string, string> {
   const origin = siteOrigin()
   return {
     ...Object.fromEntries(
@@ -48,7 +53,7 @@ export function pageMetadata({
   siteName,
 }: {
   locale: Locale
-  path: "" | "/demo"
+  path: SitePath
   title: string
   description: string
   siteName: string

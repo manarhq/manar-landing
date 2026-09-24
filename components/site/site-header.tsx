@@ -9,23 +9,24 @@ import { Brand } from "./brand"
 import { LanguageSwitch } from "./language-switch"
 import { MobileNav } from "./mobile-nav"
 import { navItems } from "./nav-items"
+import { SearchButton } from "./search-button"
 import { ThemeToggle } from "./theme-toggle"
 
 export function SiteHeader({ locale, dict }: { locale: Locale; dict: Dictionary }) {
   const items = navItems(locale, dict)
 
   return (
-    <header className="sticky top-0 z-40 border-b border-border/70 bg-background/85 backdrop-blur-md supports-[backdrop-filter]:bg-background/70">
-      <div className="shell flex h-16 items-center gap-4 lg:h-[4.5rem]">
+    <header className="header-surface sticky top-0 z-(--z-header) border-b">
+      <div className="shell flex h-16 items-center gap-3 lg:h-[4.25rem]">
         <Brand locale={locale} name={dict.common.brandName} homeLabel={dict.common.homeLink} />
 
-        <nav aria-label={dict.common.primaryNav} className="ms-6 hidden lg:block">
-          <ul className="flex items-center gap-1">
+        <nav aria-label={dict.common.primaryNav} className="ms-4 hidden lg:block xl:ms-8">
+          <ul className="flex items-center">
             {items.map((item) => (
               <li key={item.href}>
                 <Link
                   href={item.href}
-                  className="inline-flex h-10 items-center rounded-md px-3 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+                  className="inline-flex h-10 items-center rounded-full px-3 text-sm font-medium whitespace-nowrap text-muted-foreground transition-colors hover:text-foreground"
                 >
                   {item.label}
                 </Link>
@@ -34,17 +35,15 @@ export function SiteHeader({ locale, dict }: { locale: Locale; dict: Dictionary 
           </ul>
         </nav>
 
-        <div className="ms-auto flex items-center gap-1 sm:gap-1.5">
+        <div className="ms-auto flex items-center gap-1">
+          <SearchButton label={dict.site.search.open} />
           <LanguageSwitch
             locale={locale}
             label={dict.common.languageSwitch}
             accessibleLabel={dict.common.languageSwitchLabel}
           />
-          <ThemeToggle toDark={dict.common.themeToDark} toLight={dict.common.themeToLight} />
-          <Link
-            href={`/${locale}/demo`}
-            className={cn(buttonVariants(), "ms-1.5 hidden sm:inline-flex")}
-          >
+          <ThemeToggle labels={dict.site.theme} />
+          <Link href={`/${locale}/demo`} className={cn(buttonVariants(), "ms-2 hidden sm:inline-flex")}>
             {dict.common.bookDemo}
           </Link>
           <MobileNav
