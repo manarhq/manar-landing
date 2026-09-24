@@ -5,67 +5,86 @@
 @custom-variant dark (&:is(.dark *));
 
 /*
- * Manar brand tokens.
+ * Manar brand tokens: night sea and a lamp-amber signal.
  * Semantic tokens (--page, --surface, ...) are the source of truth; the shadcn
- * variables below them are mapped from these so every primitive follows the brand.
- * Light values live on :root, dark values on .dark (the initial presentation).
+ * variables below are mapped from them so every primitive follows the brand.
+ * Light values ("fog") live on :root, dark values ("night") on .dark.
+ * One accent only: amber. Status colours carry state, never decoration.
  */
 :root {
-  --page: #f5f2e9;
-  --surface: #fffef9;
-  --elevated: #eaede5;
-  --text: #18231e;
-  --text-muted: #52635a;
-  --divider: #d4ddd3;
-  --control: #7a8c80;
-  --action: #0d6b4b;
-  --action-text: #ffffff;
-  --action-hover: #095039;
-  --link: #0d6b4b;
+  --page: #f3f5f7;
+  --surface: #fbfcfd;
+  --elevated: #e7ebef;
+  --text: #0f1720;
+  --text-muted: #4b5866;
+  --divider: #d3dae1;
+  --control: #7d8b99;
+  --action: #e9a526;
+  --action-text: #0f1720;
+  --action-hover: #f2b441;
+  --link: #8a5a00;
 
-  --success: #0d6b4b;
-  --warning: #b45309;
-  --danger: #b91c1c;
-  --info: #1d4ed8;
+  --success: #0f7a58;
+  --warning: #8a5a00;
+  --danger: #b42318;
 
-  /* Beam: the emerald light motif. Softer on ivory. */
-  --beam: 13 107 75;
-  --beam-strength: 0.13;
-  --grain: 0.025;
+  /* The lamp: rgb triplet for alpha blends. */
+  --beam: 214 150 30;
+  --beam-strength: 0.16;
+  --grain: 0.035;
 
-  --app-font-sans: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
-  --app-font-mono: var(--font-plex-mono), ui-monospace, monospace;
+  /* Read by the WebGL scenes in components/three. */
+  --scene-sky: #dfe5eb;
+  --scene-sea: #b9c6d2;
+  --scene-tower: #1b2632;
+  --scene-beam: #d9961e;
+
+  --app-font-sans: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
+  --app-font-mono: var(--font-geist-mono), ui-monospace, monospace;
+
+  /* Layering scale (W44). Use these, never ad-hoc z values. */
+  --z-raised: 10;
+  --z-header: 40;
+  --z-float: 45;
+  --z-banner: 50;
+  --z-overlay: 60;
+  --z-skip: 70;
+  --z-grain: 80;
 
   color-scheme: light;
 }
 
 .dark {
-  --page: #121816;
-  --surface: #1b2320;
-  --elevated: #242d28;
-  --text: #f4f1e8;
-  --text-muted: #b9c3ba;
-  --divider: #34473c;
-  --control: #677b6d;
-  --action: #34d399;
-  --action-text: #0e1a13;
-  --action-hover: #52ddaa;
-  --link: #70e2af;
+  --page: #0b1016;
+  --surface: #111922;
+  --elevated: #19232e;
+  --text: #e8edf2;
+  --text-muted: #97a3b1;
+  --divider: #223040;
+  --control: #4d5e70;
+  --action: #f2b441;
+  --action-text: #0b1016;
+  --action-hover: #f7c565;
+  --link: #f2b441;
 
-  --success: #34d399;
-  --warning: #fbbf24;
-  --danger: #f87171;
-  --info: #60a5fa;
+  --success: #4fd1a5;
+  --warning: #f2b441;
+  --danger: #f47067;
 
-  --beam: 52 211 153;
+  --beam: 242 180 65;
   --beam-strength: 0.2;
-  --grain: 0.04;
+  --grain: 0.05;
+
+  --scene-sky: #0b1016;
+  --scene-sea: #0e1620;
+  --scene-tower: #d9dee4;
+  --scene-beam: #f2b441;
 
   color-scheme: dark;
 }
 
 :root:lang(ar) {
-  --app-font-sans: var(--font-plex-arabic), var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
+  --app-font-sans: var(--font-plex-arabic), var(--font-geist), ui-sans-serif, system-ui, sans-serif;
 }
 
 /* shadcn/ui variable mapping */
@@ -125,18 +144,19 @@
   --color-success: var(--success);
   --color-warning: var(--warning);
   --color-danger: var(--danger);
-  --color-info: var(--info);
 
   --font-sans: var(--app-font-sans);
   --font-heading: var(--app-font-sans);
   --font-mono: var(--app-font-mono);
 
-  /* Radius scale: controls 8px, cards 12px, large previews 20px. */
-  --radius-sm: 4px;
-  --radius-md: 8px;
-  --radius-lg: 12px;
-  --radius-xl: 20px;
-  --radius-2xl: 28px;
+  /* One radius system: controls 10px, panels 16px, pills full. */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-xl: 16px;
+  --radius-2xl: 24px;
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 @layer base {
@@ -152,13 +172,13 @@
   body {
     @apply bg-background text-foreground antialiased;
     text-rendering: optimizeLegibility;
-    font-feature-settings: "kern";
+    font-feature-settings: "kern", "ss01";
   }
   :lang(ar) body {
     line-height: 1.75;
   }
   ::selection {
-    background: rgb(var(--beam) / 0.28);
+    background: rgb(var(--beam) / 0.3);
   }
   :focus-visible {
     outline: 2px solid var(--link);
@@ -179,35 +199,31 @@
 }
 
 @layer components {
-  /* Brand eyebrow: tracked uppercase in Latin script only. */
+  /* The single eyebrow style: amber, tracked in Latin script only. */
   .eyebrow {
-    @apply inline-flex items-center gap-2.5 text-[0.8125rem] font-semibold text-link;
+    @apply inline-flex items-center gap-2.5 text-[0.8125rem] font-medium text-link;
   }
   :lang(en) .eyebrow {
-    @apply text-xs tracking-[0.16em] uppercase;
-  }
-  .eyebrow::before {
-    content: "";
-    @apply h-px w-6 bg-current opacity-70;
+    @apply font-mono text-xs tracking-[0.14em] uppercase;
   }
 
   .display {
     @apply font-heading font-semibold text-balance text-foreground;
-    font-size: clamp(2.5rem, 1.35rem + 4.9vw, 5rem);
-    line-height: 1.02;
-    letter-spacing: -0.035em;
+    font-size: clamp(2.6rem, 1.4rem + 4.6vw, 5.25rem);
+    line-height: 0.98;
+    letter-spacing: -0.045em;
   }
   :lang(ar) .display {
-    font-size: clamp(2.35rem, 1.3rem + 4.2vw, 4.4rem);
+    font-size: clamp(2.35rem, 1.3rem + 4vw, 4.4rem);
     line-height: 1.3;
     letter-spacing: 0;
   }
 
   .headline {
     @apply font-heading font-semibold text-balance text-foreground;
-    font-size: clamp(1.875rem, 1.3rem + 2.2vw, 3rem);
-    line-height: 1.1;
-    letter-spacing: -0.025em;
+    font-size: clamp(2rem, 1.35rem + 2.4vw, 3.25rem);
+    line-height: 1.04;
+    letter-spacing: -0.035em;
   }
   :lang(ar) .headline {
     line-height: 1.4;
@@ -222,37 +238,21 @@
   }
 
   .shell {
-    @apply mx-auto w-full max-w-[1240px] px-4 sm:px-6 lg:px-8;
+    @apply mx-auto w-full max-w-[1320px] px-4 sm:px-6 lg:px-10;
   }
 
-  /* Hairline grid texture used behind architectural sections. */
-  .blueprint {
-    background-image:
-      linear-gradient(to right, color-mix(in oklab, var(--divider) 55%, transparent) 1px, transparent 1px),
-      linear-gradient(to bottom, color-mix(in oklab, var(--divider) 55%, transparent) 1px, transparent 1px);
-    background-size: 72px 72px;
-    mask-image: radial-gradient(ellipse at 50% 0%, black 0%, transparent 70%);
+  /* Header: clear over the hero, frosted once the page scrolls. Solid where scroll timelines are unsupported. */
+  .header-surface {
+    background: color-mix(in oklab, var(--page) 88%, transparent);
+    border-color: color-mix(in oklab, var(--divider) 70%, transparent);
+    backdrop-filter: blur(14px) saturate(140%);
   }
-
-  /* Controlled emerald beam: a narrow source that widens and fades. */
-  .beam {
-    pointer-events: none;
-    background: conic-gradient(
-      from 0deg at 50% 0%,
-      transparent 0deg,
-      transparent 158deg,
-      rgb(var(--beam) / calc(var(--beam-strength) * 0.35)) 168deg,
-      rgb(var(--beam) / var(--beam-strength)) 180deg,
-      rgb(var(--beam) / calc(var(--beam-strength) * 0.35)) 192deg,
-      transparent 202deg,
-      transparent 360deg
-    );
-    mask-image: linear-gradient(to bottom, black 0%, black 30%, transparent 90%);
-  }
-
-  .glow {
-    pointer-events: none;
-    background: radial-gradient(closest-side, rgb(var(--beam) / calc(var(--beam-strength) * 0.9)), transparent);
+  @supports (animation-timeline: scroll()) {
+    .header-surface {
+      animation: header-settle linear both;
+      animation-timeline: scroll(root block);
+      animation-range: 0 120px;
+    }
   }
 
   .panel {
@@ -263,23 +263,150 @@
     direction: ltr;
     unicode-bidi: isolate;
   }
+
+  /* Soft lamp glow behind focal content. */
+  .glow {
+    pointer-events: none;
+    background: radial-gradient(closest-side, rgb(var(--beam) / calc(var(--beam-strength) * 0.9)), transparent);
+  }
+
+  /* A sweeping cone of light, used where the WebGL scene is not. */
+  .beam {
+    pointer-events: none;
+    background: conic-gradient(
+      from 0deg at 50% 0%,
+      transparent 0deg,
+      transparent 158deg,
+      rgb(var(--beam) / calc(var(--beam-strength) * 0.35)) 170deg,
+      rgb(var(--beam) / var(--beam-strength)) 180deg,
+      rgb(var(--beam) / calc(var(--beam-strength) * 0.35)) 190deg,
+      transparent 202deg,
+      transparent 360deg
+    );
+    mask-image: linear-gradient(to bottom, black 0%, black 30%, transparent 92%);
+  }
+
+  /* Faint film grain on a fixed layer only, never on scrolling containers. */
+  .grain {
+    position: fixed;
+    inset: 0;
+    z-index: var(--z-grain);
+    pointer-events: none;
+    opacity: var(--grain);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* Reading progress (W08): a CSS scroll timeline, so it costs no JavaScript. */
+  .scroll-progress {
+    display: none;
+  }
+  @supports (animation-timeline: scroll()) {
+    .scroll-progress {
+      display: block;
+      position: fixed;
+      inset-inline: 0;
+      top: 0;
+      z-index: calc(var(--z-header) + 1);
+      height: 2px;
+      pointer-events: none;
+      background: var(--action);
+      transform: scaleX(0);
+      transform-origin: left;
+      animation: progress-grow linear both;
+      animation-timeline: scroll(root block);
+    }
+    [dir="rtl"] .scroll-progress {
+      transform-origin: right;
+    }
+  }
 }
 
-@keyframes beam-settle {
+/* Scroll reveal: sections rise into place as they enter. Pure CSS, skipped when unsupported or reduced. */
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    .reveal {
+      animation: reveal linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 55%;
+    }
+  }
+}
+
+/* Manifesto words: dim until the line is read, then lit. Stays fully lit without support. */
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    .word-lit {
+      animation: word-lit linear both;
+      animation-timeline: view();
+      animation-range: cover calc(12% + var(--i) * 2.2%) cover calc(22% + var(--i) * 2.2%);
+    }
+  }
+}
+
+@keyframes word-lit {
   from {
-    opacity: 0;
-    transform: translateX(-50%) scaleX(0.55);
+    opacity: 0.45;
   }
   to {
     opacity: 1;
-    transform: translateX(-50%) scaleX(1);
+  }
+}
+
+/* Product frame: tilted back as it enters, level once in view. */
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    .tilt-in {
+      transform-origin: 50% 100%;
+      animation: tilt-in linear both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 40%;
+    }
+  }
+}
+
+@keyframes tilt-in {
+  from {
+    opacity: 0.4;
+    transform: perspective(1400px) rotateX(14deg) scale(0.94);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes reveal {
+  from {
+    opacity: 0;
+    transform: translateY(28px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes header-settle {
+  from {
+    background: transparent;
+    border-color: transparent;
+    backdrop-filter: none;
+  }
+}
+
+@keyframes progress-grow {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
   }
 }
 
 @keyframes rise {
   from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(14px);
   }
   to {
     opacity: 1;
@@ -287,10 +414,40 @@
   }
 }
 
-@utility animate-beam-settle {
-  animation: beam-settle 1.8s cubic-bezier(0.2, 0.7, 0.1, 1) both;
+@utility animate-rise {
+  animation: rise 0.9s var(--ease-out-expo) both;
 }
 
-@utility animate-rise {
-  animation: rise 0.7s cubic-bezier(0.2, 0.7, 0.1, 1) both;
+/* W10: print the words, not the chrome. */
+@media print {
+  :root,
+  .dark {
+    --page: #fff;
+    --surface: #fff;
+    --elevated: #f2f2f2;
+    --text: #111;
+    --text-muted: #333;
+    --divider: #bbb;
+    --link: #111;
+    color-scheme: light;
+  }
+  [data-print="hide"],
+  header,
+  canvas,
+  .grain,
+  .scroll-progress {
+    display: none !important;
+  }
+  main a[href^="http"]::after {
+    content: " (" attr(href) ")";
+    font-size: 0.85em;
+  }
+  section {
+    break-inside: avoid-page;
+  }
+  .reveal {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
 }

@@ -1,6 +1,6 @@
 "use client"
 
-import { LanguagesIcon } from "lucide-react"
+import { TranslateIcon } from "@phosphor-icons/react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 
@@ -33,7 +33,7 @@ export function LanguageSwitch({
       aria-label={accessibleLabel}
       className={cn(buttonVariants({ variant: "ghost", size: "sm" }), "gap-2 px-2.5 font-semibold", className)}
     >
-      <LanguagesIcon aria-hidden className="text-muted-foreground" />
+      <TranslateIcon aria-hidden className="text-muted-foreground" />
       <span className={target === "ar" ? "font-[family-name:var(--font-plex-arabic)] text-[0.95rem]" : ""}>
         {label}
       </span>

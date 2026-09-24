@@ -2,33 +2,27 @@ import type { Dictionary } from "@/lib/i18n/dictionaries"
 
 import { WorkspacePreview } from "./workspace/workspace-preview"
 
+/** Full-bleed product moment: a working, interactive preview rather than a screenshot. */
 export function WorkspaceSection({ dict }: { dict: Dictionary }) {
   const w = dict.workspace
 
   return (
-    <section
-      id="workspace"
-      aria-labelledby="workspace-title"
-      className="relative isolate overflow-hidden border-y border-border bg-card/35 py-20 sm:py-24 lg:py-28"
-    >
+    <section id="workspace" aria-labelledby="workspace-title" className="relative isolate overflow-x-clip pb-24 sm:pb-28 lg:pb-40">
       <div aria-hidden className="pointer-events-none absolute inset-0 -z-10">
-        <div className="glow absolute -top-40 left-1/2 h-96 w-[900px] -translate-x-1/2 opacity-60" />
+        <div className="glow absolute top-24 left-1/2 h-[36rem] w-[min(70rem,120vw)] -translate-x-1/2 opacity-70" />
       </div>
       <div className="shell">
-        <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-          <div className="max-w-2xl">
-            <p className="eyebrow">{w.eyebrow}</p>
-            <h2 id="workspace-title" className="headline mt-5">
-              {w.title}
-            </h2>
-            <p className="lede mt-5">{w.body}</p>
-          </div>
-          <p className="max-w-xs text-sm leading-relaxed text-muted-foreground lg:text-end">{w.note}</p>
+        <div className="mx-auto max-w-3xl text-center">
+          <h2 id="workspace-title" className="headline">
+            {w.title}
+          </h2>
+          <p className="lede mx-auto mt-5 max-w-[48ch]">{w.body}</p>
         </div>
 
-        <div className="mt-10 lg:mt-14">
+        <div className="tilt-in mt-14 lg:mt-20">
           <WorkspacePreview w={w} brandName={dict.common.brandName} />
         </div>
+        <p className="mt-5 text-center text-sm text-muted-foreground">{w.note}</p>
       </div>
     </section>
   )

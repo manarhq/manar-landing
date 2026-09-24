@@ -1,4 +1,4 @@
-import { ArrowRightIcon } from "lucide-react"
+import { ArrowRightIcon } from "@phosphor-icons/react/ssr"
 import Link from "next/link"
 
 import { buttonVariants } from "@/components/ui/button"
@@ -6,54 +6,49 @@ import type { Locale } from "@/lib/i18n/config"
 import type { Dictionary } from "@/lib/i18n/dictionaries"
 import { cn } from "@/lib/utils"
 
+/** Three independent decisions, each a row: the question on one side, the answers on the other. */
 export function Deployment({ locale, dict }: { locale: Locale; dict: Dictionary }) {
   const d = dict.deployment
 
   return (
-    <section id="deployment" aria-labelledby="deployment-title" className="relative py-20 sm:py-24 lg:py-32">
-      <div className="shell grid gap-12 lg:grid-cols-12 lg:gap-10">
-        <div className="lg:col-span-5">
-          <div className="lg:sticky lg:top-28">
-            <p className="eyebrow">{d.eyebrow}</p>
-            <h2 id="deployment-title" className="headline mt-5">
-              {d.title}
-            </h2>
-            <p className="lede mt-5">{d.body}</p>
-            <Link href={`/${locale}/demo`} className={cn(buttonVariants({ variant: "outline", size: "lg" }), "group mt-8")}>
-              {d.cta}
-              <ArrowRightIcon aria-hidden className="transition-transform group-hover:translate-x-0.5 rtl:-scale-x-100" />
-            </Link>
-          </div>
+    <section id="deployment" aria-labelledby="deployment-title" className="relative border-y border-border bg-card/40 py-24 sm:py-28 lg:py-40">
+      <div className="shell">
+        <div className="max-w-3xl">
+          <h2 id="deployment-title" className="headline">
+            {d.title}
+          </h2>
+          <p className="lede mt-5 max-w-[56ch]">{d.body}</p>
         </div>
 
-        <div className="lg:col-span-7 lg:col-start-6 lg:ps-10">
-          <ol className="relative grid gap-4">
-            {d.dimensions.map((dim, i) => (
-              <li key={dim.title} className="rounded-lg border border-border bg-card p-6 sm:p-7">
-                <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
-                  <h3 className="text-xl font-semibold text-foreground">
-                    <span aria-hidden className="ltr-fragment me-3 font-mono text-sm font-medium text-primary/80">
-                      {String(i + 1).padStart(2, "0")}
-                    </span>
-                    {dim.title}
-                  </h3>
-                  <p className="text-sm font-medium text-muted-foreground">{dim.question}</p>
-                </div>
-                <p className="mt-3 max-w-2xl text-[0.9375rem] leading-relaxed text-muted-foreground">{dim.body}</p>
-                <ul className="mt-5 flex flex-wrap gap-2">
+        <dl className="mt-16 lg:mt-20">
+          {d.dimensions.map((dim) => (
+            <div key={dim.title} className="reveal grid gap-4 border-t border-border py-10 lg:grid-cols-12 lg:gap-10 lg:py-12">
+              <dt className="lg:col-span-4">
+                <span className="block text-[clamp(1.75rem,1.3rem+1.4vw,2.5rem)] leading-none font-semibold tracking-[-0.03em] text-foreground rtl:leading-tight rtl:tracking-normal">
+                  {dim.title}
+                </span>
+                <span className="mt-3 block text-base text-link">{dim.question}</span>
+              </dt>
+              <dd className="lg:col-span-8">
+                <p className="max-w-[60ch] text-[1.0625rem] leading-relaxed text-muted-foreground">{dim.body}</p>
+                <ul className="mt-6 flex flex-wrap gap-2">
                   {dim.options.map((option) => (
-                    <li
-                      key={option}
-                      className="rounded-md border border-control/50 bg-background/50 px-3 py-1.5 text-sm font-medium text-foreground"
-                    >
+                    <li key={option} className="rounded-full border border-control/60 bg-background px-4 py-2 text-sm font-medium text-foreground">
                       {option}
                     </li>
                   ))}
                 </ul>
-              </li>
-            ))}
-          </ol>
-          <p className="mt-6 text-sm leading-relaxed text-muted-foreground">{d.footnote}</p>
+              </dd>
+            </div>
+          ))}
+        </dl>
+
+        <div className="flex flex-col gap-6 border-t border-border pt-10 sm:flex-row sm:items-center sm:justify-between">
+          <p className="max-w-[60ch] text-sm leading-relaxed text-muted-foreground">{d.footnote}</p>
+          <Link href={`/${locale}/demo`} className={cn(buttonVariants({ variant: "outline", size: "lg" }), "group shrink-0")}>
+            {d.cta}
+            <ArrowRightIcon aria-hidden className="transition-transform group-hover:translate-x-0.5 rtl:-scale-x-100" />
+          </Link>
         </div>
       </div>
     </section>

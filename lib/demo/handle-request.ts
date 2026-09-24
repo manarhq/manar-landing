@@ -1,3 +1,4 @@
+import { pickUtm } from "../consent.ts"
 import { buildDemoRequestEmail } from "./email-content.ts"
 import type { RateLimiter } from "./rate-limit.ts"
 import type { EmailTransport, SendResult } from "./resend.ts"
@@ -72,8 +73,14 @@ export async function handleDemoRequest(
   }
 
   const locale = data.locale === "ar" ? "ar" : "en"
+  // Campaign fields (W14): only allowlisted keys with bounded, plain values survive.
+  const utmSource = data.utm && typeof data.utm === "object" ? (data.utm as Record<string, unknown>) : {}
+  const utm = pickUtm(
+    new URLSearchParams(Object.entries(utmSource).filter((entry): entry is [string, string] => typeof entry[1] === "string"))
+  )
   const content = buildDemoRequestEmail(result.value, {
     locale,
+    utm,
     submittedAt: (deps.now ?? (() => new Date()))(),
   })
 
