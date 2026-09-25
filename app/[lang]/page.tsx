@@ -15,6 +15,7 @@ import { SiteHeader } from "@/components/site/site-header"
 import { isLocale } from "@/lib/i18n/config"
 import { getDictionary } from "@/lib/i18n/dictionaries"
 import { CONTACT_EMAIL, pageMetadata, siteOrigin, VAX_URL } from "@/lib/site"
+import { homeStructuredData } from "@/lib/structured-data"
 
 export async function generateMetadata({ params }: PageProps<"/[lang]">): Promise<Metadata> {
   const { lang } = await params
@@ -39,24 +40,14 @@ export default async function HomePage({ params }: PageProps<"/[lang]">) {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify([
-            {
-              "@context": "https://schema.org",
-              "@type": "WebSite",
-              name: "Manar",
-              alternateName: "منار",
-              url: siteOrigin().href,
-              inLanguage: lang,
-            },
-            {
-              "@context": "https://schema.org",
-              "@type": "Organization",
-              name: "VAX",
-              url: VAX_URL,
-              email: CONTACT_EMAIL,
-              brand: { "@type": "Brand", name: "Manar", logo: new URL("/brand/manar-lighthouse.png", siteOrigin()).href },
-            },
-          ]).replace(/</g, "\\u003c"),
+          __html: homeStructuredData({
+            origin: siteOrigin(),
+            lang,
+            description: dict.meta.homeDescription,
+            faq: dict.faq.items,
+            vaxUrl: VAX_URL,
+            email: CONTACT_EMAIL,
+          }),
         }}
       />
       <SiteHeader locale={lang} dict={dict} />
