@@ -153,6 +153,7 @@ deploy-production:
   before_script:
     - node deploy/ci/install-kubectl.mjs
     - export PATH="$CI_PROJECT_DIR/.ci-bin:$PATH"
+    - export SSL_CERT_FILE="$CI_PROJECT_DIR/.ci-bin/ca-certificates.pem"
     - kubectl config use-context "$KUBE_CONTEXT"
     - case "$IMAGE_REF" in "$EXPECTED_REGISTRY_IMAGE"@sha256:*) ;; *) echo "unexpected IMAGE_REF" >&2; exit 1 ;; esac
   script:
