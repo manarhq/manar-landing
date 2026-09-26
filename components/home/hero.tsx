@@ -12,7 +12,7 @@ export function Hero({ locale, dict }: { locale: Locale; dict: Dictionary }) {
   return (
     <section
       aria-labelledby="hero-title"
-      className="relative isolate -mt-16 flex min-h-[min(100dvh,60rem)] items-end overflow-hidden lg:-mt-[4.25rem] lg:items-center"
+      className="relative isolate -mt-16 flex min-h-[min(100svh,60rem)] items-end overflow-hidden lg:-mt-[4.25rem] lg:items-center"
     >
       <div aria-hidden className="absolute inset-0 -z-10">
         <LazyLighthouse mirror={locale === "ar"} className="absolute inset-0" />

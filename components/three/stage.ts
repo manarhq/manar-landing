@@ -69,6 +69,9 @@ export function mountStage(wrap: HTMLElement, create: () => StageScene, options:
   stage.applyPalette(readPalette())
 
   const reduced = window.matchMedia("(prefers-reduced-motion: reduce)")
+  // On touch screens the scene holds still under the finger: no scroll dolly (it lags the
+  // compositor-driven scroll and judders) and no pointer parallax (a scroll drag is a pointer move).
+  const coarse = window.matchMedia("(pointer: coarse)")
   const input: Input = { px: 0, py: 0, scroll: 0, still: false }
   let targetX = 0
   let targetY = 0
@@ -104,7 +107,7 @@ export function mountStage(wrap: HTMLElement, create: () => StageScene, options:
     const k = 1 - Math.exp(-delta * 2.5)
     input.px += (targetX - input.px) * k
     input.py += (targetY - input.py) * k
-    input.scroll = height ? Math.min(Math.max(window.scrollY / height, 0), 1) : 0
+    input.scroll = height && !coarse.matches ? Math.min(Math.max(window.scrollY / height, 0), 1) : 0
     input.still = false
     stage.update(time, delta, input)
     render()
@@ -146,6 +149,7 @@ export function mountStage(wrap: HTMLElement, create: () => StageScene, options:
   themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] })
 
   function onPointer(event: PointerEvent) {
+    if (event.pointerType !== "mouse") return
     targetX = ((event.clientX / window.innerWidth) * 2 - 1) * (options.mirror ? -1 : 1)
     targetY = -((event.clientY / window.innerHeight) * 2 - 1)
   }
