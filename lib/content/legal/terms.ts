@@ -2,8 +2,8 @@ import type { Locale } from "@/lib/i18n/config"
 
 import type { LegalDoc } from "../schema.ts"
 
-const ENTITY_EN = "[Registered entity name and address to be confirmed]"
-const ENTITY_AR = "[اسم الجهة المسجلة وعنوانها قيد التأكيد]"
+const ENTITY_EN = "[Registered address, licence number and issuing authority to be confirmed]"
+const ENTITY_AR = "[العنوان المسجل ورقم الرخصة وجهة الإصدار قيد التأكيد]"
 const LAW_EN = "[Governing law and jurisdiction to be confirmed]"
 const LAW_AR = "[القانون الحاكم والاختصاص القضائي قيد التأكيد]"
 
@@ -18,7 +18,7 @@ export const terms: Record<Locale, LegalDoc> = {
         id: "about",
         heading: "About these terms",
         blocks: [
-          `These terms apply to your use of the Manar website at manar.vax.sh, operated by VAX, ${ENTITY_EN}. By using the website you agree to them.`,
+          `These terms apply to your use of the Manar website at manar.vax.sh, operated by VAX Labs Cloud Computing Services L.L.C S.P.C, Abu Dhabi (VAX). ${ENTITY_EN}. By using the website you agree to them.`,
           "They cover the website only. Use of the Manar product is governed by a separate written agreement.",
         ],
       },
@@ -85,7 +85,7 @@ export const terms: Record<Locale, LegalDoc> = {
         id: "about",
         heading: "حول هذه الشروط",
         blocks: [
-          `تنطبق هذه الشروط على استخدامك موقع منار على العنوان manar.vax.sh، الذي تشغّله VAX، ${ENTITY_AR}. وباستخدامك الموقع فإنك توافق عليها.`,
+          `تنطبق هذه الشروط على استخدامك موقع منار على العنوان manar.vax.sh، الذي تشغّله شركة VAX Labs Cloud Computing Services L.L.C S.P.C في أبوظبي (VAX). ${ENTITY_AR}. وباستخدامك الموقع فإنك توافق عليها.`,
           "وتقتصر هذه الشروط على الموقع، أما استخدام منصة منار فتحكمه اتفاقية مكتوبة منفصلة.",
         ],
       },

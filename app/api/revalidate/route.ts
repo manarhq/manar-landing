@@ -20,7 +20,10 @@ export async function POST(request: Request) {
   const given = request.headers.get("authorization")?.match(/^Bearer (.+)$/)?.[1] ?? ""
   if (!timingSafeEqual(digest(given), digest(secret))) return Response.json({ ok: false }, { status: 401 })
 
-  // expire 0: the next visit fetches the new document instead of serving the old one once more.
-  revalidateTag(CONTENT_TAG, { expire: 0 })
+  // Stale-while-revalidate: the next visit gets the old page once and triggers the refresh.
+  // A blocking refresh ({ expire: 0 } or revalidatePath) makes Next 16.3 answer 404
+  // (NoFallbackError) on these dynamicParams = false routes, so it is not used here.
+  // Pages built while the API was unreachable carry no tag; the layout's revalidate = 60 covers them.
+  revalidateTag(CONTENT_TAG, "max")
   return Response.json({ ok: true, revalidated: CONTENT_TAG })
 }
