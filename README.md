@@ -28,10 +28,14 @@ npm run dev                  # http://localhost:3000 → redirects to /en
 | -------------------- | ------------------------------------------------------ |
 | `/`                  | Permanently redirects (308) to `/en`                   |
 | `/en`, `/ar`         | Homepage (statically prerendered)                      |
-| `/en/demo`, `/ar/demo` | Demo request page (statically prerendered)           |
+| `/en/meet`, `/ar/meet` | Book a meeting: pick a person or "Any of us", a time, then details (`Book a meeting` CTA) |
+| `/en/meet/confirm`, `/en/meet/manage` (and `/ar/...`) | Emailed links: confirm, reschedule or cancel a booking (noindex) |
+| `/en/demo`, `/ar/demo` | Written request form, the fallback when online booking is unavailable |
 | `/sitemap.xml`       | Public XML sitemap for the four canonical pages and their language alternates |
 | `/robots.txt`        | Public crawler rules and absolute sitemap location    |
 | `POST /api/demo-request` | Validates a demo request and emails it (Node.js runtime) |
+| `/api/meet/*` | Same-origin proxy to manar-site `/public/meet/*` (allowlisted routes only) |
+| `POST /api/revalidate` | Refreshes published content; `Authorization: Bearer $REVALIDATE_SECRET` |
 
 Unsupported locales return 404 (`dynamicParams = false`).
 
@@ -42,22 +46,35 @@ Unsupported locales return 404 (`dynamicParams = false`).
 | `SITE_URL`        | Sitemap/robots/metadata | Public origin; defaults to `https://manar.vax.sh`. Read at **build time**. Overrides must be absolute HTTP(S) origins with no credentials, path, query, or fragment. Invalid values fail the build. Docker requires an explicit build argument; CI already supplies it. |
 | `RESEND_API_KEY`  | Sending demo requests | Server-only. |
 | `DEMO_FROM_EMAIL` | Sending demo requests | Sender on a domain verified in Resend, e.g. `Manar <demo@mail.your-domain>`. |
-| `NEXT_PUBLIC_CF_BEACON_TOKEN` | Optional analytics | Cloudflare Web Analytics token, read at **build time** (Docker build argument). Enables the consent banner; the beacon loads only after opt-in. |
+| `NEXT_PUBLIC_CF_BEACON_TOKEN` | Optional analytics | Cloudflare Web Analytics token, read at **build time** (Docker build argument, passed by CI from the masked variable of the same name). Enables the consent banner; the beacon loads only after opt-in. Unset: no banner, no beacon. |
+| `NEXT_PUBLIC_TURNSTILE_SITE_KEY` | Booking | Cloudflare Turnstile site key, **build time** (CI build argument from the variable of the same name). |
+| `SITE_API_URL` | Content and booking | manar-site origin, **runtime**, server only. Unset or unreachable: bundled content, and `/meet` offers the request form. |
+| `REVALIDATE_SECRET` | Content publishing | At least 32 characters, **runtime**, server only. Unset: `/api/revalidate` returns 404. |
+
+### Turning on analytics (Cloudflare Web Analytics)
+
+1. Cloudflare dashboard: **Analytics and Logs → Web Analytics → Add a site**, hostname `manar.vax.sh`, and
+   choose the JavaScript snippet (not automatic setup, which injects the beacon without consent).
+   Copy only the `token` value from the snippet.
+2. GitLab `manar/landing`: **Settings → CI/CD → Variables → Add variable**, key `NEXT_PUBLIC_CF_BEACON_TOKEN`,
+   the token as value, **Masked** and **Protected** on (protected so only `main` builds see it).
+3. The next merge to `main` builds it in. Check: the banner appears on a first visit; nothing loads from
+   `static.cloudflareinsights.com` until **Accept analytics**; with Global Privacy Control on, no banner.
 
 ## Search indexing
 
 Next.js generates `/robots.txt` and `/sitemap.xml` as public, static metadata routes at the domain root;
-they require no login, cookies, or locale prefix. The sitemap contains `/en`, `/ar`, `/en/demo`, and
-`/ar/demo`, with reciprocal English/Arabic alternates and an English `x-default`. It excludes the root
+they require no login, cookies, or locale prefix. The sitemap contains `/en`, `/ar`, `/meet`, `/demo` and
+the legal pages in both languages, with reciprocal English/Arabic alternates and an English `x-default`. It excludes the root
 redirect and operational endpoints. `lastmod` is omitted because content modification dates are not
 tracked; do not substitute build time for the date of a real content update.
 
 Robots rules allow public pages and rendering assets, and disallow crawling `/api/` and `/_edge-health`.
 These rules are crawler hints, not access controls or a guarantee that an endpoint cannot be indexed.
 Every public page has a self-referencing canonical, localized title/description, language alternates,
-and `index, follow` metadata. Both homepages include consistent `WebSite` structured data. FAQ answers
-remain in server-rendered HTML even when collapsed. No keyword stuffing, invented reviews, or ratings
-are needed.
+and `index, follow` metadata. Both homepages include consistent `WebSite`, `Organization` and
+`SoftwareApplication` structured data (no FAQPage: the page shows no FAQ). The booking confirm and manage
+pages are `noindex`. No keyword stuffing, invented reviews, or ratings are needed.
 
 After deploying:
 
@@ -120,27 +137,33 @@ the client IP for rate limiting; set it only when every request passes a proxy t
 
 ## Editing content and translations
 
-- All visible copy, accessible labels, sample workspace data, FAQs, form text, errors, and metadata live in
-  typed dictionaries: `lib/i18n/dictionaries/en.ts` and `ar.ts`. `ar.ts` is typed against the English shape,
-  so a missing or extra key fails `npm run typecheck`.
+- Every visible string, link and image is in the content model, `lib/content/`: one typed document per
+  locale (`en.ts`, `ar.ts`, plus the legal documents in `legal/`), composed in `index.ts` and validated by
+  the zod schema in `schema.ts`. manar-site seeds its CMS from these documents and serves the published one at
+  `GET /public/content/:locale` as `{ version, content }`.
+- Pages render from `getContent(locale)` (`lib/content/load.ts`): the published document, cached for 60 s
+  under the `site-content` tag, or the bundled one when `SITE_API_URL` is unset, the API is unreachable, or
+  the answer fails validation.
+- The schema rejects en and em dashes, banned words, markup, off-site booking links, external links outside
+  `EXTERNAL_HOSTS`, and images that are not raster files under `/public`. `npm test` validates both documents.
 - Locales and direction: `lib/i18n/config.ts`. The `[lang]` root layout sets `lang` and `dir` on the server.
 - Use logical Tailwind utilities (`ms-*`, `pe-*`, `start-*`, `text-start`) so layouts mirror in RTL. Mirror
   directional arrows with `rtl:-scale-x-100`. Never mirror the logo. Wrap emails, IDs, and URLs in
   `ltr-fragment` (or `<bdi>`).
-- Sample workspace content must stay visibly labelled as illustrative. Do not add customer names, certifications,
-  performance numbers, or integrations that have not been confirmed.
+- Example data (the hero approval record) stays labelled as an example. Do not add customer names,
+  certifications, performance numbers, or integrations that have not been confirmed.
 
 ## Brand tokens and theme
 
-- Tokens are defined once in `app/globals.css`: light values on `:root`, dark values on `.dark`. shadcn variables
-  (`--background`, `--primary`, …) are mapped from the semantic tokens (`--page`, `--action`, …), and Tailwind
-  color utilities (`bg-surface`, `text-link`, `text-warning`, …) come from `@theme inline`.
-- Radius scale: `rounded-md` 8px (controls), `rounded-lg` 12px (cards), `rounded-xl` 20px (large previews).
-- Fonts via `next/font/google`: Manrope (English), IBM Plex Sans Arabic (Arabic), IBM Plex Mono (IDs and
-  metadata only, not preloaded).
-- Theme: dark by default. An explicit choice is stored in `localStorage` (`manar-theme`) and applied by an inline
-  script before first paint (`app/[lang]/layout.tsx`); `components/site/theme-toggle.tsx` handles switching.
-- The beam motif is CSS only (`.beam`, `.glow`, `.blueprint` in `globals.css`).
+- Design system: `docs/design/DESIGN-SYSTEM.md` in the workspace repo (Stone + UAE red). Tokens live once in
+  `app/globals.css` with the same names and values as manar-web: light on `:root`, dark on `.dark`. shadcn's
+  slots (`--primary`, `--muted`, ...) map onto them; the landing's primary is the brand red.
+- One radius: 6px (4px for badges). Spacing steps 4, 8, 12, 16, 24, 32, 48, 64, 96 only.
+- Fonts via `next/font/google`: IBM Plex Sans, IBM Plex Sans Arabic, IBM Plex Mono (ids and action names).
+- Theme: follows the system by default; an explicit choice is stored in `localStorage` (`manar-theme`) and
+  applied by an inline script before first paint (`app/[lang]/layout.tsx`).
+- Motion: colour transitions only, plus one hero animation (the example request moving to approved). No
+  scroll animation. Everything is off under `prefers-reduced-motion`.
 
 ## Brand assets
 
@@ -148,6 +171,9 @@ the client IP for rate limiting; set it only when every request passes a proxy t
   Always render it at its natural aspect ratio next to live "Manar" / "منار" text.
 - `app/favicon.ico`, `app/icon.png`, `app/apple-icon.png`: derived from that PNG by padding to a square
   (no redrawing).
-- `public/og/manar-en.png`, `public/og/manar-ar.png`: 1200 × 630 social images built from the same mark.
+- `public/og/manar-en.png`, `public/og/manar-ar.png`: 1200 × 630 social images (Stone dark, the mark, the
+  headline), rendered from HTML with Playwright.
+- `public/photo/lighthouse-dawn.webp`: the "where it runs" photograph, AI-generated (Figma image generation)
+  for this site. Replace with commissioned photography when available.
 - `design/stitch/`: exported Stitch references (design input only, not site source; the copy in those files
   contains unverified claims and must not be reused as-is).
