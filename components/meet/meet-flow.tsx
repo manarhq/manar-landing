@@ -137,7 +137,7 @@ export function MeetFlow({ t, locale, requestHref }: { t: Dictionary["meet"]; lo
       <fieldset>
         <legend className="mb-4 text-xl font-semibold text-foreground">{t.hostHeading}</legend>
         {hosts.state === "loading" ? (
-          <p role="status" className="text-base text-muted-foreground">{t.loading}</p>
+          <HostsSkeleton label={t.loading} />
         ) : (
           <div className="grid gap-2 sm:grid-cols-2">
             {people.map((person) => {
@@ -192,7 +192,7 @@ export function MeetFlow({ t, locale, requestHref }: { t: Dictionary["meet"]; lo
         </h2>
         {notice ? <Notice tone="wait">{notice}</Notice> : null}
         {hosts.state === "loading" || days.state === "loading" ? (
-          <p role="status" className="text-base text-muted-foreground">{t.loading}</p>
+          <TimesSkeleton label={t.loading} timezone={t.timezone} />
         ) : days.state === "error" ? (
           <Notice tone="wait">
             <p>{t.slotsFailed}</p>
@@ -222,6 +222,49 @@ export function MeetFlow({ t, locale, requestHref }: { t: Dictionary["meet"]; lo
           <DetailsForm t={t} locale={locale} details={details} onChange={(patch) => setDetails((d) => ({ ...d, ...patch }))} onSubmit={book} />
         </section>
       ) : null}
+    </div>
+  )
+}
+
+function HostsSkeleton({ label }: { label: string }) {
+  return (
+    <div role="status" className="grid gap-2 sm:grid-cols-2">
+      <span className="sr-only">{label}</span>
+      {[0, 1, 2, 3].map((i) => (
+        <span key={i} aria-hidden className="h-16 rounded-md bg-subtle" />
+      ))}
+    </div>
+  )
+}
+
+function TimesSkeleton({ label, timezone }: { label: string; timezone: string }) {
+  return (
+    <div role="status" className="grid gap-6">
+      <span className="sr-only">{label}</span>
+      <p aria-hidden className="text-sm text-muted-foreground">{timezone}</p>
+      {[5, 3].map((n, row) => (
+        <div key={row} aria-hidden className="flex flex-wrap gap-2">
+          {Array.from({ length: n }, (_, i) => (
+            <span key={i} className="h-11 w-24 rounded-md bg-subtle" />
+          ))}
+        </div>
+      ))}
+    </div>
+  )
+}
+
+/** Same shape as the loading flow, for the server render before the browser takes over. */
+export function MeetSkeleton({ t }: { t: Dictionary["meet"] }) {
+  return (
+    <div className="grid gap-12">
+      <div>
+        <p className="mb-4 text-xl font-semibold text-foreground">{t.hostHeading}</p>
+        <HostsSkeleton label={t.loading} />
+      </div>
+      <div className="grid gap-4">
+        <p className="text-xl font-semibold text-foreground">{t.whenHeading}</p>
+        <TimesSkeleton label={t.loading} timezone={t.timezone} />
+      </div>
     </div>
   )
 }
