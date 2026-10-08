@@ -17,7 +17,7 @@ export function SiteFooter({ locale, dict }: { locale: Locale; dict: Dictionary 
   const f = dict.footer
 
   return (
-    <footer className="border-t border-line bg-surface" data-print="hide">
+    <footer className="mt-auto border-t border-line bg-surface" data-print="hide">
       <div className="shell grid gap-12 py-16 md:grid-cols-12 md:gap-8">
         <div className="md:col-span-12 lg:col-span-6">
           <Link href={`/${locale}`} aria-label={dict.common.homeLink} className="inline-flex items-center gap-2 rounded-md">

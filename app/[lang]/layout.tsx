@@ -64,7 +64,7 @@ export default async function RootLayout({ children, params }: LayoutProps<"/[la
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
-      <body className="min-h-dvh overflow-x-clip">
+      <body className="flex min-h-dvh flex-col overflow-x-clip">
         <a
           href="#main"
           className="fixed start-4 top-3 z-(--z-skip) -translate-y-24 rounded-md bg-ink px-4 py-2 text-sm font-medium text-ink-text focus-visible:translate-y-0"
