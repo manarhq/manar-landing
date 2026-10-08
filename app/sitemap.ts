@@ -4,6 +4,8 @@ import { locales } from "@/lib/i18n/config"
 import { getContent } from "@/lib/content/load"
 import { localizedAlternates, localizedPath, siteOrigin, type SitePath } from "@/lib/site"
 
+export const revalidate = 3600
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const origin = siteOrigin()
   const { legal } = await getContent("en")

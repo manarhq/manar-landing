@@ -34,6 +34,12 @@ const plexArabic = IBM_Plex_Sans_Arabic({
 
 export const dynamicParams = false
 
+/**
+ * Pages prerender at build (CI has no SITE_API_URL), then regenerate at most once a minute on
+ * visit, reading the runtime SITE_API_URL. Without this, CMS content would never reach a built page.
+ */
+export const revalidate = 60
+
 export function generateStaticParams() {
   return locales.map((lang) => ({ lang }))
 }
