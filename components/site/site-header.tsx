@@ -27,7 +27,7 @@ export function SiteHeader({ locale, dict }: { locale: Locale; dict: Dictionary 
               <li key={item.href}>
                 <Link
                   href={item.href}
-                  className="inline-flex h-9 items-center rounded-md px-3 text-sm font-medium whitespace-nowrap text-muted-foreground transition-colors duration-[120ms] hover:bg-surface hover:text-foreground"
+                  className="inline-flex h-9 items-center rounded-md px-3 text-sm font-medium whitespace-nowrap text-muted-foreground transition-colors duration-[120ms] hover:bg-subtle hover:text-foreground"
                 >
                   {item.label}
                 </Link>

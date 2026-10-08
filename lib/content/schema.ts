@@ -8,8 +8,10 @@
 import { z } from "zod"
 
 /** DESIGN-SYSTEM.md rule 15 and CLAUDE.md section 6, enforced on every string, including CMS edits. */
-const DASHES = /[–—]/
+const DASHES = /[\u2012-\u2015]/
 const BANNED = /\b(immutable|unhackable|tamper-proof|guaranteed|provably safe|physically impossible|production-ready|seamless)\b|100% safe/i
+/** Checks run on the NFKC form, so full-width and compatibility characters cannot slip past. */
+const nfkc = (s: string) => s.normalize("NFKC")
 
 /** One visible string. Never empty, never a dash, never a banned word, never markup. */
 export const text = z
@@ -17,19 +19,53 @@ export const text = z
   .trim()
   .min(1)
   .max(4000)
-  .refine((s) => !DASHES.test(s), "Use a period, comma, colon or hyphen instead of an en or em dash")
-  .refine((s) => !BANNED.test(s), "Contains a banned word (see docs/hackathon/LANGUAGE.md)")
-  .refine((s) => !/[<>]/.test(s), "Plain text only")
+  .refine((s) => !DASHES.test(nfkc(s)), "Use a period, comma, colon or hyphen instead of a dash")
+  .refine((s) => !BANNED.test(nfkc(s)), "Contains a banned word (see docs/hackathon/LANGUAGE.md)")
+  .refine((s) => !/[<>]/.test(nfkc(s)), "Plain text only")
 
 /** Alt text: may be empty when the image is decorative and the adjacent text names it. */
-const alt = z.string().trim().max(300).refine((s) => !DASHES.test(s), "No en or em dashes")
+const alt = z
+  .string()
+  .trim()
+  .max(300)
+  .refine((s) => !DASHES.test(nfkc(s)), "No dashes")
+  .refine((s) => !/[<>]/.test(nfkc(s)), "Plain text only")
 
 /** Same-origin page path, such as "/meet". Never a full URL, so content cannot point visitors off-site. */
 const internalPath = z.string().regex(/^\/[a-z0-9-]+(\/[a-z0-9-]+)*$/, "A same-site path such as /meet")
-const httpsUrl = z.string().regex(/^https:\/\/[a-z0-9.-]+(\/[^\s"'<>]*)?$/i, "An https URL")
-/** Images are served from this site (CSP img-src 'self'). */
-const imagePath = z.string().regex(/^\/[A-Za-z0-9._/-]+\.(png|webp|jpg|jpeg|svg|avif)$/, "A path under /public")
-const image = z.object({ src: imagePath, alt })
+
+/** The only external hosts the site links to. Compared exactly against the parsed hostname. */
+export const EXTERNAL_HOSTS = ["vax.sh", "www.vax.sh", "manar.vax.sh"] as const
+
+const httpsUrl = z
+  .string()
+  .max(2048)
+  .refine((s) => !/[\\\u0000-\u001f\u007f\s]/.test(s), "No backslashes, spaces or control characters")
+  .refine((s) => {
+    try {
+      const url = new URL(s)
+      return (
+        url.protocol === "https:" &&
+        !url.username &&
+        !url.password &&
+        !url.port &&
+        (EXTERNAL_HOSTS as readonly string[]).includes(url.hostname)
+      )
+    } catch {
+      return false
+    }
+  }, `An https link to one of: ${EXTERNAL_HOSTS.join(", ")}`)
+
+/**
+ * An image served from this site's /public folder (CSP img-src 'self'). Segment by segment: each
+ * segment starts with a letter, digit, underscore or hyphen, so "//host", "/../" and "/./" fail.
+ * No SVG: an edited or uploaded SVG can carry script.
+ */
+const imagePath = z
+  .string()
+  .max(512)
+  .regex(/^(\/[A-Za-z0-9_-][A-Za-z0-9._-]*)+\.(png|webp|jpg|jpeg|avif)$/, "A raster image path under /public")
+const image = z.strictObject({ src: imagePath, alt })
 
 const field = z.object({ label: text, placeholder: text })
 const strict = <T extends z.ZodRawShape>(shape: T) => z.strictObject(shape)

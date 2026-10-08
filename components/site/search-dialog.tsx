@@ -74,7 +74,7 @@ export function SearchDialog({ entries, labels }: { entries: SearchEntry[]; labe
       }}
     >
       <Dialog.Portal>
-        <Dialog.Backdrop className="fixed inset-0 z-(--z-overlay) bg-[rgb(23_23_26/0.5)] transition-opacity duration-150 data-ending-style:opacity-0 data-starting-style:opacity-0" />
+        <Dialog.Backdrop className="fixed inset-0 z-(--z-overlay) bg-(--scrim) transition-opacity duration-150 data-ending-style:opacity-0 data-starting-style:opacity-0" />
         <Dialog.Popup
           className="fixed inset-x-4 top-[max(1rem,10vh)] z-(--z-overlay) mx-auto flex max-h-[min(34rem,80dvh)] max-w-xl flex-col overflow-hidden rounded-md border border-line bg-popover text-popover-foreground shadow-pop transition-[opacity,translate] duration-[160ms] data-ending-style:translate-y-1 data-ending-style:opacity-0 data-starting-style:translate-y-1 data-starting-style:opacity-0"
         >
@@ -101,7 +101,7 @@ export function SearchDialog({ entries, labels }: { entries: SearchEntry[]; labe
             />
             <Dialog.Close
               aria-label={labels.close}
-              className="inline-flex size-9 items-center justify-center rounded-md text-muted-foreground transition-colors duration-[120ms] hover:bg-surface hover:text-foreground"
+              className="inline-flex size-9 items-center justify-center rounded-md text-muted-foreground transition-colors duration-[120ms] hover:bg-subtle hover:text-foreground"
             >
               <XIcon aria-hidden className="size-4" />
             </Dialog.Close>
@@ -125,7 +125,7 @@ export function SearchDialog({ entries, labels }: { entries: SearchEntry[]; labe
                     aria-selected={i === activeIndex}
                     onPointerMove={() => setActive(i)}
                     onClick={() => go(entry)}
-                    className="group flex cursor-pointer items-start gap-3 rounded-md px-3 py-3 aria-selected:bg-surface"
+                    className="group flex cursor-pointer items-start gap-3 rounded-md px-3 py-3 aria-selected:bg-subtle"
                   >
                     <Icon aria-hidden className="mt-0.5 size-4 shrink-0 text-muted-foreground group-aria-selected:text-foreground" />
                     <span className="min-w-0 flex-1">

@@ -63,7 +63,7 @@ export function DecisionRecord({ t }: { t: Dictionary["hero"]["record"] }) {
         <div>
           <p className="text-sm font-medium text-foreground">{t.timelineLabel}</p>
           <ol className="relative mt-3 grid gap-3">
-            <span aria-hidden className="absolute start-3 top-3 bottom-3 w-px bg-line-strong" />
+            <span aria-hidden className="absolute start-3 top-3 bottom-3 w-px bg-line" />
             {t.steps.map((step, i) => {
               const Icon = stepIcons[i]
               return (
