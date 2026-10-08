@@ -1,14 +1,12 @@
 import type { Metadata } from "next"
-import { IBM_Plex_Sans, IBM_Plex_Sans_Arabic } from "next/font/google"
 
 import { buttonVariants } from "@/components/ui/button"
 import { bundledContent } from "@/lib/content"
+import { fontVariables } from "@/lib/fonts"
 import { bookingHref, THEME_STORAGE_KEY } from "@/lib/site"
 
 import "./globals.css"
 
-const plexSans = IBM_Plex_Sans({ subsets: ["latin"], weight: ["400", "500", "600"], variable: "--font-plex-sans", display: "swap" })
-const plexArabic = IBM_Plex_Sans_Arabic({ subsets: ["arabic"], weight: ["400", "500", "600"], variable: "--font-plex-arabic", display: "swap" })
 
 export const metadata: Metadata = {
   title: "404 | Manar",
@@ -23,7 +21,7 @@ const themeScript = `(function(){var d;try{var t=localStorage.getItem("${THEME_S
  */
 export default function GlobalNotFound() {
   return (
-    <html lang="en" className={`${plexSans.variable} ${plexArabic.variable}`} suppressHydrationWarning>
+    <html lang="en" className={fontVariables} suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>

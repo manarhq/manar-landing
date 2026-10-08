@@ -37,7 +37,7 @@ function subscribe(onChange: () => void) {
 }
 
 /** W01: Light, Dark, or System (the default). The pre-paint script in the layout prevents a flash. */
-export function ThemeToggle({ labels }: { labels: Dictionary["site"]["theme"] }) {
+export function ThemeMenu({ labels }: { labels: Dictionary["site"]["theme"] }) {
   const preference = useSyncExternalStore(subscribe, readPreference, () => "system" as Preference)
 
   // Re-apply on mount (React resets <html> attributes on remount) and follow the OS while on System.

@@ -16,12 +16,23 @@ export function Deployment({ dict }: { dict: Dictionary }) {
         <SectionHeading id="deployment-title" title={d.title} body={d.body} />
 
         <div className="relative mt-12 aspect-[4/3] overflow-hidden rounded-md bg-surface sm:aspect-[16/9] lg:aspect-[21/9]">
+          {/*
+            One photograph per theme, swapped by the same .dark class as the rest of the site (OS
+            preference or the theme toggle). Both are lazy: the hidden one is never fetched.
+          */}
           <Image
             src={dict.images.deployment.src}
             alt={dict.images.deployment.alt}
             fill
             sizes="(min-width: 1248px) 1200px, 100vw"
-            className="object-cover object-[68%_60%] dark:brightness-90"
+            className="object-cover object-[68%_60%] dark:hidden"
+          />
+          <Image
+            src={dict.images.deploymentDark.src}
+            alt={dict.images.deploymentDark.alt}
+            fill
+            sizes="(min-width: 1248px) 1200px, 100vw"
+            className="hidden object-cover object-[68%_60%] dark:block"
           />
         </div>
 

@@ -12,7 +12,7 @@ import { cn } from "@/lib/utils"
 
 import type { NavItem } from "./nav-items"
 
-export function MobileNav({
+export function MobileNavSheet({
   locale,
   items,
   labels,

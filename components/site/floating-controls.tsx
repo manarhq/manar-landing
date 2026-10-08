@@ -2,13 +2,15 @@
 
 import { Popover } from "@base-ui/react/popover"
 import { ArrowRightIcon, ArrowUpIcon, ChatCircleTextIcon, CopyIcon, EnvelopeSimpleIcon, XIcon } from "@phosphor-icons/react"
-import { AnimatePresence, motion, useReducedMotion } from "motion/react"
 import Link from "next/link"
 import { useEffect, useRef, useState } from "react"
 
 import { buttonVariants } from "@/components/ui/button"
 import type { Locale } from "@/lib/i18n/config"
 import type { Dictionary } from "@/lib/i18n/dictionaries"
+
+/** Only what the controls show, so the page does not ship the whole content document to the browser. */
+export type ChromeText = Pick<Dictionary, "site" | "common" | "links">
 import { bookingHref } from "@/lib/site"
 import { cn } from "@/lib/utils"
 
@@ -36,8 +38,7 @@ const floatButton =
   "inline-flex size-11 items-center justify-center rounded-md border border-line bg-elevated text-foreground shadow-pop transition-colors duration-[120ms] hover:bg-subtle active:translate-y-px focus-visible:outline-2 focus-visible:outline-solid focus-visible:outline-offset-2 focus-visible:outline-ring [&_svg]:size-5"
 
 /** W04 + W20 + W44: one bottom-end stack, stepping aside while the consent banner is up. */
-export function FloatingControls({ locale, dict }: { locale: Locale; dict: Dictionary }) {
-  const reduce = useReducedMotion()
+export function FloatingControls({ locale, dict }: { locale: Locale; dict: ChromeText }) {
   const pending = useConsentPending()
   const [scrolled, setScrolled] = useState(false)
   const sentinel = useRef<HTMLDivElement>(null)
@@ -51,7 +52,8 @@ export function FloatingControls({ locale, dict }: { locale: Locale; dict: Dicti
   }, [])
 
   function toTop() {
-    window.scrollTo({ top: 0, behavior: reduce ? "auto" : "smooth" })
+    // Smooth only when the visitor allows motion (html scroll-behavior is set in globals.css).
+    window.scrollTo({ top: 0 })
     // Move focus with the view so keyboard users are not left at the bottom (W04).
     document.getElementById("main")?.focus({ preventScroll: true })
   }
@@ -65,30 +67,18 @@ export function FloatingControls({ locale, dict }: { locale: Locale; dict: Dicti
         data-print="hide"
         className="fixed end-[max(1rem,env(safe-area-inset-right))] bottom-[max(1rem,env(safe-area-inset-bottom))] z-(--z-float) flex flex-col items-end gap-3"
       >
-        <AnimatePresence>
-          {scrolled ? (
-            <motion.button
-              type="button"
-              onClick={toTop}
-              aria-label={dict.site.backToTop}
-              title={dict.site.backToTop}
-              initial={reduce ? false : { opacity: 0, y: 4 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={reduce ? { opacity: 0 } : { opacity: 0, y: 4 }}
-              transition={{ duration: 0.16, ease: "easeOut" }}
-              className={floatButton}
-            >
-              <ArrowUpIcon aria-hidden />
-            </motion.button>
-          ) : null}
-        </AnimatePresence>
+        {scrolled ? (
+          <button type="button" onClick={toTop} aria-label={dict.site.backToTop} title={dict.site.backToTop} className={floatButton}>
+            <ArrowUpIcon aria-hidden />
+          </button>
+        ) : null}
         <ContactPopover locale={locale} dict={dict} />
       </div>
     </>
   )
 }
 
-function ContactPopover({ locale, dict }: { locale: Locale; dict: Dictionary }) {
+function ContactPopover({ locale, dict }: { locale: Locale; dict: ChromeText }) {
   const c = dict.site.contact
   const [status, setStatus] = useState<"idle" | "copied" | "failed">("idle")
 

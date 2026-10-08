@@ -25,6 +25,10 @@ const nextConfig: NextConfig = {
   // Minimal self-contained server for the container image (see Dockerfile).
   output: "standalone",
   poweredByHeader: false,
+  images: {
+    // AVIF first, WebP for browsers without it; next/image picks per request.
+    formats: ["image/avif", "image/webp"],
+  },
   experimental: {
     globalNotFound: true,
   },

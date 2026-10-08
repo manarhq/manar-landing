@@ -22,7 +22,8 @@ import {
   type FieldErrors,
 } from "@/lib/demo/validation"
 import type { Locale } from "@/lib/i18n/config"
-import { format, type Dictionary } from "@/lib/i18n/dictionaries"
+import { format } from "@/lib/i18n/format"
+import type { Dictionary } from "@/lib/i18n/dictionaries"
 import { cn } from "@/lib/utils"
 
 type FormText = Dictionary["demo"]["form"]

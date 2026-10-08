@@ -98,7 +98,7 @@ and [technical requirements](https://developers.google.com/search/docs/essential
 
 - Flow: `components/demo/demo-form.tsx` → `POST /api/demo-request` (`app/api/demo-request/route.ts`)
   → `handleDemoRequest` (`lib/demo/handle-request.ts`) → transport (`lib/demo/server.ts`).
-- The recipient is fixed server-side: `nofal@vax.sh` (`DEMO_REQUEST_RECIPIENT`). No request field can change it.
+- The recipient is fixed server-side: `info@fixio.ae` (`DEMO_REQUEST_RECIPIENT`). No request field can change it.
   The visitor's validated email is used as `Reply-To`.
 - Validation runs in the browser and again on the server (`lib/demo/validation.ts`): required fields, email
   syntax (personal providers are accepted), length limits, allowed deployment options, and rejection of line
@@ -107,7 +107,7 @@ and [technical requirements](https://developers.google.com/search/docs/essential
 - Spam and abuse: a hidden honeypot field (silently accepted, nothing sent) and a rate limit of 5 requests per
   client per 10 minutes.
 - Failure behaviour: missing configuration (503), provider rejection or network failure (502) all show a
-  localized failure with `nofal@vax.sh` as an alternative. The visitor's input is preserved. Only the failure
+  localized failure with `info@fixio.ae` as an alternative. The visitor's input is preserved. Only the failure
   reason is logged (`demo_request_email_failed`), never submission content.
 - A 200 response means the provider **accepted** the message. It is not proof of inbox delivery.
 - To change provider, replace `createResendTransport` in `lib/demo/server.ts` with another function matching
@@ -125,7 +125,7 @@ The client key comes from `x-forwarded-for` / `x-real-ip`; only trust these behi
 1. Verify a sending domain in Resend (DNS records).
 2. Create an API key with sending access.
 3. Set `RESEND_API_KEY` and `DEMO_FROM_EMAIL` in the deployment environment.
-4. Submit one real request from the deployed site and confirm it arrives at `nofal@vax.sh`.
+4. Submit one real request from the deployed site and confirm it arrives at `info@fixio.ae`.
 
 ## Deployment requirements
 
@@ -159,7 +159,7 @@ the client IP for rate limiting; set it only when every request passes a proxy t
   `app/globals.css` with the same names and values as manar-web: light on `:root`, dark on `.dark`. shadcn's
   slots (`--primary`, `--muted`, ...) map onto them; the landing's primary is the brand red.
 - One radius: 6px (4px for badges). Spacing steps 4, 8, 12, 16, 24, 32, 48, 64, 96 only.
-- Fonts via `next/font/google`: IBM Plex Sans, IBM Plex Sans Arabic, IBM Plex Mono (ids and action names).
+- Fonts: IBM Plex Sans and Plex Sans Arabic self-hosted (`app/fonts.css`), IBM Plex Mono via `next/font` (ids and action names).
 - Theme: follows the system by default; an explicit choice is stored in `localStorage` (`manar-theme`) and
   applied by an inline script before first paint (`app/[lang]/layout.tsx`).
 - Motion: colour transitions only, plus one hero animation (the example request moving to approved). No
@@ -173,7 +173,12 @@ the client IP for rate limiting; set it only when every request passes a proxy t
   (no redrawing).
 - `public/og/manar-en.png`, `public/og/manar-ar.png`: 1200 × 630 social images (Stone dark, the mark, the
   headline), rendered from HTML with Playwright.
-- `public/photo/lighthouse-dawn.webp`: the "where it runs" photograph, AI-generated (Figma image generation)
-  for this site. Replace with commissioned photography when available.
+- `public/photo/lighthouse-day.webp` (light theme) and `public/photo/lighthouse-night.webp` (dark theme): the
+  "where it runs" photograph, same framing and aspect ratio, swapped by the `.dark` class. AI-generated for this
+  site with Figma image generation; no third-party licence applies. Replace with commissioned photography when
+  available. next/image serves AVIF or WebP.
+- `public/fonts/`: IBM Plex Sans (variable, Latin) and IBM Plex Sans Arabic, self-hosted under the SIL Open
+  Font License 1.1 (`public/fonts/OFL.txt`). Faces and fallback metrics are in `app/fonts.css`; each locale
+  preloads only its own files (`lib/fonts.ts`).
 - `design/stitch/`: exported Stitch references (design input only, not site source; the copy in those files
   contains unverified claims and must not be reused as-is).
