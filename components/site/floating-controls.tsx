@@ -33,7 +33,7 @@ export async function copyText(value: string): Promise<boolean> {
 }
 
 const floatButton =
-  "inline-flex size-11 items-center justify-center rounded-md border border-line bg-elevated text-foreground shadow-pop transition-colors duration-[120ms] hover:bg-subtle active:translate-y-px focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring [&_svg]:size-5"
+  "inline-flex size-11 items-center justify-center rounded-md border border-line bg-elevated text-foreground shadow-pop transition-colors duration-[120ms] hover:bg-subtle active:translate-y-px focus-visible:outline-2 focus-visible:outline-solid focus-visible:outline-offset-2 focus-visible:outline-ring [&_svg]:size-5"
 
 /** W04 + W20 + W44: one bottom-end stack, stepping aside while the consent banner is up. */
 export function FloatingControls({ locale, dict }: { locale: Locale; dict: Dictionary }) {

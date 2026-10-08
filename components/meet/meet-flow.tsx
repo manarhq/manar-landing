@@ -146,7 +146,7 @@ export function MeetFlow({ t, locale, requestHref }: { t: Dictionary["meet"]; lo
                 <label
                   key={person.key}
                   className={cn(
-                    "flex min-h-16 cursor-pointer items-center gap-3 rounded-md border p-3 transition-colors duration-[120ms] has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-ring",
+                    "flex min-h-16 cursor-pointer items-center gap-3 rounded-md border p-3 transition-colors duration-[120ms] has-focus-visible:outline-2 has-focus-visible:outline-solid has-focus-visible:outline-offset-2 has-focus-visible:outline-ring",
                     active ? "border-ink bg-elevated" : "border-line bg-surface hover:bg-subtle"
                   )}
                 >
