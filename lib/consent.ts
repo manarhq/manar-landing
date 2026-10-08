@@ -70,6 +70,7 @@ export function readConsent(): Consent | null {
 }
 
 export function writeConsent(analytics: boolean) {
+  document.documentElement.removeAttribute(CONSENT_PENDING_ATTR)
   try {
     localStorage.setItem(CONSENT_STORAGE_KEY, JSON.stringify({ v: 1, analytics, ts: Date.now() } satisfies Consent))
     if (!analytics) sessionStorage.removeItem(UTM_STORAGE_KEY)
@@ -110,4 +111,16 @@ export function readStoredUtm(): Utm {
   } catch {
     return {}
   }
+}
+
+/** Set on <html> before first paint while the first-visit banner should show. */
+export const CONSENT_PENDING_ATTR = "data-consent-pending"
+
+/**
+ * Inline, pre-paint script: the same decision as shouldAskForConsent(), made before React loads,
+ * so the server-rendered banner paints with the page instead of popping in after hydration.
+ */
+export function consentPendingScript(tokenConfigured: boolean): string {
+  if (!tokenConfigured) return ""
+  return `(function(){try{var n=navigator;if(n.globalPrivacyControl===true||n.doNotTrack==="1")return;var r=localStorage.getItem("${CONSENT_STORAGE_KEY}");if(r){var c=JSON.parse(r),a=Date.now()-c.ts;if(c.v===1&&typeof c.analytics==="boolean"&&typeof c.ts==="number"&&a>=0&&a<=${MAX_AGE_MS})return}}catch(e){}document.documentElement.setAttribute("${CONSENT_PENDING_ATTR}","")})()`
 }
