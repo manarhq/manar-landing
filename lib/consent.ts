@@ -19,6 +19,38 @@ export function parseConsent(raw: string | null, now = Date.now()): Consent | nu
   }
 }
 
+/** The privacy signals a browser can send. Both are read from `navigator`. */
+export type PrivacySignals = { globalPrivacyControl?: boolean; doNotTrack?: string | null }
+
+/**
+ * Global Privacy Control, or Do Not Track set to "1", counts as a rejection of analytics.
+ * With either signal the banner is not shown and the beacon never loads.
+ */
+export function hasPrivacySignal(signals: PrivacySignals | undefined): boolean {
+  return signals?.globalPrivacyControl === true || signals?.doNotTrack === "1"
+}
+
+export function readPrivacySignal(): boolean {
+  try {
+    return hasPrivacySignal(navigator as PrivacySignals)
+  } catch {
+    return false
+  }
+}
+
+/**
+ * Whether the analytics beacon may load: only with a configured token, no browser privacy
+ * signal, and a stored, unexpired acceptance. Anything else, including no choice yet, is off.
+ */
+export function analyticsAllowed(consent: Consent | null, signal: boolean, tokenConfigured: boolean): boolean {
+  return tokenConfigured && !signal && consent?.analytics === true
+}
+
+/** The first-visit banner shows only when there is something to ask and nothing has answered it. */
+export function shouldAskForConsent(consent: Consent | null, signal: boolean, tokenConfigured: boolean): boolean {
+  return tokenConfigured && !signal && consent === null
+}
+
 let cachedRaw: string | null | undefined
 let cached: Consent | null = null
 
