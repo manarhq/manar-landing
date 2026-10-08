@@ -160,7 +160,7 @@ export const privacy: Record<Locale, LegalDoc> = {
         heading: "الجهة المسؤولة",
         blocks: [
           "يعرض هذا الموقع منار، وهي أحد منتجات VAX. وVAX هي المتحكم في البيانات الشخصية التي تُجمع عبر هذا الموقع.",
-          "المتحكم: VAX Labs Cloud Computing Services L.L.C S.P.C، 1st Oud Maitha Street, Al Wathba Tower 1402, Abu Dhabi, United Arab Emirates (أبوظبي، الإمارات العربية المتحدة). للاستفسارات والطلبات المتعلقة بالخصوصية: info@fixio.ae.",
+          "المتحكم: \u2068VAX Labs Cloud Computing Services L.L.C S.P.C, 1st Oud Maitha Street, Al Wathba Tower 1402, Abu Dhabi, United Arab Emirates\u2069 (أبوظبي، الإمارات العربية المتحدة). للاستفسارات والطلبات المتعلقة بالخصوصية: info@fixio.ae.",
           "يشمل هذا الإشعار الموقع العام manar.vax.sh، بما في ذلك طلبات العرض التوضيحي وحجوزات الاجتماعات، ولا يشمل منتج منار الذي تحكمه الاتفاقية المبرمة مع كل عميل.",
           "نطبّق المرسوم بقانون اتحادي رقم 45 لسنة 2021 بشأن حماية البيانات الشخصية.",
         ],

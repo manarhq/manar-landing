@@ -78,7 +78,7 @@ export const terms: Record<Locale, LegalDoc> = {
         id: "about",
         heading: "حول هذه الشروط",
         blocks: [
-          "تنطبق هذه الشروط على استخدامك موقع منار على العنوان manar.vax.sh، الذي تشغّله شركة VAX Labs Cloud Computing Services L.L.C S.P.C (VAX)، 1st Oud Maitha Street, Al Wathba Tower 1402, Abu Dhabi, United Arab Emirates (أبوظبي، الإمارات العربية المتحدة). وباستخدامك الموقع فإنك توافق عليها.",
+          "تنطبق هذه الشروط على استخدامك موقع منار على العنوان manar.vax.sh، الذي تشغّله شركة \u2068VAX Labs Cloud Computing Services L.L.C S.P.C (VAX), 1st Oud Maitha Street, Al Wathba Tower 1402, Abu Dhabi, United Arab Emirates\u2069 (أبوظبي، الإمارات العربية المتحدة). وباستخدامك الموقع فإنك توافق عليها.",
           "وتقتصر هذه الشروط على الموقع، أما استخدام منصة منار فتحكمه اتفاقية مكتوبة منفصلة.",
         ],
       },
