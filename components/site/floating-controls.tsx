@@ -33,7 +33,7 @@ export async function copyText(value: string): Promise<boolean> {
 }
 
 const floatButton =
-  "inline-flex size-11 items-center justify-center rounded-md border border-line bg-elevated text-foreground shadow-pop transition-colors duration-[120ms] hover:bg-surface active:translate-y-px focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring [&_svg]:size-5"
+  "inline-flex size-11 items-center justify-center rounded-md border border-line bg-elevated text-foreground shadow-pop transition-colors duration-[120ms] hover:bg-subtle active:translate-y-px focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring [&_svg]:size-5"
 
 /** W04 + W20 + W44: one bottom-end stack, stepping aside while the consent banner is up. */
 export function FloatingControls({ locale, dict }: { locale: Locale; dict: Dictionary }) {
@@ -98,7 +98,7 @@ function ContactPopover({ locale, dict }: { locale: Locale; dict: Dictionary }) 
 
   return (
     <Popover.Root onOpenChange={(open) => !open && setStatus("idle")}>
-      <Popover.Trigger aria-label={c.open} title={c.open} className={cn(floatButton, "data-popup-open:bg-surface")}>
+      <Popover.Trigger aria-label={c.open} title={c.open} className={cn(floatButton, "data-popup-open:bg-subtle")}>
         <ChatCircleTextIcon aria-hidden />
       </Popover.Trigger>
       <Popover.Portal>
@@ -108,7 +108,7 @@ function ContactPopover({ locale, dict }: { locale: Locale; dict: Dictionary }) 
               <Popover.Title className="text-base font-semibold text-foreground">{c.title}</Popover.Title>
               <Popover.Close
                 aria-label={c.close}
-                className="-me-2 -mt-1 inline-flex size-9 items-center justify-center rounded-md text-muted-foreground hover:bg-surface hover:text-foreground"
+                className="-me-2 -mt-1 inline-flex size-9 items-center justify-center rounded-md text-muted-foreground hover:bg-subtle hover:text-foreground"
               >
                 <XIcon aria-hidden className="size-4" />
               </Popover.Close>
@@ -125,7 +125,7 @@ function ContactPopover({ locale, dict }: { locale: Locale; dict: Dictionary }) 
                 onClick={copy}
                 aria-label={c.copy}
                 title={c.copy}
-                className="inline-flex size-9 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors duration-[120ms] hover:bg-surface hover:text-foreground active:translate-y-px"
+                className="inline-flex size-9 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors duration-[120ms] hover:bg-subtle hover:text-foreground active:translate-y-px"
               >
                 <CopyIcon aria-hidden className="size-4" />
               </button>

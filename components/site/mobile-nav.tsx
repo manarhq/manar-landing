@@ -53,7 +53,7 @@ export function MobileNav({
               key={item.href}
               href={item.href}
               onClick={() => setOpen(false)}
-              className="flex min-h-11 items-center rounded-md px-3 text-lg font-medium text-foreground transition-colors duration-[120ms] hover:bg-surface"
+              className="flex min-h-11 items-center rounded-md px-3 text-lg font-medium text-foreground transition-colors duration-[120ms] hover:bg-subtle"
             >
               {item.label}
             </Link>

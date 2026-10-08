@@ -21,7 +21,7 @@ export function Deployment({ dict }: { dict: Dictionary }) {
             alt={dict.images.deployment.alt}
             fill
             sizes="(min-width: 1248px) 1200px, 100vw"
-            className="object-cover object-[68%_60%]"
+            className="object-cover object-[68%_60%] dark:brightness-90"
           />
         </div>
 

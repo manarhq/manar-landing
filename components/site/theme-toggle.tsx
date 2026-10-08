@@ -85,7 +85,7 @@ export function ThemeToggle({ labels }: { labels: Dictionary["site"]["theme"] })
                   key={value}
                   value={value}
                   closeOnClick
-                  className="flex min-h-9 cursor-default items-center gap-2 rounded-sm px-2 text-sm text-foreground outline-none select-none data-highlighted:bg-surface"
+                  className="flex min-h-9 cursor-default items-center gap-2 rounded-sm px-2 text-sm text-foreground outline-none select-none data-highlighted:bg-subtle"
                 >
                   <Icon aria-hidden className="size-4 text-muted-foreground" />
                   <span className="flex-1">{label}</span>

@@ -13,16 +13,18 @@
   --page: #f4f4f2;
   --surface: #fafaf8;
   --elevated: #fffffe;
+  --subtle: #ededea;
   --line: #dcdcd6;
-  --line-strong: #c4c4bd;
+  --line-strong: #8c8c87;
   --text: #17171a;
-  --muted: #5c5c61;
+  --muted-text: #5c5c61;
   --ink: #17171a;
+  --ink-hover: #2e2e33;
   --ink-text: #fafaf8;
-  --accent: #b3261e;
-  --accent-hover: #951f18;
-  --accent-text: #fffffe;
-  --accent-soft: #f6e3e1;
+  --brand: #b3261e;
+  --brand-hover: #951f18;
+  --brand-text: #fffffe;
+  --brand-soft: #f6e3e1;
   --allow: #1e6f48;
   --allow-soft: #e1f0e7;
   --wait: #8a5300;
@@ -30,7 +32,8 @@
   --deny: #b3261e;
   --deny-soft: #f6e3e1;
   --focus: #b3261e;
-  --shadow-pop: 0 8px 24px rgb(23 23 26 / 0.12);
+  --scrim: rgb(23 23 26 / 0.32);
+  --shadow-overlay: 0 8px 24px rgb(23 23 26 / 0.12);
 
   --app-font-sans: var(--font-plex-sans), ui-sans-serif, system-ui, sans-serif;
   --app-font-mono: var(--font-plex-mono), ui-monospace, monospace;
@@ -49,16 +52,18 @@
   --page: #121212;
   --surface: #1a1a1b;
   --elevated: #222224;
+  --subtle: #262628;
   --line: #2e2e31;
-  --line-strong: #45454a;
+  --line-strong: #6a6a6f;
   --text: #ededeb;
-  --muted: #a6a6a9;
+  --muted-text: #a6a6a9;
   --ink: #ededeb;
+  --ink-hover: #d4d4d1;
   --ink-text: #121212;
-  --accent: #f0675e;
-  --accent-hover: #f4847c;
-  --accent-text: #121212;
-  --accent-soft: #3a1d1b;
+  --brand: #f0675e;
+  --brand-hover: #f4847c;
+  --brand-text: #121212;
+  --brand-soft: #3a1d1b;
   --allow: #5bc891;
   --allow-soft: #173326;
   --wait: #f0b44c;
@@ -66,7 +71,8 @@
   --deny: #f0675e;
   --deny-soft: #3a1d1b;
   --focus: #f0675e;
-  --shadow-pop: 0 8px 24px rgb(0 0 0 / 0.5);
+  --scrim: rgb(0 0 0 / 0.6);
+  --shadow-overlay: 0 8px 24px rgb(0 0 0 / 0.5);
 
   color-scheme: dark;
 }
@@ -76,29 +82,50 @@
 }
 
 /*
- * Tailwind and shadcn mapping. shadcn's own names (muted = a fill, accent = a hover fill) clash
- * with the design tokens, so the utilities are mapped here directly: bg-muted is a quiet fill,
- * text-muted-foreground is --muted text, and accent is always the brand red.
+ * shadcn's semantic slots, mapped onto the design tokens (DESIGN-SYSTEM.md section 2). The
+ * landing's primary is the brand red; the console's is ink. Everything else matches manar-web.
  */
+:root,
+.dark {
+  --background: var(--page);
+  --foreground: var(--text);
+  --card: var(--surface);
+  --card-foreground: var(--text);
+  --popover: var(--elevated);
+  --popover-foreground: var(--text);
+  --primary: var(--brand);
+  --primary-foreground: var(--brand-text);
+  --secondary: var(--surface);
+  --secondary-foreground: var(--text);
+  --muted: var(--subtle);
+  --muted-foreground: var(--muted-text);
+  --accent: var(--subtle);
+  --accent-foreground: var(--text);
+  --destructive: var(--deny);
+  --border: var(--line);
+  --input: var(--line-strong);
+  --ring: var(--focus);
+}
+
 @theme inline {
-  --color-background: var(--page);
-  --color-foreground: var(--text);
-  --color-card: var(--surface);
-  --color-card-foreground: var(--text);
-  --color-popover: var(--elevated);
-  --color-popover-foreground: var(--text);
-  --color-primary: var(--accent);
-  --color-primary-foreground: var(--accent-text);
-  --color-secondary: var(--surface);
-  --color-secondary-foreground: var(--text);
-  --color-muted: var(--elevated);
-  --color-muted-foreground: var(--muted);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
   --color-accent: var(--accent);
-  --color-accent-foreground: var(--accent-text);
-  --color-destructive: var(--deny);
-  --color-border: var(--line);
-  --color-input: var(--line-strong);
-  --color-ring: var(--focus);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
 
   --color-page: var(--page);
   --color-surface: var(--surface);
@@ -107,8 +134,13 @@
   --color-line-strong: var(--line-strong);
   --color-ink: var(--ink);
   --color-ink-text: var(--ink-text);
-  --color-accent-hover: var(--accent-hover);
-  --color-accent-soft: var(--accent-soft);
+  --color-ink-hover: var(--ink-hover);
+  --color-subtle: var(--subtle);
+  --color-muted-text: var(--muted-text);
+  --color-brand: var(--brand);
+  --color-brand-hover: var(--brand-hover);
+  --color-brand-text: var(--brand-text);
+  --color-brand-soft: var(--brand-soft);
   --color-allow: var(--allow);
   --color-allow-soft: var(--allow-soft);
   --color-wait: var(--wait);
@@ -137,7 +169,7 @@
   --radius-3xl: 6px;
   --radius-4xl: 4px;
 
-  --shadow-pop: var(--shadow-pop);
+  --shadow-pop: var(--shadow-overlay);
 }
 
 @layer base {
@@ -161,7 +193,7 @@
     line-height: calc(1em + 1.25rem);
   }
   ::selection {
-    background: var(--accent-soft);
+    background: var(--brand-soft);
     color: var(--text);
   }
   :focus-visible {
@@ -213,10 +245,6 @@
     animation: flow-mark 200ms ease-out both;
     animation-delay: calc(400ms + var(--i) * 550ms);
   }
-  .flow-line {
-    transform-origin: top;
-    animation: flow-line 2200ms linear both 400ms;
-  }
   .flow-before {
     animation: flow-hide 1ms step-end both;
     animation-delay: calc(400ms + var(--at) * 550ms);
@@ -235,11 +263,6 @@
     background-color: var(--surface);
     border-color: var(--line-strong);
     color: var(--muted);
-  }
-}
-@keyframes flow-line {
-  from {
-    transform: scaleY(0);
   }
 }
 @keyframes flow-hide {
@@ -267,7 +290,7 @@
     --surface: #fffffe;
     --elevated: #fffffe;
     --text: #17171a;
-    --muted: #3a3a3e;
+    --muted-text: #3a3a3e;
     --line: #c4c4bd;
     color-scheme: light;
   }

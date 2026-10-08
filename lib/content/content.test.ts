@@ -24,4 +24,52 @@ describe("bundled content", () => {
     assert.equal(bad((c) => (c.links.booking = "https://evil.example/meet")), false)
     assert.equal(bad((c) => (c.images.deployment.src = "https://evil.example/a.png")), false)
   })
+
+  it("closes the image path bypasses: protocol-relative, dot segments, SVG", () => {
+    const img = (src: string) => {
+      const copy = structuredClone(bundledContent.en)
+      copy.images.deployment.src = src
+      return siteContentSchema.safeParse(copy).success
+    }
+    assert.equal(img("/photo/lighthouse-dawn.webp"), true)
+    assert.equal(img("//evil.example/x.png"), false)
+    assert.equal(img("/photo/../../etc/x.png"), false)
+    assert.equal(img("/./photo/x.png"), false)
+    assert.equal(img("/photo//x.png"), false)
+    assert.equal(img("/brand/logo.svg"), false)
+    assert.equal(img("/photo/x.png?track=1"), false)
+  })
+
+  it("only links to allowlisted https hosts, parsed like a browser", () => {
+    const link = (vax: string) => {
+      const copy = structuredClone(bundledContent.en)
+      copy.links.vax = vax
+      return siteContentSchema.safeParse(copy).success
+    }
+    assert.equal(link("https://vax.sh"), true)
+    assert.equal(link("https://manar.vax.sh/en"), true)
+    assert.equal(link("http://vax.sh"), false)
+    assert.equal(link("https://evil.example"), false)
+    assert.equal(link("https://vax.sh.evil.example"), false)
+    assert.equal(link("https://vax.sh@evil.example"), false)
+    assert.equal(link("https://user:pw@vax.sh"), false)
+    assert.equal(link("https://vax.sh\\@evil.example"), false)
+    assert.equal(link("https://evil.example\\vax.sh"), false)
+    assert.equal(link("https://vax.sh/\u0000x"), false)
+    assert.equal(link("javascript:alert(1)"), false)
+    assert.equal(link("//vax.sh"), false)
+  })
+
+  it("normalises with NFKC before the dash, word and markup checks", () => {
+    const title = (value: string) => {
+      const copy = structuredClone(bundledContent.en)
+      copy.hero.title = value
+      return siteContentSchema.safeParse(copy).success
+    }
+    assert.equal(title("Owners \u2012 everywhere"), false)
+    assert.equal(title("Owners \u2015 everywhere"), false)
+    assert.equal(title("\uff1cb\uff1ebold"), false)
+    assert.equal(title("\uff47uaranteed owners"), false)
+    assert.equal(title("Every AI action has an owner."), true)
+  })
 })
