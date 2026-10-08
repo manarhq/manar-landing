@@ -84,6 +84,11 @@ export function SiteFooter({ locale, dict }: { locale: Locale; dict: Dictionary 
               </a>
             </li>
             <li>
+              <a href={`mailto:${dict.links.support}`} className={linkClass}>
+                {dict.footer.support}:&nbsp;<span className="ltr-fragment">{dict.links.support}</span>
+              </a>
+            </li>
+            <li>
               <Link href={bookingHref(locale, dict)} className={linkClass}>
                 {dict.common.bookDemo}
               </Link>

@@ -156,14 +156,19 @@ const ar: Omit<SiteContent, "legal"> = {
     booking: "/meet",
     requestForm: "/demo",
     vax: "https://vax.sh",
-    email: "nofal@vax.sh",
+    email: "info@fixio.ae",
+    support: "support@fixio.ae",
   },
 
   images: {
     logo: { src: "/brand/manar-lighthouse.png", alt: "" },
     deployment: {
-      src: "/photo/lighthouse-dawn.webp",
-      alt: "منارة حجرية على حاجز أمواج عند الفجر، والبحر هادئ والسماء صافية",
+      src: "/photo/lighthouse-day.webp",
+      alt: "منارة حجرية في نهاية حاجز أمواج في ضوء النهار الهادئ، والبحر ساكن والسماء صافية",
+    },
+    deploymentDark: {
+      src: "/photo/lighthouse-night.webp",
+      alt: "المنارة نفسها ليلًا، ومصباحها مضاء يمتد ضوؤه عبر السماء المظلمة",
     },
     og: { src: "/og/manar-ar.png", alt: "منار" },
   },
@@ -279,6 +284,7 @@ const ar: Omit<SiteContent, "legal"> = {
     hackathon: "فريق VAX.SH ضمن القائمة المختصرة لمرحلة ما بعد الهاكاثون في هاكاثون الإمارات التاسع 2026 الذي تنظمه هيئة تنظيم الاتصالات والحكومة الرقمية.",
     sectionsTitle: "استكشف",
     contactTitle: "تواصل معنا",
+    support: "الدعم",
     rights: "جميع الحقوق محفوظة.",
     legalTitle: "الشؤون القانونية",
     privacy: "إشعار الخصوصية",

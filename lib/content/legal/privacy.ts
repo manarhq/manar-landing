@@ -4,32 +4,22 @@ import type { LegalDoc } from "../schema.ts"
 
 /*
  * Structured for the UAE Federal Decree-Law No. 45 of 2021 on the Protection of Personal Data
- * (PDPL). Draft for review by counsel before go-live. The bracketed constants are values the
- * founder is confirming; they are listed in the page's draft notice and replaced, never invented.
+ * (PDPL). The company is on the Abu Dhabi mainland (not DIFC or ADGM); the supervisory authority is
+ * the UAE Data Office.
  */
-const ENTITY_EN = "[Registered address, licence number and issuing authority to be confirmed]"
-const ENTITY_AR = "[العنوان المسجل ورقم الرخصة وجهة الإصدار قيد التأكيد]"
-const RETENTION_EN = "[Retention period for demo requests and meeting bookings to be confirmed]"
-const RETENTION_AR = "[مدة الاحتفاظ بطلبات العرض التوضيحي وحجوزات الاجتماعات قيد التأكيد]"
-const LOGS_EN = "[Retention period for server access logs to be confirmed]"
-const LOGS_AR = "[مدة الاحتفاظ بسجلات الوصول إلى الخادم قيد التأكيد]"
-const LAW_EN = "[Confirm that the PDPL, and not a free-zone data protection law, applies]"
-const LAW_AR = "[تأكيد أن المرسوم بقانون الاتحادي لحماية البيانات الشخصية هو المطبق، وليس قانونًا لمنطقة حرة]"
-
 export const privacy: Record<Locale, LegalDoc> = {
   en: {
     title: "Privacy notice",
     description:
       "How VAX handles personal data on the Manar website under the UAE PDPL: demo requests, meeting bookings, logs, optional analytics and your rights.",
     updated: "2026-10-09",
-    placeholders: [ENTITY_EN, RETENTION_EN, LOGS_EN, LAW_EN],
     sections: [
       {
         id: "who-we-are",
         heading: "Who is responsible",
         blocks: [
           "This website presents Manar, a product of VAX. VAX is the controller of the personal data collected through this website.",
-          `Controller: VAX Labs Cloud Computing Services L.L.C S.P.C, Abu Dhabi, United Arab Emirates. ${ENTITY_EN}. Contact for privacy questions and requests: nofal@vax.sh.`,
+          "Controller: VAX Labs Cloud Computing Services L.L.C S.P.C, 1st Oud Maitha Street, Al Wathba Tower 1402, Abu Dhabi, United Arab Emirates. Contact for privacy questions and requests: info@fixio.ae.",
           "This notice covers the public website at manar.vax.sh, including demo requests and meeting bookings. It does not cover the Manar product, which is governed by the agreement with each customer.",
           "We apply the UAE Federal Decree-Law No. 45 of 2021 on the Protection of Personal Data (PDPL).",
         ],
@@ -46,7 +36,7 @@ export const privacy: Record<Locale, LegalDoc> = {
               "Campaign tags: only if you accepted analytics, the tags in the link you arrived by (utm_source, utm_medium, utm_campaign, utm_term, utm_content) are attached to a demo request you send from the same browser tab.",
               "Technical data: your IP address, the page requested, the time and your browser's user agent, recorded by our servers and our network provider.",
               "Optional analytics: page views and loading times, only if you accept analytics.",
-              "Choices stored in your browser: your theme and your privacy choice. They stay on your device and are not sent to us.",
+              "Choices stored in your browser: your theme and your privacy choice (kept 12 months). They stay on your device and are not sent to us.",
             ],
           },
           "Please do not put sensitive personal data in the message or note fields.",
@@ -106,7 +96,7 @@ export const privacy: Record<Locale, LegalDoc> = {
         heading: "Transfers outside the UAE",
         blocks: [
           "Cloudflare and Resend, and Microsoft where its data centres are outside the UAE, may process personal data outside the United Arab Emirates. We transfer data only as the PDPL allows: we rely on each provider's data processing terms, which bind it to protect the data and use it only on our instructions, and for analytics also on your consent.",
-          "You can ask us for more detail about these safeguards at nofal@vax.sh.",
+          "You can ask us for more detail about these safeguards at info@fixio.ae.",
         ],
       },
       {
@@ -115,9 +105,9 @@ export const privacy: Record<Locale, LegalDoc> = {
         blocks: [
           {
             list: [
-              `Demo requests and meeting bookings: ${RETENTION_EN}. We delete requests that lead to no further contact once they are no longer needed.`,
+              "Demo requests and meeting bookings: 12 months after our last contact with you, then deleted.",
               "An unconfirmed booking is released when its hold runs out.",
-              `Server access logs: ${LOGS_EN}.`,
+              "Server access logs: 30 days.",
               "Rate limit counters are held in server memory for 10 minutes and are lost when the server restarts.",
               "Campaign tags in your browser are cleared when you close the tab.",
             ],
@@ -148,7 +138,7 @@ export const privacy: Record<Locale, LegalDoc> = {
               "withdraw your consent at any time, without affecting processing done before you withdrew it.",
             ],
           },
-          "To use any of these rights, email nofal@vax.sh. We may need to confirm who you are before we act, and we answer within the time the law sets.",
+          "To use any of these rights, email info@fixio.ae. We may need to confirm who you are before we act, and we answer within the time the law sets.",
           "If you are unhappy with how we handled your data, you can complain to the UAE Data Office.",
         ],
       },
@@ -164,14 +154,13 @@ export const privacy: Record<Locale, LegalDoc> = {
     description:
       "كيف تتعامل VAX مع البيانات الشخصية على موقع منار وفق القانون الإماراتي لحماية البيانات الشخصية: الطلبات والحجوزات والسجلات والتحليلات وحقوقك.",
     updated: "2026-10-09",
-    placeholders: [ENTITY_AR, RETENTION_AR, LOGS_AR, LAW_AR],
     sections: [
       {
         id: "who-we-are",
         heading: "الجهة المسؤولة",
         blocks: [
           "يعرض هذا الموقع منار، وهي أحد منتجات VAX. وVAX هي المتحكم في البيانات الشخصية التي تُجمع عبر هذا الموقع.",
-          `المتحكم: VAX Labs Cloud Computing Services L.L.C S.P.C، أبوظبي، الإمارات العربية المتحدة. ${ENTITY_AR}. للاستفسارات والطلبات المتعلقة بالخصوصية: nofal@vax.sh.`,
+          "المتحكم: VAX Labs Cloud Computing Services L.L.C S.P.C، 1st Oud Maitha Street, Al Wathba Tower 1402, Abu Dhabi, United Arab Emirates (أبوظبي، الإمارات العربية المتحدة). للاستفسارات والطلبات المتعلقة بالخصوصية: info@fixio.ae.",
           "يشمل هذا الإشعار الموقع العام manar.vax.sh، بما في ذلك طلبات العرض التوضيحي وحجوزات الاجتماعات، ولا يشمل منتج منار الذي تحكمه الاتفاقية المبرمة مع كل عميل.",
           "نطبّق المرسوم بقانون اتحادي رقم 45 لسنة 2021 بشأن حماية البيانات الشخصية.",
         ],
@@ -188,7 +177,7 @@ export const privacy: Record<Locale, LegalDoc> = {
               "وسوم الحملات: إذا وافقت على التحليلات فقط، تُرفق الوسوم الموجودة في الرابط الذي وصلت منه (utm_source وutm_medium وutm_campaign وutm_term وutm_content) بطلب العرض الذي ترسله من علامة التبويب نفسها.",
               "البيانات التقنية: عنوان IP والصفحة المطلوبة والوقت ونوع المتصفح، كما تسجلها خوادمنا ومزود الشبكة.",
               "التحليلات الاختيارية: مشاهدات الصفحات وأوقات التحميل، ولا تُجمع إلا بموافقتك.",
-              "خيارات محفوظة في متصفحك: المظهر الذي اخترته وخيار الخصوصية. تبقى على جهازك ولا تُرسل إلينا.",
+              "خيارات محفوظة في متصفحك: المظهر الذي اخترته وخيار الخصوصية (يُحفظ 12 شهرًا). تبقى على جهازك ولا تُرسل إلينا.",
             ],
           },
           "نرجو ألا تضع أي بيانات شخصية حساسة في حقل الرسالة أو الملاحظة.",
@@ -236,7 +225,7 @@ export const privacy: Record<Locale, LegalDoc> = {
         heading: "نقل البيانات خارج الإمارات",
         blocks: [
           "قد تعالج Cloudflare وResend، وMicrosoft عندما تكون مراكز بياناتها خارج الدولة، بيانات شخصية خارج الإمارات العربية المتحدة. ولا ننقل البيانات إلا بما يسمح به القانون: نعتمد على شروط معالجة البيانات لدى كل مزود، التي تلزمه بحماية البيانات وعدم استخدامها إلا بتعليماتنا، ونعتمد أيضًا على موافقتك في ما يخص التحليلات.",
-          "يمكنك أن تطلب منا مزيدًا من التفاصيل عن هذه الضمانات على nofal@vax.sh.",
+          "يمكنك أن تطلب منا مزيدًا من التفاصيل عن هذه الضمانات على info@fixio.ae.",
         ],
       },
       {
@@ -245,9 +234,9 @@ export const privacy: Record<Locale, LegalDoc> = {
         blocks: [
           {
             list: [
-              `طلبات العرض التوضيحي وحجوزات الاجتماعات: ${RETENTION_AR}. ونحذف الطلبات التي لا يتبعها تواصل إضافي متى انتفت الحاجة إليها.`,
+              "طلبات العرض التوضيحي وحجوزات الاجتماعات: 12 شهرًا من آخر تواصل بيننا، ثم تُحذف.",
               "يُلغى الحجز غير المؤكد عند انتهاء مدة حجز الموعد.",
-              `سجلات الوصول إلى الخادم: ${LOGS_AR}.`,
+              "سجلات الوصول إلى الخادم: 30 يومًا.",
               "تُحفظ عدادات الحد من الطلبات في ذاكرة الخادم لمدة 10 دقائق، وتُفقد عند إعادة تشغيله.",
               "تُحذف وسوم الحملات من متصفحك عند إغلاق علامة التبويب.",
             ],
@@ -278,7 +267,7 @@ export const privacy: Record<Locale, LegalDoc> = {
               "سحب موافقتك في أي وقت، دون أن يؤثر ذلك في المعالجة التي سبقت السحب.",
             ],
           },
-          "لممارسة أي من هذه الحقوق، راسلنا على nofal@vax.sh. وقد نحتاج إلى التحقق من هويتك قبل التنفيذ، ونرد خلال المدة التي يحددها القانون.",
+          "لممارسة أي من هذه الحقوق، راسلنا على info@fixio.ae. وقد نحتاج إلى التحقق من هويتك قبل التنفيذ، ونرد خلال المدة التي يحددها القانون.",
           "وإذا لم تكن راضيًا عن طريقة تعاملنا مع بياناتك، فيمكنك تقديم شكوى إلى مكتب الإمارات للبيانات.",
         ],
       },

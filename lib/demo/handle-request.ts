@@ -5,7 +5,7 @@ import type { EmailTransport, SendResult } from "./resend.ts"
 import { validateDemoRequest, type FieldErrors } from "./validation.ts"
 
 /** Fixed destination. It is never read from the request. */
-export const DEMO_REQUEST_RECIPIENT = "nofal@vax.sh"
+export const DEMO_REQUEST_RECIPIENT = "info@fixio.ae"
 
 export const MAX_BODY_BYTES = 16 * 1024
 

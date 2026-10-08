@@ -8,7 +8,6 @@ export const cookies: Record<Locale, LegalDoc> = {
     description:
       "Every cookie and browser storage item used on the Manar website, why it is used, how long it lasts, and how to change your choice.",
     updated: "2026-10-09",
-    placeholders: [],
     sections: [
       {
         id: "summary",
@@ -62,7 +61,7 @@ export const cookies: Record<Locale, LegalDoc> = {
               "You can also clear this website's data in your browser settings. We will then ask for your choice again.",
             ],
           },
-          "Questions about this policy can be sent to nofal@vax.sh.",
+          "Questions about this policy can be sent to info@fixio.ae.",
         ],
       },
     ],
@@ -72,7 +71,6 @@ export const cookies: Record<Locale, LegalDoc> = {
     description:
       "كل ملف تعريف ارتباط وكل عنصر تخزين يستخدمه موقع منار، والغرض منه، ومدة بقائه، وكيف تغيّر خيارك.",
     updated: "2026-10-09",
-    placeholders: [],
     sections: [
       {
         id: "summary",
@@ -126,7 +124,7 @@ export const cookies: Record<Locale, LegalDoc> = {
               "ويمكنك أيضًا مسح بيانات هذا الموقع من إعدادات متصفحك، وعندها سنسألك عن خيارك من جديد.",
             ],
           },
-          "للاستفسار عن هذه السياسة، راسلنا على nofal@vax.sh.",
+          "للاستفسار عن هذه السياسة، راسلنا على info@fixio.ae.",
         ],
       },
     ],

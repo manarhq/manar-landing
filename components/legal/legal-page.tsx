@@ -1,4 +1,4 @@
-import { ArrowLeftIcon, CaretDownIcon, WarningCircleIcon } from "@phosphor-icons/react/ssr"
+import { ArrowLeftIcon, CaretDownIcon } from "@phosphor-icons/react/ssr"
 import Link from "next/link"
 
 import { SiteFooter } from "@/components/site/site-footer"
@@ -54,24 +54,6 @@ export function LegalPage({ locale, dict, doc, ui }: { locale: Locale; dict: Dic
               {ui.lastUpdated}: <time dateTime={doc.updated}>{updated}</time>
             </p>
           </header>
-
-          <div role="note" className="mt-8 max-w-[65ch] rounded-md bg-wait-soft p-4 text-sm">
-            <p className="flex items-center gap-2 font-semibold text-foreground">
-              <WarningCircleIcon aria-hidden className="size-5 shrink-0 text-wait" />
-              {ui.draftTitle}
-            </p>
-            <p className="mt-2 text-foreground">{ui.draftBody}</p>
-            {doc.placeholders.length > 0 ? (
-              <>
-                <p className="mt-3 font-medium text-foreground">{ui.pendingDetails}</p>
-                <ul className="mt-2 list-disc space-y-1 ps-5 text-foreground">
-                  {doc.placeholders.map((p) => (
-                    <li key={p}>{p}</li>
-                  ))}
-                </ul>
-              </>
-            ) : null}
-          </div>
 
           <div className="mt-12 grid gap-12 lg:grid-cols-12">
             <nav aria-label={ui.onThisPage} className="lg:col-span-3 print:hidden">

@@ -9,7 +9,7 @@ function parse() {
     lang: "en",
     description: "Not with </script> in it.",
     vaxUrl: "https://vax.sh",
-    email: "nofal@vax.sh",
+    email: "info@fixio.ae",
     logo: "/brand/manar-lighthouse.png",
   })
   return { json, graph: JSON.parse(json)["@graph"] as Record<string, unknown>[] }

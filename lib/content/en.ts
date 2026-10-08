@@ -156,14 +156,19 @@ const en: Omit<SiteContent, "legal"> = {
     booking: "/meet",
     requestForm: "/demo",
     vax: "https://vax.sh",
-    email: "nofal@vax.sh",
+    email: "info@fixio.ae",
+    support: "support@fixio.ae",
   },
 
   images: {
     logo: { src: "/brand/manar-lighthouse.png", alt: "" },
     deployment: {
-      src: "/photo/lighthouse-dawn.webp",
-      alt: "A stone lighthouse on a breakwater at dawn, calm sea and an empty sky",
+      src: "/photo/lighthouse-day.webp",
+      alt: "A stone lighthouse at the end of a breakwater in soft daylight, calm sea and an empty sky",
+    },
+    deploymentDark: {
+      src: "/photo/lighthouse-night.webp",
+      alt: "The same lighthouse at night, its lamp lit and a beam of light reaching across the dark sky",
     },
     og: { src: "/og/manar-en.png", alt: "Manar" },
   },
@@ -279,6 +284,7 @@ const en: Omit<SiteContent, "legal"> = {
     hackathon: "Team VAX.SH is shortlisted for the post-hackathon phase of the 9th TDRA UAE Hackathon 2026.",
     sectionsTitle: "Explore",
     contactTitle: "Contact",
+    support: "Support",
     rights: "All rights reserved.",
     legalTitle: "Legal",
     privacy: "Privacy notice",
