@@ -34,6 +34,16 @@ const alt = z
 /** Same-origin page path, such as "/meet". Never a full URL, so content cannot point visitors off-site. */
 const internalPath = z.string().regex(/^\/[a-z0-9-]+(\/[a-z0-9-]+)*$/, "A same-site path such as /meet")
 
+/** The only domains a contact address may use. Compared exactly against the part after "@". */
+export const EMAIL_DOMAINS = ["fixio.ae"] as const
+
+const contactEmail = z
+  .email()
+  .max(254)
+  .refine((s) => (EMAIL_DOMAINS as readonly string[]).includes(s.split("@")[1]?.toLowerCase() ?? ""), {
+    message: `An address at ${EMAIL_DOMAINS.join(", ")}`,
+  })
+
 /** The only external hosts the site links to. Compared exactly against the parsed hostname. */
 export const EXTERNAL_HOSTS = ["vax.sh", "www.vax.sh", "manar.vax.sh"] as const
 
@@ -82,8 +92,6 @@ export const legalDocSchema = strict({
   description: text.max(160),
   /** ISO date of the last real content change. */
   updated: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
-  /** Details still to be confirmed. Shown in the draft notice while non-empty. */
-  placeholders: z.array(text),
   sections: z
     .array(strict({ id: z.string().regex(/^[a-z0-9-]+$/), heading: text, blocks: z.array(legalBlock).min(1) }))
     .min(1),
@@ -207,10 +215,14 @@ export const siteContentSchema = strict({
     /** The written request form, the fallback when online booking is unavailable. */
     requestForm: internalPath,
     vax: httpsUrl,
-    email: z.email(),
+    /** General contact and privacy requests. */
+    email: contactEmail,
+    /** Support requests. */
+    support: contactEmail,
   }),
 
-  images: strict({ logo: image, deployment: image, og: image }),
+  /** deployment shows in light mode, deploymentDark in dark mode: same framing, same aspect ratio. */
+  images: strict({ logo: image, deployment: image, deploymentDark: image, og: image }),
 
   meet: strict({
     metaTitle: text,
@@ -309,6 +321,7 @@ export const siteContentSchema = strict({
     hackathon: text,
     sectionsTitle: text,
     contactTitle: text,
+    support: text,
     rights: text,
     legalTitle: text,
     privacy: text,
@@ -365,9 +378,6 @@ export const siteContentSchema = strict({
     ui: strict({
       lastUpdated: text,
       onThisPage: text,
-      draftTitle: text,
-      draftBody: text,
-      pendingDetails: text,
       backHome: text,
       print: text,
       tableLabel: text,

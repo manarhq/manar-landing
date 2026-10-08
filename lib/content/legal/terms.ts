@@ -2,23 +2,17 @@ import type { Locale } from "@/lib/i18n/config"
 
 import type { LegalDoc } from "../schema.ts"
 
-const ENTITY_EN = "[Registered address, licence number and issuing authority to be confirmed]"
-const ENTITY_AR = "[العنوان المسجل ورقم الرخصة وجهة الإصدار قيد التأكيد]"
-const LAW_EN = "[Governing law and jurisdiction to be confirmed]"
-const LAW_AR = "[القانون الحاكم والاختصاص القضائي قيد التأكيد]"
-
 export const terms: Record<Locale, LegalDoc> = {
   en: {
     title: "Terms of use",
     description: "The terms that apply when you use the Manar website, including illustrative content, intellectual property, and links.",
-    updated: "2026-09-25",
-    placeholders: [ENTITY_EN, LAW_EN],
+    updated: "2026-10-09",
     sections: [
       {
         id: "about",
         heading: "About these terms",
         blocks: [
-          `These terms apply to your use of the Manar website at manar.vax.sh, operated by VAX Labs Cloud Computing Services L.L.C S.P.C, Abu Dhabi (VAX). ${ENTITY_EN}. By using the website you agree to them.`,
+          "These terms apply to your use of the Manar website at manar.vax.sh, operated by VAX Labs Cloud Computing Services L.L.C S.P.C (VAX), 1st Oud Maitha Street, Al Wathba Tower 1402, Abu Dhabi, United Arab Emirates. By using the website you agree to them.",
           "They cover the website only. Use of the Manar product is governed by a separate written agreement.",
         ],
       },
@@ -65,27 +59,26 @@ export const terms: Record<Locale, LegalDoc> = {
         blocks: [
           "To the extent the law allows, VAX is not liable for losses arising from use of, or inability to use, the website. Nothing in these terms limits liability that cannot be limited by law.",
           "We may update these terms or the website at any time. The date at the top shows the last real change to these terms.",
-          `Governing law: ${LAW_EN}.`,
+          "These terms are governed by the laws of the United Arab Emirates as applied in the Emirate of Abu Dhabi. The courts of Abu Dhabi have jurisdiction over any dispute about them.",
         ],
       },
       {
         id: "contact",
         heading: "Contact",
-        blocks: ["Questions about these terms can be sent to nofal@vax.sh."],
+        blocks: ["Questions about these terms can be sent to info@fixio.ae."],
       },
     ],
   },
   ar: {
     title: "شروط الاستخدام",
     description: "الشروط التي تنطبق عند استخدامك موقع منار، بما في ذلك المحتوى التوضيحي والملكية الفكرية والروابط.",
-    updated: "2026-09-25",
-    placeholders: [ENTITY_AR, LAW_AR],
+    updated: "2026-10-09",
     sections: [
       {
         id: "about",
         heading: "حول هذه الشروط",
         blocks: [
-          `تنطبق هذه الشروط على استخدامك موقع منار على العنوان manar.vax.sh، الذي تشغّله شركة VAX Labs Cloud Computing Services L.L.C S.P.C في أبوظبي (VAX). ${ENTITY_AR}. وباستخدامك الموقع فإنك توافق عليها.`,
+          "تنطبق هذه الشروط على استخدامك موقع منار على العنوان manar.vax.sh، الذي تشغّله شركة VAX Labs Cloud Computing Services L.L.C S.P.C (VAX)، 1st Oud Maitha Street, Al Wathba Tower 1402, Abu Dhabi, United Arab Emirates (أبوظبي، الإمارات العربية المتحدة). وباستخدامك الموقع فإنك توافق عليها.",
           "وتقتصر هذه الشروط على الموقع، أما استخدام منصة منار فتحكمه اتفاقية مكتوبة منفصلة.",
         ],
       },
@@ -132,13 +125,13 @@ export const terms: Record<Locale, LegalDoc> = {
         blocks: [
           "في الحدود التي يسمح بها القانون، لا تتحمل VAX المسؤولية عن الخسائر الناشئة عن استخدام الموقع أو تعذّر استخدامه. ولا يحدّ أي شيء في هذه الشروط من مسؤولية لا يجوز الحد منها قانونًا.",
           "قد نحدّث هذه الشروط أو الموقع في أي وقت. ويبيّن التاريخ في أعلى الصفحة آخر تعديل فعلي على هذه الشروط.",
-          `القانون الحاكم: ${LAW_AR}.`,
+          "تخضع هذه الشروط لقوانين دولة الإمارات العربية المتحدة كما تُطبَّق في إمارة أبوظبي، وتختص محاكم أبوظبي بالنظر في أي نزاع بشأنها.",
         ],
       },
       {
         id: "contact",
         heading: "التواصل",
-        blocks: ["للاستفسار عن هذه الشروط، راسلنا على nofal@vax.sh."],
+        blocks: ["للاستفسار عن هذه الشروط، راسلنا على info@fixio.ae."],
       },
     ],
   },

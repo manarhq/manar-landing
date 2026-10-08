@@ -72,4 +72,16 @@ describe("bundled content", () => {
     assert.equal(title("\uff47uaranteed owners"), false)
     assert.equal(title("Every AI action has an owner."), true)
   })
+
+  it("accepts contact addresses only at the allowed domains", () => {
+    const mail = (email: string) => {
+      const copy = structuredClone(bundledContent.en)
+      copy.links.support = email
+      return siteContentSchema.safeParse(copy).success
+    }
+    assert.equal(mail("support@fixio.ae"), true)
+    assert.equal(mail("someone@evil.example"), false)
+    assert.equal(mail("support@fixio.ae.evil.example"), false)
+    assert.equal(mail("not-an-email"), false)
+  })
 })
