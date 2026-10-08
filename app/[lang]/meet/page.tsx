@@ -2,7 +2,7 @@ import type { Metadata } from "next"
 import { notFound } from "next/navigation"
 import { Suspense } from "react"
 
-import { MeetFlow } from "@/components/meet/meet-flow"
+import { MeetFlow, MeetSkeleton } from "@/components/meet/meet-flow"
 import { SiteFooter } from "@/components/site/site-footer"
 import { SiteHeader } from "@/components/site/site-header"
 import { getContent } from "@/lib/content/load"
@@ -46,7 +46,7 @@ export default async function MeetPage({ params }: PageProps<"/[lang]/meet">) {
           </div>
           <div className="lg:col-span-8">
             {/* The flow reads the address bar (?retry=1), so it renders in the browser. */}
-            <Suspense fallback={<p className="text-base text-muted-foreground">{t.loading}</p>}>
+            <Suspense fallback={<MeetSkeleton t={t} />}>
               <MeetFlow t={t} locale={lang} requestHref={requestHref(lang, dict)} />
             </Suspense>
           </div>
