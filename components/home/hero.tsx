@@ -1,56 +1,40 @@
-import { ArrowDownIcon, ArrowRightIcon } from "@phosphor-icons/react/ssr"
+import { bookingHref } from "@/lib/site"
+import { ArrowRightIcon } from "@phosphor-icons/react/ssr"
 import Link from "next/link"
 
-import { LazyLighthouse } from "@/components/three/lazy-scenes"
 import { buttonVariants } from "@/components/ui/button"
 import type { Locale } from "@/lib/i18n/config"
 import type { Dictionary } from "@/lib/i18n/dictionaries"
-import { cn } from "@/lib/utils"
 
-/** Split hero: copy on the start side, the lighthouse scene filling the frame behind it. */
+import { DecisionRecord } from "./decision-record"
+
+/** Asymmetric split: the promise on the start side, a real approval record on the end side. */
 export function Hero({ locale, dict }: { locale: Locale; dict: Dictionary }) {
   return (
-    <section
-      aria-labelledby="hero-title"
-      className="relative isolate -mt-16 flex min-h-[min(100svh,60rem)] items-end overflow-hidden lg:-mt-[4.25rem] lg:items-center"
-    >
-      <div aria-hidden className="absolute inset-0 -z-10">
-        <LazyLighthouse mirror={locale === "ar"} className="absolute inset-0" />
-        {/* Scrim on the copy side and at the fold keeps text at AA contrast over any frame. */}
-        <div className="absolute inset-0 bg-gradient-to-r from-background via-background/70 to-transparent max-lg:bg-gradient-to-t max-lg:from-background max-lg:via-background/85 max-lg:to-background/0 rtl:bg-gradient-to-l" />
-        <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-b from-transparent to-background" />
-      </div>
-
-      <div className="shell pt-40 pb-16 sm:pb-20 lg:pt-24 lg:pb-24">
-        <div className="max-w-[40rem]">
-          <p className="eyebrow motion-safe:animate-rise">{dict.hero.eyebrow}</p>
+    <section aria-labelledby="hero-title" className="border-b border-line">
+      <div className="shell grid gap-12 py-16 md:py-24 lg:grid-cols-12 lg:items-center">
+        <div className="lg:col-span-6">
           <h1
             id="hero-title"
-            className="display mt-6 max-w-[12ch] motion-safe:animate-rise rtl:max-w-[14ch]"
-            style={{ animationDelay: "80ms" }}
+            className="max-w-[14ch] text-4xl font-semibold tracking-tight text-balance text-foreground md:text-5xl"
           >
             {dict.hero.title}
           </h1>
-          <p className="lede mt-6 max-w-[34rem] motion-safe:animate-rise" style={{ animationDelay: "160ms" }}>
-            {dict.hero.body}
-          </p>
-          <div
-            className="mt-9 flex flex-col gap-3 motion-safe:animate-rise sm:flex-row sm:items-center"
-            style={{ animationDelay: "240ms" }}
-          >
-            <Link href={`/${locale}/demo`} className={cn(buttonVariants({ size: "lg" }), "group")}>
+          <p className="mt-6 max-w-[44ch] text-lg text-pretty text-muted-foreground">{dict.hero.body}</p>
+          <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+            <Link href={bookingHref(locale, dict)} className={buttonVariants({ size: "lg" })}>
               {dict.hero.primaryCta}
-              <ArrowRightIcon
-                aria-hidden
-                className="transition-transform group-hover:translate-x-0.5 rtl:-scale-x-100 rtl:group-hover:-translate-x-0.5"
-              />
+              <ArrowRightIcon aria-hidden className="rtl:-scale-x-100" />
             </Link>
-            <Link href="#workspace" className={buttonVariants({ size: "lg", variant: "outline" })}>
+            <Link href="#how-it-works" className={buttonVariants({ size: "lg", variant: "secondary" })}>
               {dict.hero.secondaryCta}
-              <ArrowDownIcon aria-hidden className="text-muted-foreground" />
             </Link>
           </div>
         </div>
+        <figure id="workspace" className="scroll-mt-24 lg:col-span-6">
+          <DecisionRecord t={dict.hero.record} />
+          <figcaption className="mt-3 text-xs text-muted-foreground">{dict.hero.record.caption}</figcaption>
+        </figure>
       </div>
     </section>
   )

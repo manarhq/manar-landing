@@ -1,18 +1,18 @@
 "use client"
 
 import { Dialog } from "@base-ui/react/dialog"
-import { ArrowUpRightIcon, FileTextIcon, HashIcon, MagnifyingGlassIcon, QuestionIcon, XIcon } from "@phosphor-icons/react"
+import { ArrowUpRightIcon, FileTextIcon, HashIcon, MagnifyingGlassIcon, XIcon } from "@phosphor-icons/react"
 import { useRouter } from "next/navigation"
 import { useDeferredValue, useEffect, useId, useState } from "react"
 
 import type { Dictionary } from "@/lib/i18n/dictionaries"
-import { format } from "@/lib/i18n/dictionaries"
+import { format } from "@/lib/i18n/format"
 import { searchEntries, type SearchEntry } from "@/lib/search-index"
 import { cn } from "@/lib/utils"
 
-export const OPEN_SEARCH_EVENT = "manar:open-search"
+import { OPEN_SEARCH_EVENT } from "./events"
 
-const kindIcon = { section: HashIcon, faq: QuestionIcon, page: FileTextIcon }
+const kindIcon = { section: HashIcon, page: FileTextIcon }
 
 /** W03: Cmd+K / Ctrl+K site search over real page, section, and FAQ content. */
 export function SearchDialog({ entries, labels }: { entries: SearchEntry[]; labels: Dictionary["site"]["search"] }) {
@@ -74,13 +74,13 @@ export function SearchDialog({ entries, labels }: { entries: SearchEntry[]; labe
       }}
     >
       <Dialog.Portal>
-        <Dialog.Backdrop className="fixed inset-0 z-(--z-overlay) bg-[#05080c]/55 backdrop-blur-sm transition-opacity duration-200 data-ending-style:opacity-0 data-starting-style:opacity-0" />
+        <Dialog.Backdrop className="fixed inset-0 z-(--z-overlay) bg-(--scrim) transition-opacity duration-150 data-ending-style:opacity-0 data-starting-style:opacity-0" />
         <Dialog.Popup
-          className="fixed inset-x-3 top-[max(1rem,10vh)] z-(--z-overlay) mx-auto flex max-h-[min(34rem,80dvh)] max-w-xl flex-col overflow-hidden rounded-lg border border-border bg-popover text-popover-foreground shadow-[0_40px_120px_-30px_rgb(5_8_12/0.7)] transition-[opacity,transform] duration-200 ease-(--ease-out-expo) data-ending-style:scale-[0.98] data-ending-style:opacity-0 data-starting-style:scale-[0.98] data-starting-style:opacity-0"
+          className="fixed inset-x-4 top-[max(1rem,10vh)] z-(--z-overlay) mx-auto flex max-h-[min(34rem,80dvh)] max-w-xl flex-col overflow-hidden rounded-md border border-line bg-popover text-popover-foreground shadow-pop transition-[opacity,translate] duration-[160ms] data-ending-style:translate-y-1 data-ending-style:opacity-0 data-starting-style:translate-y-1 data-starting-style:opacity-0"
         >
           <Dialog.Title className="sr-only">{labels.title}</Dialog.Title>
           <Dialog.Description className="sr-only">{labels.hint}</Dialog.Description>
-          <div className="flex items-center gap-3 border-b border-border px-4">
+          <div className="flex items-center gap-3 border-b border-line px-4">
             <MagnifyingGlassIcon aria-hidden className="size-5 shrink-0 text-muted-foreground" />
             <input
               autoFocus
@@ -101,7 +101,7 @@ export function SearchDialog({ entries, labels }: { entries: SearchEntry[]; labe
             />
             <Dialog.Close
               aria-label={labels.close}
-              className="inline-flex size-9 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-elevated hover:text-foreground"
+              className="inline-flex size-9 items-center justify-center rounded-md text-muted-foreground transition-colors duration-[120ms] hover:bg-subtle hover:text-foreground"
             >
               <XIcon aria-hidden className="size-4" />
             </Dialog.Close>
@@ -125,11 +125,11 @@ export function SearchDialog({ entries, labels }: { entries: SearchEntry[]; labe
                     aria-selected={i === activeIndex}
                     onPointerMove={() => setActive(i)}
                     onClick={() => go(entry)}
-                    className="group flex cursor-pointer items-start gap-3 rounded-md px-3 py-3 aria-selected:bg-elevated"
+                    className="group flex cursor-pointer items-start gap-3 rounded-md px-3 py-3 aria-selected:bg-subtle"
                   >
-                    <Icon aria-hidden className="mt-0.5 size-4 shrink-0 text-muted-foreground group-aria-selected:text-link" />
+                    <Icon aria-hidden className="mt-0.5 size-4 shrink-0 text-muted-foreground group-aria-selected:text-foreground" />
                     <span className="min-w-0 flex-1">
-                      <span className="block truncate text-[0.9375rem] font-medium text-foreground">{entry.title}</span>
+                      <span className="block truncate text-base font-medium text-foreground">{entry.title}</span>
                       <span className="mt-0.5 block truncate text-sm text-muted-foreground">{entry.text}</span>
                     </span>
                     <span className="mt-0.5 shrink-0 text-xs text-muted-foreground">{labels.groups[entry.kind]}</span>

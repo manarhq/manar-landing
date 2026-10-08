@@ -1,7 +1,7 @@
 import assert from "node:assert/strict"
 import { describe, it } from "node:test"
 
-import { parseConsent, pickUtm } from "./consent.ts"
+import { analyticsAllowed, consentPendingScript, hasPrivacySignal, parseConsent, pickUtm, shouldAskForConsent } from "./consent.ts"
 
 describe("parseConsent", () => {
   const now = Date.UTC(2026, 8, 25)
@@ -24,6 +24,50 @@ describe("parseConsent", () => {
   })
 })
 
+describe("rejection persistence", () => {
+  const now = Date.UTC(2026, 9, 8)
+
+  it("remembers a rejection exactly as long as an acceptance", () => {
+    for (const analytics of [true, false]) {
+      const day300 = parseConsent(JSON.stringify({ v: 1, analytics, ts: now - 300 * 864e5 }), now)
+      assert.deepEqual(day300, { v: 1, analytics, ts: now - 300 * 864e5 })
+      assert.equal(parseConsent(JSON.stringify({ v: 1, analytics, ts: now - 366 * 864e5 }), now), null)
+    }
+  })
+
+  it("does not ask again after a stored rejection", () => {
+    const rejected = { v: 1 as const, analytics: false, ts: now }
+    assert.equal(shouldAskForConsent(rejected, false, true), false)
+    assert.equal(analyticsAllowed(rejected, false, true), false)
+  })
+})
+
+describe("browser privacy signals", () => {
+  const accepted = { v: 1 as const, analytics: true, ts: Date.UTC(2026, 9, 8) }
+
+  it("reads Global Privacy Control and Do Not Track", () => {
+    assert.equal(hasPrivacySignal({ globalPrivacyControl: true }), true)
+    assert.equal(hasPrivacySignal({ doNotTrack: "1" }), true)
+    assert.equal(hasPrivacySignal({ globalPrivacyControl: false, doNotTrack: "0" }), false)
+    assert.equal(hasPrivacySignal({ doNotTrack: "unspecified" }), false)
+    assert.equal(hasPrivacySignal(undefined), false)
+  })
+
+  it("treats a signal as a rejection: no banner, no beacon, even over a stored acceptance", () => {
+    assert.equal(shouldAskForConsent(null, true, true), false)
+    assert.equal(analyticsAllowed(null, true, true), false)
+    assert.equal(analyticsAllowed(accepted, true, true), false)
+  })
+
+  it("asks only when a token is configured, and loads only after acceptance", () => {
+    assert.equal(shouldAskForConsent(null, false, false), false)
+    assert.equal(analyticsAllowed(accepted, false, false), false)
+    assert.equal(shouldAskForConsent(null, false, true), true)
+    assert.equal(analyticsAllowed(null, false, true), false)
+    assert.equal(analyticsAllowed(accepted, false, true), true)
+  })
+})
+
 describe("pickUtm", () => {
   it("keeps only allowlisted, bounded campaign fields", () => {
     assert.deepEqual(
@@ -34,5 +78,36 @@ describe("pickUtm", () => {
 
   it("rejects markup and control characters", () => {
     assert.deepEqual(pickUtm("?utm_source=%3Cscript%3E&utm_term=a%0Ab"), {})
+  })
+})
+
+describe("consentPendingScript", () => {
+  /** Runs the inline script against a fake browser and reports whether it marked the banner pending. */
+  function run(stored: string | null, nav: Record<string, unknown> = {}) {
+    let marked = false
+    const env = {
+      navigator: nav,
+      localStorage: { getItem: () => stored },
+      document: { documentElement: { setAttribute: () => (marked = true) } },
+    }
+    new Function("navigator", "localStorage", "document", consentPendingScript(true))(env.navigator, env.localStorage, env.document)
+    return marked
+  }
+
+  it("shows the banner on a first visit and after a choice expires", () => {
+    assert.equal(run(null), true)
+    assert.equal(run(JSON.stringify({ v: 1, analytics: false, ts: Date.now() - 366 * 864e5 })), true)
+    assert.equal(run("{broken"), true)
+  })
+
+  it("stays hidden after a current choice, either way, and under GPC or DNT", () => {
+    assert.equal(run(JSON.stringify({ v: 1, analytics: false, ts: Date.now() - 1000 })), false)
+    assert.equal(run(JSON.stringify({ v: 1, analytics: true, ts: Date.now() - 1000 })), false)
+    assert.equal(run(null, { globalPrivacyControl: true }), false)
+    assert.equal(run(null, { doNotTrack: "1" }), false)
+  })
+
+  it("is empty when no analytics token is configured", () => {
+    assert.equal(consentPendingScript(false), "")
   })
 })

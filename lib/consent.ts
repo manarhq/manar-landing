@@ -19,6 +19,38 @@ export function parseConsent(raw: string | null, now = Date.now()): Consent | nu
   }
 }
 
+/** The privacy signals a browser can send. Both are read from `navigator`. */
+export type PrivacySignals = { globalPrivacyControl?: boolean; doNotTrack?: string | null }
+
+/**
+ * Global Privacy Control, or Do Not Track set to "1", counts as a rejection of analytics.
+ * With either signal the banner is not shown and the beacon never loads.
+ */
+export function hasPrivacySignal(signals: PrivacySignals | undefined): boolean {
+  return signals?.globalPrivacyControl === true || signals?.doNotTrack === "1"
+}
+
+export function readPrivacySignal(): boolean {
+  try {
+    return hasPrivacySignal(navigator as PrivacySignals)
+  } catch {
+    return false
+  }
+}
+
+/**
+ * Whether the analytics beacon may load: only with a configured token, no browser privacy
+ * signal, and a stored, unexpired acceptance. Anything else, including no choice yet, is off.
+ */
+export function analyticsAllowed(consent: Consent | null, signal: boolean, tokenConfigured: boolean): boolean {
+  return tokenConfigured && !signal && consent?.analytics === true
+}
+
+/** The first-visit banner shows only when there is something to ask and nothing has answered it. */
+export function shouldAskForConsent(consent: Consent | null, signal: boolean, tokenConfigured: boolean): boolean {
+  return tokenConfigured && !signal && consent === null
+}
+
 let cachedRaw: string | null | undefined
 let cached: Consent | null = null
 
@@ -38,6 +70,7 @@ export function readConsent(): Consent | null {
 }
 
 export function writeConsent(analytics: boolean) {
+  document.documentElement.removeAttribute(CONSENT_PENDING_ATTR)
   try {
     localStorage.setItem(CONSENT_STORAGE_KEY, JSON.stringify({ v: 1, analytics, ts: Date.now() } satisfies Consent))
     if (!analytics) sessionStorage.removeItem(UTM_STORAGE_KEY)
@@ -78,4 +111,16 @@ export function readStoredUtm(): Utm {
   } catch {
     return {}
   }
+}
+
+/** Set on <html> before first paint while the first-visit banner should show. */
+export const CONSENT_PENDING_ATTR = "data-consent-pending"
+
+/**
+ * Inline, pre-paint script: the same decision as shouldAskForConsent(), made before React loads,
+ * so the server-rendered banner paints with the page instead of popping in after hydration.
+ */
+export function consentPendingScript(tokenConfigured: boolean): string {
+  if (!tokenConfigured) return ""
+  return `(function(){try{var n=navigator;if(n.globalPrivacyControl===true||n.doNotTrack==="1")return;var r=localStorage.getItem("${CONSENT_STORAGE_KEY}");if(r){var c=JSON.parse(r),a=Date.now()-c.ts;if(c.v===1&&typeof c.analytics==="boolean"&&typeof c.ts==="number"&&a>=0&&a<=${MAX_AGE_MS})return}}catch(e){}document.documentElement.setAttribute("${CONSENT_PENDING_ATTR}","")})()`
 }

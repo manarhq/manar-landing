@@ -28,15 +28,17 @@ export function LanguageSwitch({
   return (
     <Link
       href={href}
+      // No prefetch: the other locale's page carries its own font preloads, which would then
+      // download on this page too.
+      prefetch={false}
       hrefLang={localeTag[target]}
       lang={localeTag[target]}
       aria-label={accessibleLabel}
-      className={cn(buttonVariants({ variant: "ghost", size: "sm" }), "gap-2 px-2.5 font-semibold", className)}
+      className={cn(buttonVariants({ variant: "ghost", size: "sm" }), "gap-2 px-3", className)}
     >
       <TranslateIcon aria-hidden className="text-muted-foreground" />
-      <span className={target === "ar" ? "font-[family-name:var(--font-plex-arabic)] text-[0.95rem]" : ""}>
-        {label}
-      </span>
+      {/* System Arabic font on English pages: loading Plex Sans Arabic for one word is not worth it. */}
+      <span>{label}</span>
     </Link>
   )
 }

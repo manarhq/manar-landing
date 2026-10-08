@@ -2,14 +2,22 @@ import type { Metadata } from "next"
 
 import { defaultLocale, localeTag, locales, ogLocale, otherLocale, type Locale } from "./i18n/config"
 
-export const CONTACT_EMAIL = "nofal@vax.sh"
-export const VAX_URL = "https://vax.sh"
 export const THEME_STORAGE_KEY = "manar-theme"
 
 /** Cloudflare Web Analytics token. Analytics and the consent banner exist only when it is set. */
 export const CF_BEACON_TOKEN = process.env.NEXT_PUBLIC_CF_BEACON_TOKEN?.trim() || ""
 
-export type SitePath = "" | "/demo" | "/privacy" | "/cookies" | "/terms"
+export type SitePath = "" | "/meet" | "/demo" | "/privacy" | "/cookies" | "/terms"
+
+/** Where every "Book a meeting" link goes. The path is content (links.booking), editable in the CMS. */
+export function bookingHref(locale: Locale, content: { links: { booking: string } }): string {
+  return `/${locale}${content.links.booking}`
+}
+
+/** The written request form: the fallback whenever online booking is unavailable. */
+export function requestHref(locale: Locale, content: { links: { requestForm: string } }): string {
+  return `/${locale}${content.links.requestForm}`
+}
 
 /**
  * Shared build-time origin for metadata, robots, and the sitemap. The default is
@@ -51,12 +59,15 @@ export function pageMetadata({
   title,
   description,
   siteName,
+  image,
 }: {
   locale: Locale
   path: SitePath
   title: string
   description: string
   siteName: string
+  /** Open Graph image from the content model; defaults to the bundled card for the locale. */
+  image?: { src: string; alt: string }
 }): Metadata {
   const origin = siteOrigin()
 
@@ -87,7 +98,7 @@ export function pageMetadata({
       locale: ogLocale[locale],
       alternateLocale: [ogLocale[otherLocale(locale)]],
       url: localizedPath(locale, path),
-      images: [{ url: `/og/manar-${locale}.png`, width: 1200, height: 630, alt: siteName }],
+      images: [{ url: image?.src ?? `/og/manar-${locale}.png`, width: 1200, height: 630, alt: image?.alt || siteName }],
     },
     twitter: {
       card: "summary_large_image",

@@ -116,7 +116,7 @@ describe("handleDemoRequest", () => {
     assert.deepEqual(response.body, { ok: true })
     assert.equal(sent.length, 1)
     assert.equal(sent[0].to, DEMO_REQUEST_RECIPIENT)
-    assert.equal(sent[0].to, "nofal@vax.sh")
+    assert.equal(sent[0].to, "info@fixio.ae")
     assert.equal(sent[0].replyTo, valid.email)
     assert.ok(!JSON.stringify(sent[0]).includes("attacker@example.com"))
   })
@@ -207,7 +207,7 @@ describe("createResendTransport", () => {
     })
     const result = await transport({
       from: "Manar <demo@mail.example.com>",
-      to: "nofal@vax.sh",
+      to: "info@fixio.ae",
       replyTo: "aisha@example.org",
       subject: "s",
       text: "t",
@@ -216,7 +216,7 @@ describe("createResendTransport", () => {
     assert.deepEqual(result, { ok: true, id: "abc" })
     assert.equal(captured?.url, "https://api.resend.com/emails")
     const body = JSON.parse(String(captured?.init.body))
-    assert.deepEqual(body.to, ["nofal@vax.sh"])
+    assert.deepEqual(body.to, ["info@fixio.ae"])
     assert.equal(body.reply_to, "aisha@example.org")
   })
 
@@ -231,7 +231,7 @@ describe("createResendTransport", () => {
         throw new TypeError("fetch failed")
       },
     })
-    const email = { from: "a@b.co", to: "nofal@vax.sh", replyTo: "c@d.co", subject: "s", text: "t", html: "h" }
+    const email = { from: "a@b.co", to: "info@fixio.ae", replyTo: "c@d.co", subject: "s", text: "t", html: "h" }
     assert.deepEqual(await rejected(email), { ok: false, reason: "rejected" })
     assert.deepEqual(await offline(email), { ok: false, reason: "network" })
   })
