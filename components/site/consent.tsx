@@ -1,6 +1,5 @@
 "use client"
 
-import { AnimatePresence, motion, useReducedMotion } from "motion/react"
 import Link from "next/link"
 import { useEffect, useRef, useState, useSyncExternalStore } from "react"
 
@@ -47,7 +46,7 @@ export function Consent({ locale, labels }: { locale: Locale; labels: Dictionary
   const consent = useConsent()
   const signal = usePrivacySignal()
   const pending = useConsentPending()
-  const reduce = useReducedMotion()
+  const hydrated = useHydrated()
   const [prefsOpen, setPrefsOpen] = useState(false)
   const [draft, setDraft] = useState(false)
   const [announce, setAnnounce] = useState("")
@@ -96,16 +95,16 @@ export function Consent({ locale, labels }: { locale: Locale; labels: Dictionary
         {announce}
       </p>
 
-      <AnimatePresence>
-        {pending && !prefsOpen ? (
-          <motion.section
+      {/*
+        Server-rendered and hidden; the pre-paint script in the layout sets data-consent-pending
+        on <html> when a choice is needed, so the banner paints with the page (no late pop-in).
+        After hydration the same decision comes from useConsentPending().
+      */}
+      {TOKEN && !prefsOpen && (pending || !hydrated) ? (
+          <section
             aria-labelledby="consent-title"
             data-print="hide"
-            initial={reduce ? false : { opacity: 0, y: 4 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.16, ease: "easeOut" }}
-            className="fixed inset-x-4 bottom-[max(1rem,env(safe-area-inset-bottom))] z-(--z-banner) mx-auto max-w-3xl rounded-md border border-line bg-elevated p-4 shadow-pop md:p-6"
+            className="fixed inset-x-4 bottom-[max(1rem,env(safe-area-inset-bottom))] z-(--z-banner) mx-auto hidden max-w-3xl rounded-md border border-line bg-elevated p-4 shadow-pop md:p-6 [[data-consent-pending]_&]:block"
           >
             <div className="grid gap-4 md:grid-cols-[1fr_auto] md:items-end md:gap-8">
               <div>
@@ -139,9 +138,8 @@ export function Consent({ locale, labels }: { locale: Locale; labels: Dictionary
                 </Button>
               </div>
             </div>
-          </motion.section>
-        ) : null}
-      </AnimatePresence>
+          </section>
+      ) : null}
 
       <Dialog open={prefsOpen} onOpenChange={setPrefsOpen}>
         <DialogContent closeLabel={labels.dialogClose}>

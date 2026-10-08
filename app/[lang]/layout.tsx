@@ -6,7 +6,8 @@ import { notFound } from "next/navigation"
 import { SiteChrome } from "@/components/site/site-chrome"
 import { getContent } from "@/lib/content/load"
 import { isLocale, localeDirection, localeTag, locales } from "@/lib/i18n/config"
-import { THEME_STORAGE_KEY } from "@/lib/site"
+import { consentPendingScript } from "@/lib/consent"
+import { CF_BEACON_TOKEN, THEME_STORAGE_KEY } from "@/lib/site"
 
 import "../globals.css"
 
@@ -68,7 +69,7 @@ export default async function RootLayout({ children, params }: LayoutProps<"/[la
       suppressHydrationWarning
     >
       <head>
-        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+        <script dangerouslySetInnerHTML={{ __html: `${themeScript};${consentPendingScript(Boolean(CF_BEACON_TOKEN))}` }} />
       </head>
       <body className="flex min-h-dvh flex-col overflow-x-clip">
         <a

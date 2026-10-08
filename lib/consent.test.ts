@@ -1,7 +1,7 @@
 import assert from "node:assert/strict"
 import { describe, it } from "node:test"
 
-import { analyticsAllowed, hasPrivacySignal, parseConsent, pickUtm, shouldAskForConsent } from "./consent.ts"
+import { analyticsAllowed, consentPendingScript, hasPrivacySignal, parseConsent, pickUtm, shouldAskForConsent } from "./consent.ts"
 
 describe("parseConsent", () => {
   const now = Date.UTC(2026, 8, 25)
@@ -78,5 +78,36 @@ describe("pickUtm", () => {
 
   it("rejects markup and control characters", () => {
     assert.deepEqual(pickUtm("?utm_source=%3Cscript%3E&utm_term=a%0Ab"), {})
+  })
+})
+
+describe("consentPendingScript", () => {
+  /** Runs the inline script against a fake browser and reports whether it marked the banner pending. */
+  function run(stored: string | null, nav: Record<string, unknown> = {}) {
+    let marked = false
+    const env = {
+      navigator: nav,
+      localStorage: { getItem: () => stored },
+      document: { documentElement: { setAttribute: () => (marked = true) } },
+    }
+    new Function("navigator", "localStorage", "document", consentPendingScript(true))(env.navigator, env.localStorage, env.document)
+    return marked
+  }
+
+  it("shows the banner on a first visit and after a choice expires", () => {
+    assert.equal(run(null), true)
+    assert.equal(run(JSON.stringify({ v: 1, analytics: false, ts: Date.now() - 366 * 864e5 })), true)
+    assert.equal(run("{broken"), true)
+  })
+
+  it("stays hidden after a current choice, either way, and under GPC or DNT", () => {
+    assert.equal(run(JSON.stringify({ v: 1, analytics: false, ts: Date.now() - 1000 })), false)
+    assert.equal(run(JSON.stringify({ v: 1, analytics: true, ts: Date.now() - 1000 })), false)
+    assert.equal(run(null, { globalPrivacyControl: true }), false)
+    assert.equal(run(null, { doNotTrack: "1" }), false)
+  })
+
+  it("is empty when no analytics token is configured", () => {
+    assert.equal(consentPendingScript(false), "")
   })
 })
