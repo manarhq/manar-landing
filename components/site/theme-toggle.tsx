@@ -78,19 +78,19 @@ export function ThemeToggle({ labels }: { labels: Dictionary["site"]["theme"] })
       </Menu.Trigger>
       <Menu.Portal>
         <Menu.Positioner sideOffset={8} align="end" className="z-(--z-overlay)">
-          <Menu.Popup className="min-w-40 origin-(--transform-origin) rounded-md border border-border bg-popover p-1 text-popover-foreground shadow-[0_24px_60px_-24px_rgb(5_8_12/0.55)] transition-[opacity,transform] duration-150 outline-none data-ending-style:scale-95 data-ending-style:opacity-0 data-starting-style:scale-95 data-starting-style:opacity-0">
+          <Menu.Popup className="min-w-40 origin-(--transform-origin) rounded-md border border-line bg-popover p-1 text-popover-foreground shadow-pop transition-[opacity,translate] duration-[160ms] outline-none data-ending-style:translate-y-1 data-ending-style:opacity-0 data-starting-style:translate-y-1 data-starting-style:opacity-0">
             <Menu.RadioGroup value={preference} onValueChange={(value) => choose(value as Preference)} aria-label={labels.label}>
               {options.map(({ value, label, Icon }) => (
                 <Menu.RadioItem
                   key={value}
                   value={value}
                   closeOnClick
-                  className="flex min-h-10 cursor-default items-center gap-2.5 rounded-sm px-2.5 text-sm text-foreground outline-none select-none data-highlighted:bg-elevated"
+                  className="flex min-h-9 cursor-default items-center gap-2 rounded-sm px-2 text-sm text-foreground outline-none select-none data-highlighted:bg-surface"
                 >
                   <Icon aria-hidden className="size-4 text-muted-foreground" />
                   <span className="flex-1">{label}</span>
                   <Menu.RadioItemIndicator>
-                    <CheckIcon aria-hidden className="size-4 text-link" />
+                    <CheckIcon aria-hidden className="size-4 text-foreground" />
                   </Menu.RadioItemIndicator>
                 </Menu.RadioItem>
               ))}

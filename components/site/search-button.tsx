@@ -23,11 +23,11 @@ export function SearchButton({ label }: { label: string }) {
         type="button"
         onClick={open}
         aria-keyshortcuts={apple ? "Meta+K" : "Control+K"}
-        className="hidden h-10 items-center gap-2 rounded-full border border-border bg-card/60 ps-3 pe-1.5 text-sm text-muted-foreground transition-colors hover:border-control hover:text-foreground md:inline-flex"
+        className="hidden h-9 items-center gap-2 rounded-md border border-line bg-surface ps-3 pe-2 text-sm text-muted-foreground transition-colors duration-[120ms] hover:border-line-strong hover:text-foreground md:inline-flex"
       >
         <MagnifyingGlassIcon aria-hidden className="size-4" />
         <span className="me-3 hidden xl:inline">{label}</span>
-        <kbd className="ltr-fragment rounded-full border border-border bg-background px-2 py-0.5 font-mono text-[0.6875rem] text-muted-foreground">
+        <kbd className="ltr-fragment rounded-sm border border-line bg-page px-1 font-mono text-xs text-muted-foreground">
           {apple ? "⌘K" : "Ctrl K"}
         </kbd>
       </button>

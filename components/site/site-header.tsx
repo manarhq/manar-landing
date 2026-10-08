@@ -1,3 +1,4 @@
+import { bookingHref } from "@/lib/site"
 import Link from "next/link"
 
 import { buttonVariants } from "@/components/ui/button"
@@ -16,17 +17,17 @@ export function SiteHeader({ locale, dict }: { locale: Locale; dict: Dictionary 
   const items = navItems(locale, dict)
 
   return (
-    <header className="header-surface sticky top-0 z-(--z-header) border-b">
-      <div className="shell flex h-16 items-center gap-3 lg:h-[4.25rem]">
-        <Brand locale={locale} name={dict.common.brandName} homeLabel={dict.common.homeLink} />
+    <header className="sticky top-0 z-(--z-header) border-b border-line bg-page">
+      <div className="shell flex h-16 items-center gap-4">
+        <Brand locale={locale} name={dict.common.brandName} homeLabel={dict.common.homeLink} logo={dict.images.logo.src} />
 
-        <nav aria-label={dict.common.primaryNav} className="ms-4 hidden lg:block xl:ms-8">
+        <nav aria-label={dict.common.primaryNav} className="ms-8 hidden lg:block">
           <ul className="flex items-center">
             {items.map((item) => (
               <li key={item.href}>
                 <Link
                   href={item.href}
-                  className="inline-flex h-10 items-center rounded-full px-3 text-sm font-medium whitespace-nowrap text-muted-foreground transition-colors hover:text-foreground"
+                  className="inline-flex h-9 items-center rounded-md px-3 text-sm font-medium whitespace-nowrap text-muted-foreground transition-colors duration-[120ms] hover:bg-surface hover:text-foreground"
                 >
                   {item.label}
                 </Link>
@@ -35,7 +36,7 @@ export function SiteHeader({ locale, dict }: { locale: Locale; dict: Dictionary 
           </ul>
         </nav>
 
-        <div className="ms-auto flex items-center gap-1">
+        <div className="ms-auto flex items-center gap-2">
           <SearchButton label={dict.site.search.open} />
           <LanguageSwitch
             locale={locale}
@@ -43,11 +44,12 @@ export function SiteHeader({ locale, dict }: { locale: Locale; dict: Dictionary 
             accessibleLabel={dict.common.languageSwitchLabel}
           />
           <ThemeToggle labels={dict.site.theme} />
-          <Link href={`/${locale}/demo`} className={cn(buttonVariants(), "ms-2 hidden sm:inline-flex")}>
+          <Link href={bookingHref(locale, dict)} className={cn(buttonVariants(), "ms-2 hidden sm:inline-flex")}>
             {dict.common.bookDemo}
           </Link>
           <MobileNav
             locale={locale}
+            bookingHref={bookingHref(locale, dict)}
             items={items}
             labels={{
               open: dict.common.openMenu,

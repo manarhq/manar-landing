@@ -1,41 +1,31 @@
 import type { Locale } from "./i18n/config"
 import type { Dictionary } from "./i18n/dictionaries"
-import { cookies as cookiesDoc } from "./legal/cookies"
-import { privacy as privacyDoc } from "./legal/privacy"
-import { terms as termsDoc } from "./legal/terms"
+import { bookingHref } from "./site"
 
 export type SearchEntry = {
-  kind: "section" | "faq" | "page"
+  kind: "section" | "page"
   title: string
   text: string
   href: string
-}
-
-export function faqSlug(index: number) {
-  return `faq-${index + 1}`
 }
 
 /** Everything the Cmd/Ctrl+K search can find (W03). Built on the server from real page content. */
 export function buildSearchIndex(locale: Locale, dict: Dictionary): SearchEntry[] {
   const home = `/${locale}`
   return [
-    { kind: "section", title: dict.nav.platform, text: `${dict.capabilities.title} ${dict.capabilities.groups.flatMap((g) => g.items.map((i) => `${i.title} ${i.body}`)).join(" ")}`, href: `${home}#platform` },
-    { kind: "section", title: dict.workspace.tabs.overview, text: `${dict.workspace.title} ${dict.workspace.body}`, href: `${home}#workspace` },
-    { kind: "section", title: dict.nav.howItWorks, text: `${dict.how.title} ${dict.how.steps.map((s) => `${s.title} ${s.body}`).join(" ")} ${dict.how.boundary}`, href: `${home}#how-it-works` },
-    { kind: "section", title: dict.nav.deployment, text: `${dict.deployment.title} ${dict.deployment.body} ${dict.deployment.dimensions.map((d) => `${d.title} ${d.body}`).join(" ")}`, href: `${home}#deployment` },
-    { kind: "section", title: dict.name.title, text: `${dict.name.word} ${dict.name.meaning} ${dict.name.body}`, href: `${home}#name` },
-    ...dict.faq.items.map((item, i) => ({ kind: "faq" as const, title: item.question, text: item.answer, href: `${home}#${faqSlug(i)}` })),
-    { kind: "page", title: dict.demo.form.title, text: `${dict.demo.title} ${dict.demo.body}`, href: `${home}/demo` },
-    ...([
-      [privacyDoc, "privacy"],
-      [cookiesDoc, "cookies"],
-      [termsDoc, "terms"],
-    ] as const).map(([doc, path]) => ({
-      kind: "page" as const,
-      title: doc[locale].title,
-      text: `${doc[locale].description} ${doc[locale].sections.map((s) => s.heading).join(" ")}`,
-      href: `${home}/${path}`,
-    })),
+    { kind: "section", title: dict.nav.howItWorks, text: `${dict.how.title} ${dict.how.body} ${dict.how.steps.map((s) => `${s.title} ${s.fact}`).join(" ")}`, href: `${home}#how-it-works` },
+    { kind: "section", title: dict.nav.platform, text: `${dict.packs.title} ${dict.packs.body} ${dict.packs.soc.name} ${dict.packs.soc.systems} ${dict.packs.others.map((p) => `${p.name} ${p.systems}`).join(" ")}`, href: `${home}#platform` },
+    { kind: "section", title: dict.nav.deployment, text: `${dict.deployment.title} ${dict.deployment.body} ${dict.deployment.options.map((o) => `${o.title} ${o.facts.join(" ")}`).join(" ")}`, href: `${home}#deployment` },
+    { kind: "page", title: dict.meet.title, text: `${dict.meet.body} ${dict.demo.title} ${dict.demo.body}`, href: bookingHref(locale, dict) },
+    ...(["privacy", "cookies", "terms"] as const).map((path) => {
+      const doc = dict.legal[path]
+      return {
+        kind: "page" as const,
+        title: doc.title,
+        text: `${doc.description} ${doc.sections.map((s) => s.heading).join(" ")}`,
+        href: `${home}/${path}`,
+      }
+    }),
   ]
 }
 

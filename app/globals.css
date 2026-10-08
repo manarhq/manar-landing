@@ -5,437 +5,274 @@
 @custom-variant dark (&:is(.dark *));
 
 /*
- * Manar brand tokens: night sea and a lamp-amber signal.
- * Semantic tokens (--page, --surface, ...) are the source of truth; the shadcn
- * variables below are mapped from them so every primitive follows the brand.
- * Light values ("fog") live on :root, dark values ("night") on .dark.
- * One accent only: amber. Status colours carry state, never decoration.
+ * Manar design system: Stone + UAE red (docs/design/DESIGN-SYSTEM.md section 2).
+ * The same token names and values live in manar-web. Change both repos on the same day.
+ * Light values on :root, dark values on .dark (set before paint by the layout script).
  */
 :root {
-  --page: #f3f5f7;
-  --surface: #fbfcfd;
-  --elevated: #e7ebef;
-  --text: #0f1720;
-  --text-muted: #4b5866;
-  --divider: #d3dae1;
-  --control: #7d8b99;
-  --action: #e9a526;
-  --action-text: #0f1720;
-  --action-hover: #f2b441;
-  --link: #8a5a00;
+  --page: #f4f4f2;
+  --surface: #fafaf8;
+  --elevated: #fffffe;
+  --line: #dcdcd6;
+  --line-strong: #c4c4bd;
+  --text: #17171a;
+  --muted: #5c5c61;
+  --ink: #17171a;
+  --ink-text: #fafaf8;
+  --accent: #b3261e;
+  --accent-hover: #951f18;
+  --accent-text: #fffffe;
+  --accent-soft: #f6e3e1;
+  --allow: #1e6f48;
+  --allow-soft: #e1f0e7;
+  --wait: #8a5300;
+  --wait-soft: #f7ebd6;
+  --deny: #b3261e;
+  --deny-soft: #f6e3e1;
+  --focus: #b3261e;
+  --shadow-pop: 0 8px 24px rgb(23 23 26 / 0.12);
 
-  --success: #0f7a58;
-  --warning: #8a5a00;
-  --danger: #b42318;
+  --app-font-sans: var(--font-plex-sans), ui-sans-serif, system-ui, sans-serif;
+  --app-font-mono: var(--font-plex-mono), ui-monospace, monospace;
 
-  /* The lamp: rgb triplet for alpha blends. */
-  --beam: 214 150 30;
-  --beam-strength: 0.16;
-  --grain: 0.035;
-
-  /* Read by the WebGL scenes in components/three. */
-  --scene-sky: #dfe5eb;
-  --scene-sea: #b9c6d2;
-  --scene-tower: #1b2632;
-  --scene-beam: #d9961e;
-
-  --app-font-sans: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
-  --app-font-mono: var(--font-geist-mono), ui-monospace, monospace;
-
-  /* Layering scale (W44). Use these, never ad-hoc z values. */
-  --z-raised: 10;
+  /* Layering scale. Use these, never ad-hoc z values. */
   --z-header: 40;
   --z-float: 45;
   --z-banner: 50;
   --z-overlay: 60;
   --z-skip: 70;
-  --z-grain: 80;
 
   color-scheme: light;
 }
 
 .dark {
-  --page: #0b1016;
-  --surface: #111922;
-  --elevated: #19232e;
-  --text: #e8edf2;
-  --text-muted: #97a3b1;
-  --divider: #223040;
-  --control: #4d5e70;
-  --action: #f2b441;
-  --action-text: #0b1016;
-  --action-hover: #f7c565;
-  --link: #f2b441;
-
-  --success: #4fd1a5;
-  --warning: #f2b441;
-  --danger: #f47067;
-
-  --beam: 242 180 65;
-  --beam-strength: 0.2;
-  --grain: 0.05;
-
-  --scene-sky: #0b1016;
-  --scene-sea: #0e1620;
-  --scene-tower: #d9dee4;
-  --scene-beam: #f2b441;
+  --page: #121212;
+  --surface: #1a1a1b;
+  --elevated: #222224;
+  --line: #2e2e31;
+  --line-strong: #45454a;
+  --text: #ededeb;
+  --muted: #a6a6a9;
+  --ink: #ededeb;
+  --ink-text: #121212;
+  --accent: #f0675e;
+  --accent-hover: #f4847c;
+  --accent-text: #121212;
+  --accent-soft: #3a1d1b;
+  --allow: #5bc891;
+  --allow-soft: #173326;
+  --wait: #f0b44c;
+  --wait-soft: #3a2c12;
+  --deny: #f0675e;
+  --deny-soft: #3a1d1b;
+  --focus: #f0675e;
+  --shadow-pop: 0 8px 24px rgb(0 0 0 / 0.5);
 
   color-scheme: dark;
 }
 
 :root:lang(ar) {
-  --app-font-sans: var(--font-plex-arabic), var(--font-geist), ui-sans-serif, system-ui, sans-serif;
+  --app-font-sans: var(--font-plex-arabic), var(--font-plex-sans), ui-sans-serif, system-ui, sans-serif;
 }
 
-/* shadcn/ui variable mapping */
-:root,
-.dark {
-  --background: var(--page);
-  --foreground: var(--text);
-  --card: var(--surface);
-  --card-foreground: var(--text);
-  --popover: var(--surface);
-  --popover-foreground: var(--text);
-  --primary: var(--action);
-  --primary-foreground: var(--action-text);
-  --secondary: var(--elevated);
-  --secondary-foreground: var(--text);
-  --muted: var(--elevated);
-  --muted-foreground: var(--text-muted);
-  --accent: var(--elevated);
-  --accent-foreground: var(--text);
-  --destructive: var(--danger);
-  --border: var(--divider);
-  --input: var(--control);
-  --ring: var(--link);
-}
-
-.dark {
-  --popover: var(--elevated);
-}
-
+/*
+ * Tailwind and shadcn mapping. shadcn's own names (muted = a fill, accent = a hover fill) clash
+ * with the design tokens, so the utilities are mapped here directly: bg-muted is a quiet fill,
+ * text-muted-foreground is --muted text, and accent is always the brand red.
+ */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-card: var(--card);
-  --color-card-foreground: var(--card-foreground);
-  --color-popover: var(--popover);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-primary: var(--primary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-secondary: var(--secondary);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-muted: var(--muted);
-  --color-muted-foreground: var(--muted-foreground);
+  --color-background: var(--page);
+  --color-foreground: var(--text);
+  --color-card: var(--surface);
+  --color-card-foreground: var(--text);
+  --color-popover: var(--elevated);
+  --color-popover-foreground: var(--text);
+  --color-primary: var(--accent);
+  --color-primary-foreground: var(--accent-text);
+  --color-secondary: var(--surface);
+  --color-secondary-foreground: var(--text);
+  --color-muted: var(--elevated);
+  --color-muted-foreground: var(--muted);
   --color-accent: var(--accent);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-destructive: var(--destructive);
-  --color-border: var(--border);
-  --color-input: var(--input);
-  --color-ring: var(--ring);
+  --color-accent-foreground: var(--accent-text);
+  --color-destructive: var(--deny);
+  --color-border: var(--line);
+  --color-input: var(--line-strong);
+  --color-ring: var(--focus);
 
   --color-page: var(--page);
   --color-surface: var(--surface);
   --color-elevated: var(--elevated);
-  --color-divider: var(--divider);
-  --color-control: var(--control);
-  --color-action-hover: var(--action-hover);
-  --color-link: var(--link);
-  --color-success: var(--success);
-  --color-warning: var(--warning);
-  --color-danger: var(--danger);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-ink: var(--ink);
+  --color-ink-text: var(--ink-text);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-soft: var(--accent-soft);
+  --color-allow: var(--allow);
+  --color-allow-soft: var(--allow-soft);
+  --color-wait: var(--wait);
+  --color-wait-soft: var(--wait-soft);
+  --color-deny: var(--deny);
+  --color-deny-soft: var(--deny-soft);
 
   --font-sans: var(--app-font-sans);
   --font-heading: var(--app-font-sans);
   --font-mono: var(--app-font-mono);
 
-  /* One radius system: controls 10px, panels 16px, pills full. */
-  --radius-sm: 6px;
-  --radius-md: 10px;
-  --radius-lg: 16px;
-  --radius-xl: 16px;
-  --radius-2xl: 24px;
+  /* Type scale from DESIGN-SYSTEM.md section 3 (px / line height). */
+  --text-4xl: 2.25rem;
+  --text-4xl--line-height: 2.75rem;
+  --text-5xl: 3rem;
+  --text-5xl--line-height: 3.5rem;
+  --text-6xl: 3.75rem;
+  --text-6xl--line-height: 4rem;
 
-  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  /* One radius: 6px for everything, 4px for badges and checkboxes. */
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 6px;
+  --radius-xl: 6px;
+  --radius-2xl: 6px;
+  --radius-3xl: 6px;
+  --radius-4xl: 4px;
+
+  --shadow-pop: var(--shadow-pop);
 }
 
 @layer base {
   * {
-    @apply border-border outline-ring/50;
+    @apply border-border;
   }
   html {
     @apply font-sans;
     -webkit-text-size-adjust: 100%;
-    scroll-behavior: smooth;
-    scroll-padding-top: 5.5rem;
+    scroll-padding-top: 5rem;
   }
   body {
     @apply bg-background text-foreground antialiased;
-    text-rendering: optimizeLegibility;
-    font-feature-settings: "kern", "ss01";
   }
+  /* Arabic: same sizes, line height +4px, never tracked or uppercased. */
   :lang(ar) body {
     line-height: 1.75;
   }
+  :lang(ar) :is(h1, h2, h3) {
+    letter-spacing: 0;
+    line-height: calc(1em + 1.25rem);
+  }
   ::selection {
-    background: rgb(var(--beam) / 0.3);
+    background: var(--accent-soft);
+    color: var(--text);
   }
   :focus-visible {
-    outline: 2px solid var(--link);
+    outline: 2px solid var(--focus);
     outline-offset: 2px;
   }
-  @media (prefers-reduced-motion: reduce) {
+  @media (prefers-reduced-motion: no-preference) {
     html {
-      scroll-behavior: auto;
+      scroll-behavior: smooth;
     }
+  }
+  @media (prefers-reduced-motion: reduce) {
     *,
     *::before,
     *::after {
-      animation-duration: 0.01ms !important;
-      animation-iteration-count: 1 !important;
+      animation: none !important;
       transition-duration: 0.01ms !important;
     }
   }
 }
 
 @layer components {
-  /* The single eyebrow style: amber, tracked in Latin script only. */
-  .eyebrow {
-    @apply inline-flex items-center gap-2.5 text-[0.8125rem] font-medium text-link;
-  }
-  :lang(en) .eyebrow {
-    @apply font-mono text-xs tracking-[0.14em] uppercase;
-  }
-
-  .display {
-    @apply font-heading font-semibold text-balance text-foreground;
-    font-size: clamp(2.6rem, 1.4rem + 4.6vw, 5.25rem);
-    line-height: 0.98;
-    letter-spacing: -0.045em;
-  }
-  :lang(ar) .display {
-    font-size: clamp(2.35rem, 1.3rem + 4vw, 4.4rem);
-    line-height: 1.3;
-    letter-spacing: 0;
-  }
-
-  .headline {
-    @apply font-heading font-semibold text-balance text-foreground;
-    font-size: clamp(2rem, 1.35rem + 2.4vw, 3.25rem);
-    line-height: 1.04;
-    letter-spacing: -0.035em;
-  }
-  :lang(ar) .headline {
-    line-height: 1.4;
-    letter-spacing: 0;
-  }
-
-  .lede {
-    @apply text-lg leading-relaxed text-muted-foreground text-pretty sm:text-xl;
-  }
-  :lang(ar) .lede {
-    line-height: 1.85;
-  }
-
   .shell {
-    @apply mx-auto w-full max-w-[1320px] px-4 sm:px-6 lg:px-10;
+    @apply mx-auto w-full max-w-[1248px] px-4 md:px-6;
   }
 
-  /* Header: clear over the hero, frosted once the page scrolls. Solid where scroll timelines are unsupported. */
-  .header-surface {
-    background: color-mix(in oklab, var(--page) 88%, transparent);
-    border-color: color-mix(in oklab, var(--divider) 70%, transparent);
-    backdrop-filter: blur(14px) saturate(140%);
+  /* The one small uppercase label (at most one per three sections). Latin only. */
+  .label-caps {
+    @apply text-xs font-medium text-muted-foreground;
   }
-  @supports (animation-timeline: scroll()) {
-    .header-surface {
-      animation: header-settle linear both;
-      animation-timeline: scroll(root block);
-      animation-range: 0 120px;
-    }
-  }
-
-  .panel {
-    @apply rounded-lg border border-border bg-card;
+  :lang(en) .label-caps {
+    @apply tracking-[0.04em] uppercase;
   }
 
   .ltr-fragment {
     direction: ltr;
     unicode-bidi: isolate;
   }
-
-  /* Soft lamp glow behind focal content. */
-  .glow {
-    pointer-events: none;
-    background: radial-gradient(closest-side, rgb(var(--beam) / calc(var(--beam-strength) * 0.9)), transparent);
-  }
-
-  /* A sweeping cone of light, used where the WebGL scene is not. */
-  .beam {
-    pointer-events: none;
-    background: conic-gradient(
-      from 0deg at 50% 0%,
-      transparent 0deg,
-      transparent 158deg,
-      rgb(var(--beam) / calc(var(--beam-strength) * 0.35)) 170deg,
-      rgb(var(--beam) / var(--beam-strength)) 180deg,
-      rgb(var(--beam) / calc(var(--beam-strength) * 0.35)) 190deg,
-      transparent 202deg,
-      transparent 360deg
-    );
-    mask-image: linear-gradient(to bottom, black 0%, black 30%, transparent 92%);
-  }
-
-  /* Faint film grain on a fixed layer only, never on scrolling containers. */
-  .grain {
-    position: fixed;
-    inset: 0;
-    z-index: var(--z-grain);
-    pointer-events: none;
-    opacity: var(--grain);
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  }
-
-  /* Reading progress (W08): a CSS scroll timeline, so it costs no JavaScript. */
-  .scroll-progress {
-    display: none;
-  }
-  @supports (animation-timeline: scroll()) {
-    .scroll-progress {
-      display: block;
-      position: fixed;
-      inset-inline: 0;
-      top: 0;
-      z-index: calc(var(--z-header) + 1);
-      height: 2px;
-      pointer-events: none;
-      background: var(--action);
-      transform: scaleX(0);
-      transform-origin: left;
-      animation: progress-grow linear both;
-      animation-timeline: scroll(root block);
-    }
-    [dir="rtl"] .scroll-progress {
-      transform-origin: right;
-    }
-  }
 }
 
-/* Scroll reveal: sections rise into place as they enter. Pure CSS, skipped when unsupported or reduced. */
+/*
+ * The one hero animation (DESIGN-SYSTEM.md section 6): on load, the example request moves
+ * from "needs approval" to "recorded". Markers fill in order and the status badge switches
+ * once the approval lands. Text never fades, so contrast holds at every frame. The resting
+ * state is the final state, which is what reduced motion and no-animation browsers show.
+ */
 @media (prefers-reduced-motion: no-preference) {
-  @supports (animation-timeline: view()) {
-    .reveal {
-      animation: reveal linear both;
-      animation-timeline: view();
-      animation-range: entry 0% entry 55%;
-    }
+  .flow-mark {
+    animation: flow-mark 200ms ease-out both;
+    animation-delay: calc(400ms + var(--i) * 550ms);
+  }
+  .flow-line {
+    transform-origin: top;
+    animation: flow-line 2200ms linear both 400ms;
+  }
+  .flow-before {
+    animation: flow-hide 1ms step-end both;
+    animation-delay: calc(400ms + var(--at) * 550ms);
+  }
+  .flow-after {
+    animation: flow-show 1ms step-end both;
+    animation-delay: calc(400ms + var(--at) * 550ms);
   }
 }
-
-/* Manifesto words: dim until the line is read, then lit. Stays fully lit without support. */
-@media (prefers-reduced-motion: no-preference) {
-  @supports (animation-timeline: view()) {
-    .word-lit {
-      animation: word-lit linear both;
-      animation-timeline: view();
-      animation-range: cover calc(12% + var(--i) * 2.2%) cover calc(22% + var(--i) * 2.2%);
-    }
-  }
+.flow-before {
+  visibility: hidden;
 }
 
-@keyframes word-lit {
+@keyframes flow-mark {
   from {
-    opacity: 0.45;
+    background-color: var(--surface);
+    border-color: var(--line-strong);
+    color: var(--muted);
+  }
+}
+@keyframes flow-line {
+  from {
+    transform: scaleY(0);
+  }
+}
+@keyframes flow-hide {
+  from {
+    visibility: visible;
   }
   to {
-    opacity: 1;
+    visibility: hidden;
   }
 }
-
-/* Product frame: tilted back as it enters, level once in view. */
-@media (prefers-reduced-motion: no-preference) {
-  @supports (animation-timeline: view()) {
-    .tilt-in {
-      transform-origin: 50% 100%;
-      animation: tilt-in linear both;
-      animation-timeline: view();
-      animation-range: entry 0% cover 40%;
-    }
-  }
-}
-
-@keyframes tilt-in {
+@keyframes flow-show {
   from {
-    opacity: 0.4;
-    transform: perspective(1400px) rotateX(14deg) scale(0.94);
+    visibility: hidden;
   }
   to {
-    opacity: 1;
-    transform: none;
+    visibility: visible;
   }
 }
 
-@keyframes reveal {
-  from {
-    opacity: 0;
-    transform: translateY(28px);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
-}
-
-@keyframes header-settle {
-  from {
-    background: transparent;
-    border-color: transparent;
-    backdrop-filter: none;
-  }
-}
-
-@keyframes progress-grow {
-  from {
-    transform: scaleX(0);
-  }
-  to {
-    transform: scaleX(1);
-  }
-}
-
-@keyframes rise {
-  from {
-    opacity: 0;
-    transform: translateY(14px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@utility animate-rise {
-  animation: rise 0.9s var(--ease-out-expo) both;
-}
-
-/* W10: print the words, not the chrome. */
+/* Print the words, not the chrome. */
 @media print {
   :root,
   .dark {
-    --page: #fff;
-    --surface: #fff;
-    --elevated: #f2f2f2;
-    --text: #111;
-    --text-muted: #333;
-    --divider: #bbb;
-    --link: #111;
+    --page: #fffffe;
+    --surface: #fffffe;
+    --elevated: #fffffe;
+    --text: #17171a;
+    --muted: #3a3a3e;
+    --line: #c4c4bd;
     color-scheme: light;
   }
   [data-print="hide"],
-  header,
-  canvas,
-  .grain,
-  .scroll-progress {
+  header {
     display: none !important;
   }
   main a[href^="http"]::after {
@@ -444,10 +281,5 @@
   }
   section {
     break-inside: avoid-page;
-  }
-  .reveal {
-    animation: none !important;
-    opacity: 1 !important;
-    transform: none !important;
   }
 }

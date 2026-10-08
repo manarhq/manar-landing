@@ -31,10 +31,10 @@ export function LanguageSwitch({
       hrefLang={localeTag[target]}
       lang={localeTag[target]}
       aria-label={accessibleLabel}
-      className={cn(buttonVariants({ variant: "ghost", size: "sm" }), "gap-2 px-2.5 font-semibold", className)}
+      className={cn(buttonVariants({ variant: "ghost", size: "sm" }), "gap-2 px-3", className)}
     >
       <TranslateIcon aria-hidden className="text-muted-foreground" />
-      <span className={target === "ar" ? "font-[family-name:var(--font-plex-arabic)] text-[0.95rem]" : ""}>
+      <span className={target === "ar" ? "font-[family-name:var(--font-plex-arabic)]" : ""}>
         {label}
       </span>
     </Link>

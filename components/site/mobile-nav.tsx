@@ -16,10 +16,12 @@ export function MobileNav({
   locale,
   items,
   labels,
+  bookingHref,
 }: {
   locale: Locale
   items: NavItem[]
   labels: { open: string; close: string; title: string; bookDemo: string; endorsement: string; navLabel: string }
+  bookingHref: string
 }) {
   const [open, setOpen] = useState(false)
   const pathname = usePathname()
@@ -39,27 +41,27 @@ export function MobileNav({
       <SheetContent
         side={locale === "ar" ? "left" : "right"}
         closeLabel={labels.close}
-        className="w-[min(88vw,22rem)] gap-0 border-border bg-background p-0"
+        className="w-[min(88vw,22rem)] gap-0 border-line bg-page p-0"
       >
-        <div className="border-b border-border px-5 pt-5 pb-4">
+        <div className="border-b border-line px-4 pt-4 pb-4">
           <SheetTitle className="text-base font-semibold">{labels.title}</SheetTitle>
           <SheetDescription className="sr-only">{labels.endorsement}</SheetDescription>
         </div>
-        <nav aria-label={labels.navLabel} className="flex flex-col px-3 py-3">
+        <nav aria-label={labels.navLabel} className="flex flex-col p-2">
           {items.map((item) => (
             <Link
               key={item.href}
               href={item.href}
               onClick={() => setOpen(false)}
-              className="flex min-h-12 items-center rounded-md px-3 text-lg font-medium text-foreground transition-colors hover:bg-elevated"
+              className="flex min-h-11 items-center rounded-md px-3 text-lg font-medium text-foreground transition-colors duration-[120ms] hover:bg-surface"
             >
               {item.label}
             </Link>
           ))}
         </nav>
-        <div className="mt-auto border-t border-border p-5">
+        <div className="mt-auto border-t border-line p-4">
           <Link
-            href={`/${locale}/demo`}
+            href={bookingHref}
             onClick={() => setOpen(false)}
             className={cn(buttonVariants({ size: "lg" }), "w-full")}
           >
