@@ -1,37 +1,17 @@
 import { DirectionProvider } from "@base-ui/react/direction-provider"
 import type { Viewport } from "next"
-import { IBM_Plex_Mono, IBM_Plex_Sans, IBM_Plex_Sans_Arabic } from "next/font/google"
 import { notFound } from "next/navigation"
+import { preload } from "react-dom"
 
 import { SiteChrome } from "@/components/site/site-chrome"
 import { getContent } from "@/lib/content/load"
+import { fontVariables, localeFontPreloads } from "@/lib/fonts"
 import { isLocale, localeDirection, localeTag, locales } from "@/lib/i18n/config"
 import { consentPendingScript } from "@/lib/consent"
 import { CF_BEACON_TOKEN, THEME_STORAGE_KEY } from "@/lib/site"
 
 import "../globals.css"
 
-const plexSans = IBM_Plex_Sans({
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
-  variable: "--font-plex-sans",
-  display: "swap",
-})
-
-const plexMono = IBM_Plex_Mono({
-  subsets: ["latin"],
-  weight: ["400", "500"],
-  variable: "--font-plex-mono",
-  display: "swap",
-  preload: false,
-})
-
-const plexArabic = IBM_Plex_Sans_Arabic({
-  subsets: ["arabic"],
-  weight: ["400", "500", "600"],
-  variable: "--font-plex-arabic",
-  display: "swap",
-})
 
 export const dynamicParams = false
 
@@ -60,12 +40,13 @@ export default async function RootLayout({ children, params }: LayoutProps<"/[la
   if (!isLocale(lang)) notFound()
   const dict = await getContent(lang)
   const dir = localeDirection[lang]
+  for (const href of localeFontPreloads[lang]) preload(href, { as: "font", type: "font/woff2", crossOrigin: "anonymous" })
 
   return (
     <html
       lang={localeTag[lang]}
       dir={dir}
-      className={`${plexSans.variable} ${plexMono.variable} ${plexArabic.variable}`}
+      className={fontVariables}
       suppressHydrationWarning
     >
       <head>

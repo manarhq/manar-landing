@@ -6,11 +6,11 @@ import { useRouter } from "next/navigation"
 import { useDeferredValue, useEffect, useId, useState } from "react"
 
 import type { Dictionary } from "@/lib/i18n/dictionaries"
-import { format } from "@/lib/i18n/dictionaries"
+import { format } from "@/lib/i18n/format"
 import { searchEntries, type SearchEntry } from "@/lib/search-index"
 import { cn } from "@/lib/utils"
 
-export const OPEN_SEARCH_EVENT = "manar:open-search"
+import { OPEN_SEARCH_EVENT } from "./events"
 
 const kindIcon = { section: HashIcon, page: FileTextIcon }
 

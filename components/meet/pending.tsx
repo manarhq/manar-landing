@@ -3,7 +3,8 @@
 import { useEffect, useRef, useState } from "react"
 
 import { Button } from "@/components/ui/button"
-import { format, type Dictionary } from "@/lib/i18n/dictionaries"
+import { format } from "@/lib/i18n/format"
+import type { Dictionary } from "@/lib/i18n/dictionaries"
 import { meetApi } from "@/lib/meet/api"
 
 import { CallSummary } from "./call-summary"

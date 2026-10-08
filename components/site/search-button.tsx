@@ -5,7 +5,7 @@ import { useSyncExternalStore } from "react"
 
 import { Button } from "@/components/ui/button"
 
-import { OPEN_SEARCH_EVENT } from "./search-dialog"
+import { OPEN_SEARCH_EVENT } from "./events"
 
 const isApple = () => /Mac|iPhone|iPad/.test(navigator.platform || navigator.userAgent)
 

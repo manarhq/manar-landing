@@ -1,11 +1,10 @@
 "use client"
 
+import dynamic from "next/dynamic"
 import Link from "next/link"
 import { useEffect, useRef, useState, useSyncExternalStore } from "react"
 
 import { Button } from "@/components/ui/button"
-import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog"
-import { Switch } from "@/components/ui/switch"
 import {
   analyticsAllowed,
   pickUtm,
@@ -20,7 +19,11 @@ import type { Locale } from "@/lib/i18n/config"
 import type { Dictionary } from "@/lib/i18n/dictionaries"
 import { CF_BEACON_TOKEN } from "@/lib/site"
 
-export const OPEN_CONSENT_EVENT = "manar:open-consent"
+import { OPEN_CONSENT_EVENT } from "./events"
+
+/** The settings dialog loads only when someone opens it, so it stays off the first-paint path. */
+const ConsentSettings = dynamic(() => import("./consent-settings").then((m) => m.ConsentSettings), { ssr: false })
+
 const BEACON_SRC = "https://static.cloudflareinsights.com/beacon.min.js"
 const TOKEN = Boolean(CF_BEACON_TOKEN)
 
@@ -141,52 +144,18 @@ export function Consent({ locale, labels }: { locale: Locale; labels: Dictionary
           </section>
       ) : null}
 
-      <Dialog open={prefsOpen} onOpenChange={setPrefsOpen}>
-        <DialogContent closeLabel={labels.dialogClose}>
-          <DialogTitle>{labels.title}</DialogTitle>
-          <DialogDescription>{labels.body}</DialogDescription>
-
-          <div className="divide-y divide-line rounded-md border border-line">
-            <Row title={labels.necessaryTitle} body={labels.necessaryBody}>
-              <Switch checked disabled aria-label={labels.necessaryTitle} />
-            </Row>
-            <Row title={labels.analyticsTitle} body={signal ? `${labels.analyticsBody} ${labels.signalNote}` : labels.analyticsBody}>
-              <Switch
-                checked={draft && !signal}
-                onCheckedChange={setDraft}
-                disabled={!TOKEN || signal}
-                aria-label={labels.analyticsTitle}
-              />
-            </Row>
-          </div>
-
-          <div className="flex flex-wrap items-center justify-between gap-4">
-            <span className="flex flex-wrap gap-4 text-sm">
-              <Link href={`/${locale}/cookies`} className="font-medium text-foreground underline underline-offset-4">
-                {labels.policy}
-              </Link>
-              <Link href={`/${locale}/privacy`} className="font-medium text-foreground underline underline-offset-4">
-                {labels.privacy}
-              </Link>
-            </span>
-            <Button size="lg" onClick={() => choose(draft && !signal)}>
-              {labels.save}
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
+      {prefsOpen ? (
+        <ConsentSettings
+          locale={locale}
+          labels={labels}
+          signal={signal}
+          tokenConfigured={TOKEN}
+          draft={draft}
+          setDraft={setDraft}
+          onClose={() => setPrefsOpen(false)}
+          onSave={() => choose(draft && !signal)}
+        />
+      ) : null}
     </>
-  )
-}
-
-function Row({ title, body, children }: { title: string; body: string; children: React.ReactNode }) {
-  return (
-    <div className="flex items-start justify-between gap-4 p-4">
-      <div>
-        <p className="text-sm font-semibold text-foreground">{title}</p>
-        <p className="mt-1 text-sm text-muted-foreground">{body}</p>
-      </div>
-      <div className="pt-1">{children}</div>
-    </div>
   )
 }
