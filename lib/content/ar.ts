@@ -232,7 +232,7 @@ const ar: Omit<SiteContent, "legal"> = {
       confirmedTitle: "تم حجز اجتماعك",
       confirmedBody: "دعوة التقويم في طريقها إلى بريدك.",
       slotTakenTitle: "حُجز هذا الوقت",
-      slotTakenBody: "حجزه شخص آخر قبل تأكيدك. بياناتك محفوظة، فاختيار وقت جديد سريع.",
+      slotTakenBody: "حجزه شخص آخر قبل تأكيدك. يُرجى اختيار وقت آخر.",
       slotTakenCta: "اختر وقتًا آخر",
       expiredTitle: "انتهت صلاحية هذا الرابط",
       expiredBody: "انتهت مدة حجز الوقت قبل تأكيده.",

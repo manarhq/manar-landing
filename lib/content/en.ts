@@ -232,7 +232,7 @@ const en: Omit<SiteContent, "legal"> = {
       confirmedTitle: "Your meeting is booked",
       confirmedBody: "A calendar invitation is on its way to your inbox.",
       slotTakenTitle: "That time was taken",
-      slotTakenBody: "Someone booked it before you confirmed. Your details are kept, so picking a new time is quick.",
+      slotTakenBody: "Someone booked it before you confirmed. Please pick another time.",
       slotTakenCta: "Pick another time",
       expiredTitle: "This link has expired",
       expiredBody: "The hold on the time ran out before it was confirmed.",
