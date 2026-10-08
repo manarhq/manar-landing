@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils"
 
 const choice = (active: boolean) =>
   cn(
-    "inline-flex h-11 items-center justify-center rounded-md border px-4 text-sm font-medium transition-colors duration-[120ms] active:translate-y-px focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring",
+    "inline-flex h-11 items-center justify-center rounded-md border px-4 text-sm font-medium transition-colors duration-[120ms] active:translate-y-px focus-visible:outline-2 focus-visible:outline-solid focus-visible:outline-offset-2 focus-visible:outline-ring",
     active ? "border-ink bg-ink text-ink-text" : "border-line bg-elevated text-foreground hover:bg-subtle"
   )
 
