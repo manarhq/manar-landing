@@ -1,6 +1,6 @@
 import type { Locale } from "@/lib/i18n/config"
 
-import type { LegalDoc } from "./types"
+import type { LegalDoc } from "../schema.ts"
 
 const ENTITY_EN = "[Registered entity name and address to be confirmed]"
 const ENTITY_AR = "[اسم الجهة المسجلة وعنوانها قيد التأكيد]"

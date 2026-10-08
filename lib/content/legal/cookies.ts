@@ -1,6 +1,6 @@
 import type { Locale } from "@/lib/i18n/config"
 
-import type { LegalDoc } from "./types"
+import type { LegalDoc } from "../schema.ts"
 
 export const cookies: Record<Locale, LegalDoc> = {
   en: {

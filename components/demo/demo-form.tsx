@@ -23,7 +23,6 @@ import {
 } from "@/lib/demo/validation"
 import type { Locale } from "@/lib/i18n/config"
 import { format, type Dictionary } from "@/lib/i18n/dictionaries"
-import { CONTACT_EMAIL } from "@/lib/site"
 import { cn } from "@/lib/utils"
 
 type FormText = Dictionary["demo"]["form"]
@@ -31,7 +30,7 @@ type Status = "idle" | "submitting" | "success" | "failure" | "rate_limited"
 
 const fieldOrder: DemoFieldName[] = ["name", "email", "organization", "role", "deployment", "message"]
 
-export function DemoForm({ locale, t }: { locale: Locale; t: FormText }) {
+export function DemoForm({ locale, t, email }: { locale: Locale; t: FormText; email: string }) {
   const [values, setValues] = useState<DemoRequestInput>(emptyDemoRequest)
   const [errors, setErrors] = useState<FieldErrors>({})
   const [attempted, setAttempted] = useState(false)
@@ -119,17 +118,15 @@ export function DemoForm({ locale, t }: { locale: Locale; t: FormText }) {
 
   if (status === "success" && submitted) {
     return (
-      <div className="rounded-xl border border-border bg-card p-6 sm:p-10" role="status">
-        <span className="flex size-12 items-center justify-center rounded-lg border border-success/40 bg-success/10 text-success">
-          <CheckCircleIcon aria-hidden className="size-6" />
-        </span>
-        <h2 ref={successHeading} tabIndex={-1} className="mt-6 text-2xl font-semibold text-foreground outline-none sm:text-3xl">
+      <div className="rounded-md border border-line bg-surface p-6 md:p-8" role="status">
+        <CheckCircleIcon aria-hidden weight="fill" className="size-8 text-allow" />
+        <h2 ref={successHeading} tabIndex={-1} className="mt-6 text-2xl font-semibold text-foreground outline-none">
           {t.success.title}
         </h2>
-        <p className="mt-3 max-w-lg text-lg leading-relaxed text-muted-foreground">
+        <p className="mt-3 max-w-lg text-lg text-muted-foreground">
           {renderWithFragments(t.success.body, submitted)}
         </p>
-        <Link href={`/${locale}`} className={cn(buttonVariants({ variant: "outline", size: "lg" }), "mt-8")}>
+        <Link href={`/${locale}`} className={cn(buttonVariants({ variant: "secondary", size: "lg" }), "mt-8")}>
           {t.success.back}
         </Link>
       </div>
@@ -146,7 +143,7 @@ export function DemoForm({ locale, t }: { locale: Locale; t: FormText }) {
       onSubmit={onSubmit}
       aria-labelledby="demo-form-title"
       aria-busy={submitting}
-      className="relative rounded-xl border border-border bg-card p-5 shadow-[0_40px_90px_-50px_rgb(0_0_0/0.5)] sm:p-8 lg:p-10"
+      className="relative rounded-md border border-line bg-surface p-4 md:p-8"
     >
       <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-2">
         <h2 id="demo-form-title" className="text-2xl font-semibold text-foreground">
@@ -157,27 +154,27 @@ export function DemoForm({ locale, t }: { locale: Locale; t: FormText }) {
 
       <div ref={feedbackRef} tabIndex={-1} aria-live="assertive" className="outline-none">
         {status === "failure" || status === "rate_limited" ? (
-          <div className="mt-6 flex gap-3 rounded-lg border border-danger/40 bg-danger/10 p-4 text-sm">
-            <WarningCircleIcon aria-hidden className="mt-0.5 size-5 shrink-0 text-danger" />
+          <div className="mt-6 flex gap-3 rounded-md bg-deny-soft p-4 text-sm">
+            <WarningCircleIcon aria-hidden className="size-5 shrink-0 text-deny" />
             <div>
               <p className="font-semibold text-foreground">
                 {status === "failure" ? t.failure.title : t.rateLimited.title}
               </p>
-              <p className="mt-1 leading-relaxed text-foreground/90">
+              <p className="mt-1 text-foreground">
                 {status === "failure" ? t.failure.body : t.rateLimited.body}{" "}
-                <a href={`mailto:${CONTACT_EMAIL}`} className="ltr-fragment font-semibold text-link underline underline-offset-4">
-                  {CONTACT_EMAIL}
+                <a href={`mailto:${email}`} className="ltr-fragment font-medium text-foreground underline underline-offset-4">
+                  {email}
                 </a>
               </p>
             </div>
           </div>
         ) : null}
       </div>
-      <p aria-live="polite" className={cn("text-sm font-medium text-danger", attempted && errorCount > 0 ? "mt-6" : "sr-only")}>
+      <p aria-live="polite" className={cn("text-sm font-medium text-deny", attempted && errorCount > 0 ? "mt-6" : "sr-only")}>
         {attempted && errorCount > 0 ? t.errors.summary : ""}
       </p>
 
-      <div className="mt-7 grid gap-6 sm:grid-cols-2">
+      <div className="mt-8 grid gap-4 sm:grid-cols-2">
         <TextField
           field="name"
           label={t.fields.name.label}
@@ -287,8 +284,13 @@ export function DemoForm({ locale, t }: { locale: Locale; t: FormText }) {
         </div>
       </div>
 
-      <div className="mt-8 flex flex-col gap-4 border-t border-border pt-6 sm:flex-row sm:items-center sm:justify-between">
-        <p className="max-w-sm text-sm leading-relaxed text-muted-foreground">{t.notice}</p>
+      <div className="mt-8 flex flex-col gap-4 border-t border-line pt-6 sm:flex-row sm:items-center sm:justify-between">
+        <p className="max-w-sm text-sm text-muted-foreground">
+          {t.notice}{" "}
+          <Link href={`/${locale}/privacy`} className="font-medium text-foreground underline underline-offset-4">
+            {t.noticeLink}
+          </Link>
+        </p>
         <Button type="submit" size="lg" disabled={submitting} className="w-full sm:w-auto">
           {submitting ? <CircleNotchIcon aria-hidden className="animate-spin" /> : null}
           {submitting ? t.submitting : status === "failure" ? t.failure.retry : t.submit}
@@ -307,11 +309,11 @@ function LabelRow({ htmlFor, label, optionalLabel, required, requiredMark }: {
 }) {
   return (
     <div className="flex items-baseline justify-between gap-3">
-      <FieldLabel htmlFor={htmlFor} className="text-sm font-semibold text-foreground">
+      <FieldLabel htmlFor={htmlFor} className="text-sm font-medium text-foreground">
         {label}
         {required ? (
           <>
-            <span aria-hidden className="text-danger">
+            <span aria-hidden className="text-deny">
               *
             </span>
             <span className="sr-only">({requiredMark})</span>

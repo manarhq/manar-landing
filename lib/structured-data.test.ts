@@ -3,32 +3,21 @@ import { describe, it } from "node:test"
 
 import { homeStructuredData } from "./structured-data.ts"
 
-const faq = [
-  { question: "What does Manar govern?", answer: "The AI systems you register." },
-  { question: "Can text break out?", answer: "Not with </script> in it." },
-]
-
 function parse() {
   const json = homeStructuredData({
     origin: new URL("https://manar.vax.sh"),
     lang: "en",
-    description: "AI governance.",
-    faq,
+    description: "Not with </script> in it.",
     vaxUrl: "https://vax.sh",
     email: "nofal@vax.sh",
+    logo: "/brand/manar-lighthouse.png",
   })
   return { json, graph: JSON.parse(json)["@graph"] as Record<string, unknown>[] }
 }
 
 describe("homeStructuredData", () => {
-  it("emits one FAQ question per visible dictionary item, verbatim", () => {
-    const faqPage = parse().graph.find((node) => node["@type"] === "FAQPage") as {
-      mainEntity: { name: string; acceptedAnswer: { text: string } }[]
-    }
-    assert.deepEqual(
-      faqPage.mainEntity.map((q) => ({ question: q.name, answer: q.acceptedAnswer.text })),
-      faq,
-    )
+  it("emits no FAQPage, because the page shows no FAQ", () => {
+    assert.ok(!parse().graph.some((node) => node["@type"] === "FAQPage"))
   })
 
   it("links the site and the product to the publishing organization", () => {

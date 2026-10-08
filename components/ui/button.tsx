@@ -2,30 +2,32 @@ import { Button as ButtonPrimitive } from "@base-ui/react/button"
 import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "cn"
 
+/**
+ * DESIGN-SYSTEM.md section 8. Landing primary is red. Hover changes the fill only (120 ms colour
+ * transition, never opacity); press moves down one pixel. Heights: 32 compact, 36 default, 44 CTA.
+ */
 const buttonVariants = cva(
-  "group/button inline-flex shrink-0 items-center justify-center gap-2 rounded-full border border-transparent bg-clip-padding font-semibold whitespace-nowrap transition-[background-color,border-color,color,box-shadow,transform] duration-200 outline-none select-none focus-visible:ring-3 focus-visible:ring-ring/45 focus-visible:outline-none active:not-aria-[haspopup]:scale-[0.98] disabled:pointer-events-none disabled:opacity-60 aria-disabled:pointer-events-none aria-disabled:opacity-60 aria-invalid:border-destructive [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+  "inline-flex shrink-0 items-center justify-center gap-2 rounded-md border border-transparent font-medium whitespace-nowrap transition-colors duration-[120ms] outline-none select-none active:not-aria-[haspopup]:translate-y-px focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:pointer-events-none disabled:opacity-60 aria-disabled:pointer-events-none aria-disabled:opacity-60 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
   {
     variants: {
       variant: {
-        default:
-          "bg-primary text-primary-foreground shadow-[0_1px_0_rgb(255_255_255/0.35)_inset,0_10px_30px_-14px_rgb(var(--beam)/0.9)] hover:bg-action-hover",
-        outline:
-          "border-control/70 bg-transparent text-foreground hover:border-control hover:bg-elevated aria-expanded:bg-elevated",
-        secondary: "bg-secondary text-secondary-foreground hover:bg-[color-mix(in_oklab,var(--elevated),var(--text)_7%)]",
-        ghost: "text-muted-foreground hover:bg-elevated hover:text-foreground aria-expanded:bg-elevated aria-expanded:text-foreground",
-        destructive: "bg-destructive/10 text-destructive hover:bg-destructive/20",
-        link: "h-auto px-0 text-link underline-offset-4 hover:underline",
+        primary: "bg-primary text-primary-foreground hover:bg-accent-hover",
+        secondary:
+          "border-line-strong bg-surface text-foreground hover:border-line-strong hover:bg-elevated aria-expanded:bg-elevated",
+        ghost: "text-foreground hover:bg-surface aria-expanded:bg-surface",
+        destructive: "bg-deny text-accent-text hover:bg-accent-hover",
+        link: "h-auto px-0 text-foreground underline underline-offset-4 decoration-line-strong hover:decoration-current",
       },
       size: {
-        default: "h-10 px-4 text-sm",
-        sm: "h-9 px-3 text-sm",
-        lg: "h-12 px-6 text-[0.9375rem]",
-        icon: "size-10",
-        "icon-sm": "size-9",
+        sm: "h-8 px-3 text-sm",
+        default: "h-9 px-4 text-sm",
+        lg: "h-11 px-6 text-base",
+        icon: "size-9",
+        "icon-lg": "size-11",
       },
     },
     defaultVariants: {
-      variant: "default",
+      variant: "primary",
       size: "default",
     },
   }
@@ -33,17 +35,11 @@ const buttonVariants = cva(
 
 function Button({
   className,
-  variant = "default",
+  variant = "primary",
   size = "default",
   ...props
 }: ButtonPrimitive.Props & VariantProps<typeof buttonVariants>) {
-  return (
-    <ButtonPrimitive
-      data-slot="button"
-      className={cn(buttonVariants({ variant, size, className }))}
-      {...props}
-    />
-  )
+  return <ButtonPrimitive data-slot="button" className={cn(buttonVariants({ variant, size, className }))} {...props} />
 }
 
 export { Button, buttonVariants }
