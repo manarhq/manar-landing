@@ -1,54 +1,58 @@
-import { ArrowRightIcon } from "@phosphor-icons/react/ssr"
-import Link from "next/link"
+import { BuildingsIcon, CloudIcon } from "@phosphor-icons/react/ssr"
+import Image from "next/image"
 
-import { buttonVariants } from "@/components/ui/button"
-import type { Locale } from "@/lib/i18n/config"
 import type { Dictionary } from "@/lib/i18n/dictionaries"
-import { cn } from "@/lib/utils"
 
-/** Three independent decisions, each a row: the question on one side, the answers on the other. */
-export function Deployment({ locale, dict }: { locale: Locale; dict: Dictionary }) {
+import { SectionHeading } from "./section-heading"
+
+const optionIcons = [CloudIcon, BuildingsIcon]
+
+/** Headline, one wide photograph, then the two ways to run Manar as plain facts. */
+export function Deployment({ dict }: { dict: Dictionary }) {
   const d = dict.deployment
-
   return (
-    <section id="deployment" aria-labelledby="deployment-title" className="relative border-y border-border bg-card/40 py-24 sm:py-28 lg:py-40">
+    <section id="deployment" aria-labelledby="deployment-title" className="py-16 md:py-24">
       <div className="shell">
-        <div className="max-w-3xl">
-          <h2 id="deployment-title" className="headline">
-            {d.title}
-          </h2>
-          <p className="lede mt-5 max-w-[56ch]">{d.body}</p>
+        <SectionHeading id="deployment-title" title={d.title} body={d.body} />
+
+        <div className="relative mt-12 aspect-[4/3] overflow-hidden rounded-md bg-surface sm:aspect-[16/9] lg:aspect-[21/9]">
+          {/*
+            One photograph per theme, swapped by the same .dark class as the rest of the site (OS
+            preference or the theme toggle). Both are lazy: the hidden one is never fetched.
+          */}
+          <Image
+            src={dict.images.deployment.src}
+            alt={dict.images.deployment.alt}
+            fill
+            sizes="(min-width: 1248px) 1200px, 100vw"
+            className="object-cover object-[68%_60%] dark:hidden"
+          />
+          <Image
+            src={dict.images.deploymentDark.src}
+            alt={dict.images.deploymentDark.alt}
+            fill
+            sizes="(min-width: 1248px) 1200px, 100vw"
+            className="hidden object-cover object-[68%_60%] dark:block"
+          />
         </div>
 
-        <dl className="mt-16 lg:mt-20">
-          {d.dimensions.map((dim) => (
-            <div key={dim.title} className="reveal grid gap-4 border-t border-border py-10 lg:grid-cols-12 lg:gap-10 lg:py-12">
-              <dt className="lg:col-span-4">
-                <span className="block text-[clamp(1.75rem,1.3rem+1.4vw,2.5rem)] leading-none font-semibold tracking-[-0.03em] text-foreground rtl:leading-tight rtl:tracking-normal">
-                  {dim.title}
-                </span>
-                <span className="mt-3 block text-base text-link">{dim.question}</span>
-              </dt>
-              <dd className="lg:col-span-8">
-                <p className="max-w-[60ch] text-[1.0625rem] leading-relaxed text-muted-foreground">{dim.body}</p>
-                <ul className="mt-6 flex flex-wrap gap-2">
-                  {dim.options.map((option) => (
-                    <li key={option} className="rounded-full border border-control/60 bg-background px-4 py-2 text-sm font-medium text-foreground">
-                      {option}
-                    </li>
-                  ))}
-                </ul>
-              </dd>
-            </div>
-          ))}
-        </dl>
-
-        <div className="flex flex-col gap-6 border-t border-border pt-10 sm:flex-row sm:items-center sm:justify-between">
-          <p className="max-w-[60ch] text-sm leading-relaxed text-muted-foreground">{d.footnote}</p>
-          <Link href={`/${locale}/demo`} className={cn(buttonVariants({ variant: "outline", size: "lg" }), "group shrink-0")}>
-            {d.cta}
-            <ArrowRightIcon aria-hidden className="transition-transform group-hover:translate-x-0.5 rtl:-scale-x-100" />
-          </Link>
+        <div className="mt-12 grid gap-8 md:grid-cols-2 md:gap-12">
+          {d.options.map((option, i) => {
+            const Icon = optionIcons[i]
+            return (
+              <div key={option.title} className="flex gap-4">
+                <Icon aria-hidden className="mt-1 size-6 shrink-0 text-foreground" />
+                <div>
+                  <h3 className="text-xl font-semibold text-foreground">{option.title}</h3>
+                  <ul className="mt-2 grid gap-1 text-base text-muted-foreground">
+                    {option.facts.map((fact) => (
+                      <li key={fact}>{fact}</li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            )
+          })}
         </div>
       </div>
     </section>

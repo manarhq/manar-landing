@@ -1,18 +1,14 @@
+import { bundledContent } from "@/lib/content"
+import type { SiteContent } from "@/lib/content/schema"
+
 import type { Locale } from "../config"
-import ar from "./ar"
-import en, { type Dictionary } from "./en"
 
-const dictionaries: Record<Locale, Dictionary> = { en, ar }
+/** Components still call the content document a dictionary. It is the content model. */
+export type Dictionary = SiteContent
 
+/** The bundled document, for places that cannot fetch (the global 404). Pages use getContent(). */
 export function getDictionary(locale: Locale): Dictionary {
-  return dictionaries[locale]
+  return bundledContent[locale]
 }
 
-/** Replace {token} placeholders in a dictionary string. */
-export function format(template: string, values: Record<string, string | number>): string {
-  return template.replace(/\{(\w+)\}/g, (match, key: string) =>
-    key in values ? String(values[key]) : match
-  )
-}
-
-export type { Dictionary }
+export { format } from "../format"

@@ -1,53 +1,45 @@
 import type { Metadata } from "next"
-import { Geist, IBM_Plex_Sans_Arabic } from "next/font/google"
 
-import ar from "@/lib/i18n/dictionaries/ar"
-import en from "@/lib/i18n/dictionaries/en"
-import { THEME_STORAGE_KEY } from "@/lib/site"
+import { buttonVariants } from "@/components/ui/button"
+import { bundledContent } from "@/lib/content"
+import { fontVariables } from "@/lib/fonts"
+import { bookingHref, THEME_STORAGE_KEY } from "@/lib/site"
 
 import "./globals.css"
 
-const geist = Geist({ subsets: ["latin"], variable: "--font-geist", display: "swap" })
-const plexArabic = IBM_Plex_Sans_Arabic({ subsets: ["arabic"], weight: ["400", "600"], variable: "--font-plex-arabic", display: "swap" })
 
 export const metadata: Metadata = {
   title: "404 | Manar",
   robots: { index: false, follow: true },
 }
 
-const themeScript = `(function(){var d;try{var t=localStorage.getItem("${THEME_STORAGE_KEY}");d=t==="dark"||(t!=="light"&&matchMedia("(prefers-color-scheme: dark)").matches)}catch(e){d=true}document.documentElement.classList.toggle("dark",d)})()`
+const themeScript = `(function(){var d;try{var t=localStorage.getItem("${THEME_STORAGE_KEY}");d=t==="dark"||(t!=="light"&&matchMedia("(prefers-color-scheme: dark)").matches)}catch(e){d=matchMedia("(prefers-color-scheme: dark)").matches}document.documentElement.classList.toggle("dark",d)})()`
 
-/** W41: unmatched routes have no locale, so the page speaks both languages. */
+/**
+ * Unmatched routes have no locale, so the page speaks both languages. It renders the bundled
+ * content: a 404 must never depend on the CMS being reachable.
+ */
 export default function GlobalNotFound() {
   return (
-    <html lang="en" className={`${geist.variable} ${plexArabic.variable}`} suppressHydrationWarning>
+    <html lang="en" className={fontVariables} suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
       <body className="min-h-dvh overflow-x-clip">
-        <main id="main" className="relative isolate flex min-h-dvh items-center overflow-hidden">
-          <div aria-hidden className="pointer-events-none absolute inset-0 -z-10">
-            <div className="beam absolute top-0 left-1/2 h-full w-[min(90rem,180vw)] -translate-x-1/2 opacity-70" />
-          </div>
-          <div className="shell grid gap-16 py-20 md:grid-cols-2">
-            {([en, ar] as const).map((dict) => {
-              const locale = dict === ar ? "ar" : "en"
+        <main id="main" className="flex min-h-dvh items-center">
+          <div className="shell grid gap-16 py-16 md:grid-cols-2">
+            {(["en", "ar"] as const).map((locale) => {
+              const dict = bundledContent[locale]
               return (
                 <section key={locale} lang={locale} dir={locale === "ar" ? "rtl" : "ltr"} className="max-w-md">
-                  <p className="ltr-fragment font-mono text-sm text-link">404</p>
-                  <h1 className="headline mt-4">{dict.notFound.title}</h1>
-                  <p className="mt-4 text-lg leading-relaxed text-muted-foreground">{dict.notFound.body}</p>
+                  <p className="ltr-fragment font-mono text-sm text-muted-foreground">404</p>
+                  <h1 className="mt-4 text-4xl font-semibold tracking-tight text-foreground">{dict.notFound.title}</h1>
+                  <p className="mt-4 text-lg text-muted-foreground">{dict.notFound.body}</p>
                   <div className="mt-8 flex flex-wrap gap-3">
-                    <a
-                      href={`/${locale}`}
-                      className="inline-flex h-12 items-center rounded-full bg-primary px-6 text-[0.9375rem] font-semibold text-primary-foreground transition-colors hover:bg-action-hover"
-                    >
+                    <a href={`/${locale}`} className={buttonVariants({ size: "lg", variant: "secondary" })}>
                       {dict.notFound.home}
                     </a>
-                    <a
-                      href={`/${locale}/demo`}
-                      className="inline-flex h-12 items-center rounded-full border border-control/70 px-6 text-[0.9375rem] font-semibold text-foreground transition-colors hover:bg-elevated"
-                    >
+                    <a href={bookingHref(locale, dict)} className={buttonVariants({ size: "lg" })}>
                       {dict.common.bookDemo}
                     </a>
                   </div>

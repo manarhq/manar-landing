@@ -3,23 +3,23 @@
  * the site, the company and the product as related entities. Pure (no path
  * aliases) so `node --test` can load it.
  *
- * The FAQPage entries are built from the same dictionary items the FAQ section
- * renders, so the markup never claims text the page does not show.
+ * No FAQPage: the home page no longer shows an FAQ, and structured data must
+ * never claim text the page does not show.
  */
 export function homeStructuredData({
   origin,
   lang,
   description,
-  faq,
   vaxUrl,
   email,
+  logo,
 }: {
   origin: URL
   lang: string
   description: string
-  faq: readonly { question: string; answer: string }[]
   vaxUrl: string
   email: string
+  logo: string
 }): string {
   const site = origin.href
   const page = new URL(`/${lang}`, origin).href
@@ -36,7 +36,7 @@ export function homeStructuredData({
         url: vaxUrl,
         email,
         address: { "@type": "PostalAddress", addressLocality: "Abu Dhabi", addressCountry: "AE" },
-        brand: { "@type": "Brand", name: "Manar", logo: new URL("/brand/manar-lighthouse.png", origin).href },
+        brand: { "@type": "Brand", name: "Manar", logo: new URL(logo, origin).href },
       },
       {
         "@type": "WebSite",
@@ -57,17 +57,6 @@ export function homeStructuredData({
         url: page,
         inLanguage: lang,
         publisher: { "@id": orgId },
-      },
-      {
-        "@type": "FAQPage",
-        "@id": `${page}#faq`,
-        url: page,
-        inLanguage: lang,
-        mainEntity: faq.map((item) => ({
-          "@type": "Question",
-          name: item.question,
-          acceptedAnswer: { "@type": "Answer", text: item.answer },
-        })),
       },
     ],
   }
