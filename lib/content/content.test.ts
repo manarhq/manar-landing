@@ -18,7 +18,7 @@ describe("bundled content", () => {
       patch(copy)
       return siteContentSchema.safeParse(copy).success
     }
-    assert.equal(bad((c) => (c.hero.title = "Owners — for every action")), false)
+    assert.equal(bad((c) => (c.hero.title = "Owners \u2014 for every action")), false)
     assert.equal(bad((c) => (c.hero.body = "A guaranteed result")), false)
     assert.equal(bad((c) => (c.closing.body = "<script>x</script>")), false)
     assert.equal(bad((c) => (c.links.booking = "https://evil.example/meet")), false)
