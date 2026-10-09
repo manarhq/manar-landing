@@ -1,4 +1,5 @@
 import { siteApiOrigin } from "@/lib/content/load"
+import { clientKey } from "@/lib/http"
 
 export const runtime = "nodejs"
 
@@ -12,13 +13,18 @@ const TIMEOUT_MS = 8000
  * GET /public/media/:file through this origin, so CSP img-src stays 'self' and next/image can
  * optimise them. Only image types pass; anything else is a 404.
  */
-export async function GET(_request: Request, { params }: { params: Promise<{ file: string }> }) {
+export async function GET(request: Request, { params }: { params: Promise<{ file: string }> }) {
   const { file } = await params
   const origin = siteApiOrigin()
   if (!origin || !FILE.test(file)) return new Response("Not found", { status: 404 })
 
   try {
-    const upstream = await fetch(`${origin}/public/media/${file}`, { redirect: "manual", signal: AbortSignal.timeout(TIMEOUT_MS) })
+    const upstream = await fetch(`${origin}/public/media/${file}`, {
+      // manar-site limits reads per visitor; without this every visitor shares this server's bucket.
+      headers: { "x-forwarded-for": clientKey(request) },
+      redirect: "manual",
+      signal: AbortSignal.timeout(TIMEOUT_MS),
+    })
     const type = upstream.headers.get("content-type")?.split(";")[0].trim() ?? ""
     if (!upstream.ok || !upstream.body || !TYPES.has(type)) return new Response("Not found", { status: 404 })
     return new Response(upstream.body, {
