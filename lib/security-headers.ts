@@ -28,13 +28,17 @@ export function contentSecurityPolicy({ dev = false, frameAncestor }: { dev?: bo
 }
 
 /** The admin console's origin, the only page allowed to frame a preview; null when unset or not http(s). */
-export function previewFrameAncestor(raw: string | undefined): string | null {
+export function previewFrameAncestor(
+  raw: string | undefined,
+  { production = process.env.NODE_ENV === "production" }: { production?: boolean } = {}
+): string | null {
   try {
     const url = new URL(raw?.trim() ?? "")
     // The value goes into a CSP header: a plain DNS name or IP only, so `*`, `;` or a quote can
     // never widen the policy or add a directive.
     const plainHost = /^[a-z0-9]([a-z0-9.-]*[a-z0-9])?$/i.test(url.hostname)
-    const web = url.protocol === "https:" || url.protocol === "http:"
+    // Production frames previews only from an https admin origin; http is for local development.
+    const web = url.protocol === "https:" || (!production && url.protocol === "http:")
     return web && plainHost && !url.username && !url.password ? url.origin : null
   } catch {
     return null
