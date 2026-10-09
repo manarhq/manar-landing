@@ -33,7 +33,22 @@ const nextConfig: NextConfig = {
     globalNotFound: true,
   },
   async redirects() {
-    return [{ source: "/", destination: "/en", permanent: true }]
+    return [
+      { source: "/", destination: "/en", permanent: true },
+      // Admin preview links (<site>/<locale>?preview=<token>) go through the token check first.
+      {
+        source: "/:lang(en|ar)",
+        has: [{ type: "query", key: "preview", value: "(?<token>[A-Za-z0-9_-]{1,200})" }],
+        destination: "/api/preview?token=:token&path=/:lang",
+        permanent: false,
+      },
+      {
+        source: "/:lang(en|ar)/:rest(.+)",
+        has: [{ type: "query", key: "preview", value: "(?<token>[A-Za-z0-9_-]{1,200})" }],
+        destination: "/api/preview?token=:token&path=/:lang/:rest",
+        permanent: false,
+      },
+    ]
   },
   async headers() {
     return [
@@ -44,6 +59,15 @@ const nextConfig: NextConfig = {
           { key: "X-Content-Type-Options", value: "nosniff" },
           { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
           { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=(), interest-cohort=()" },
+        ],
+      },
+      {
+        // A browser in preview (draft mode cookie) sees unpublished drafts: never index, never store.
+        source: "/:path*",
+        has: [{ type: "cookie", key: "__prerender_bypass" }],
+        headers: [
+          { key: "X-Robots-Tag", value: "noindex, nofollow" },
+          { key: "Cache-Control", value: "private, no-store" },
         ],
       },
     ]
