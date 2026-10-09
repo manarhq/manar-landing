@@ -41,6 +41,12 @@ describe("security headers", () => {
       assert.equal(previewFrameAncestor(bad), null, String(bad))
   })
 
+  it("accepts an http admin origin only outside production", () => {
+    assert.equal(previewFrameAncestor("http://localhost:3001", { production: false }), "http://localhost:3001")
+    assert.equal(previewFrameAncestor("http://admin.example", { production: true }), null)
+    assert.equal(previewFrameAncestor("https://admin.example", { production: true }), "https://admin.example")
+  })
+
   it("sends nosniff, a referrer policy and COOP on every route", () => {
     const keys = STATIC_SECURITY_HEADERS.map((h) => h.key)
     for (const k of ["X-Content-Type-Options", "Referrer-Policy", "Permissions-Policy", "Cross-Origin-Opener-Policy"])
