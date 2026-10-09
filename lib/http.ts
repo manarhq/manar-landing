@@ -36,6 +36,8 @@ export function clientKey(request: Request): string {
   if (trustedHeader) {
     return request.headers.get(trustedHeader)?.trim() || "unknown"
   }
-  const forwarded = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim()
+  // The last entry is the one the nearest proxy appended; earlier ones are whatever the client
+  // sent, so keying on the first would let a visitor pick a fresh rate-limit bucket per request.
+  const forwarded = request.headers.get("x-forwarded-for")?.split(",").at(-1)?.trim()
   return forwarded || request.headers.get("x-real-ip") || "unknown"
 }
