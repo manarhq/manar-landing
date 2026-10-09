@@ -35,6 +35,7 @@ describe("security headers", () => {
       "https://a.example https://b.example",
       "https://*.example",
       "https://a.example;script-src 'unsafe-inline'",
+      "https://a.example;sandbox",
       "https://user:pw@admin.example",
     ])
       assert.equal(previewFrameAncestor(bad), null, String(bad))
