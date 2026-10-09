@@ -1,8 +1,8 @@
 # manar/landing: validate every push, and release every push to the protected default branch
 # (main) to production on K3s.
 #
-#   any branch / MR : quality + source scan
-#   main            : quality + source scan -> image build (rootless BuildKit) -> image scan
+#   any branch / MR : quality + source scan + gitleaks + semgrep -> image build (no push) -> image scan
+#   main            : quality + source scan + gitleaks + semgrep -> image build (rootless BuildKit) -> image scan
 #                     -> rolling update of manar.vax.sh through the GitLab agent
 #
 # The release swaps pods with zero downtime (maxUnavailable: 0) a few minutes after the push.
@@ -35,6 +35,9 @@ variables:
   NPM_CONFIG_CACHE: "$CI_PROJECT_DIR/.npm"
   NODE_IMAGE: "docker.io/library/node:24.18.0-bookworm-slim@sha256:6f7b03f7c2c8e2e784dcf9295400527b9b1270fd37b7e9a7285cf83b6951452d"
   TRIVY_IMAGE: "docker.io/aquasec/trivy:0.74.0@sha256:62b1e65e8869bc4b4c6aa4fa2b21595256c7c2f6018a9d9ad61caf87187c1969"
+  GITLEAKS_IMAGE: "ghcr.io/gitleaks/gitleaks:v8.30.1@sha256:c00b6bd0aeb3071cbcb79009cb16a60dd9e0a7c60e2be9ab65d25e6bc8abbb7f"
+  SEMGREP_IMAGE: "docker.io/semgrep/semgrep:1.172.0@sha256:65dcd4408adda7c183a6b4550cb1e9b19f7f627a6fbb7e0559bd466bedc44d7b"
+  DOCKER_IMAGE: "docker.io/library/docker:29@sha256:0b6d18a4a222e71c88be6034926b4f6cde2fc33c2218643d03ccfddc65995470"
 
 .release-rules:
   rules:
@@ -66,6 +69,78 @@ source-scan:
       --exit-code 1 --no-progress --skip-version-check
       --skip-dirs node_modules --skip-dirs .next --skip-dirs .git --skip-dirs .npm --skip-dirs design
       .
+
+# Secrets across the full history (non-shallow clone); any finding fails.
+gitleaks:
+  stage: validate
+  image:
+    name: $GITLEAKS_IMAGE
+    entrypoint: [""]
+  variables:
+    GIT_DEPTH: "0"
+    GIT_STRATEGY: clone
+  script:
+    - gitleaks git --log-opts="--all" --redact -v --exit-code 1 --report-format json --report-path gitleaks-report.json .
+  artifacts:
+    when: always
+    paths: [gitleaks-report.json]
+    expire_in: 30 days
+
+# SAST: ERROR blocks; the full report is an artifact.
+semgrep:
+  stage: validate
+  image:
+    name: $SEMGREP_IMAGE
+    entrypoint: [""]
+  script:
+    - semgrep scan --config auto --json --output semgrep-report.json . || true
+    - semgrep scan --config auto --severity ERROR --error .
+  artifacts:
+    when: always
+    paths: [semgrep-report.json]
+    expire_in: 30 days
+
+# Merge requests and branches: build the same Dockerfile and scan it, with no registry
+# credentials and no push. The release pipeline on main builds, scans and deploys instead.
+.check-rules:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_REF_PROTECTED == "true"
+      when: never
+    - when: on_success
+
+container-check:
+  stage: build
+  image: $DOCKER_IMAGE
+  services:
+    - name: $DOCKER_IMAGE
+      alias: docker
+  needs: [quality, source-scan]
+  variables:
+    DOCKER_TLS_CERTDIR: "/certs"
+  script:
+    - docker build --build-arg SITE_URL="$SITE_URL" -t manar-landing:ci .
+    - docker save manar-landing:ci -o manar-landing.tar
+  artifacts:
+    paths: [manar-landing.tar]
+    expire_in: 1 day
+  rules: !reference [.check-rules, rules]
+
+image-check:
+  stage: scan
+  image:
+    name: $TRIVY_IMAGE
+    entrypoint: [""]
+  needs: [container-check]
+  script:
+    - trivy image --input manar-landing.tar --format cyclonedx --output sbom.cdx.json --no-progress --skip-version-check
+    - trivy image --input manar-landing.tar --scanners vuln --severity HIGH,CRITICAL --ignore-unfixed --exit-code 1 --no-progress --skip-version-check
+  artifacts:
+    when: always
+    expire_in: 30 days
+    reports:
+      cyclonedx: sbom.cdx.json
+    paths: [sbom.cdx.json]
+  rules: !reference [.check-rules, rules]
 
 container:
   stage: build
