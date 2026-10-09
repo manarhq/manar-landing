@@ -25,8 +25,26 @@ describe("security headers", () => {
 
   it("takes only an http(s) origin as the preview framer", () => {
     assert.equal(previewFrameAncestor("https://admin.example/some/path"), "https://admin.example")
-    for (const bad of [undefined, "", "*", "'self'", "javascript:alert(1)", "admin.example", "https://a.example https://b.example"])
+    for (const bad of [
+      undefined,
+      "",
+      "*",
+      "'self'",
+      "javascript:alert(1)",
+      "admin.example",
+      "https://a.example https://b.example",
+      "https://*.example",
+      "https://a.example;script-src 'unsafe-inline'",
+      "https://a.example;sandbox",
+      "https://user:pw@admin.example",
+    ])
       assert.equal(previewFrameAncestor(bad), null, String(bad))
+  })
+
+  it("accepts an http admin origin only outside production", () => {
+    assert.equal(previewFrameAncestor("http://localhost:3001", { production: false }), "http://localhost:3001")
+    assert.equal(previewFrameAncestor("http://admin.example", { production: true }), null)
+    assert.equal(previewFrameAncestor("https://admin.example", { production: true }), "https://admin.example")
   })
 
   it("sends nosniff, a referrer policy and COOP on every route", () => {
