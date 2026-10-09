@@ -12,6 +12,11 @@ rules:
     resources: [deployments]
     resourceNames: [manar-landing]
     verbs: [get, watch, update, patch]
+  # `kubectl rollout status` lists deployments; RBAC cannot narrow list by resourceNames,
+  # so it is granted for this namespace only.
+  - apiGroups: [apps]
+    resources: [deployments]
+    verbs: [list]
   - apiGroups: [apps]
     resources: [replicasets]
     verbs: [get, list, watch]
