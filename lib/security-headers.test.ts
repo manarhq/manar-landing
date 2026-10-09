@@ -25,7 +25,18 @@ describe("security headers", () => {
 
   it("takes only an http(s) origin as the preview framer", () => {
     assert.equal(previewFrameAncestor("https://admin.example/some/path"), "https://admin.example")
-    for (const bad of [undefined, "", "*", "'self'", "javascript:alert(1)", "admin.example", "https://a.example https://b.example"])
+    for (const bad of [
+      undefined,
+      "",
+      "*",
+      "'self'",
+      "javascript:alert(1)",
+      "admin.example",
+      "https://a.example https://b.example",
+      "https://*.example",
+      "https://a.example;script-src 'unsafe-inline'",
+      "https://user:pw@admin.example",
+    ])
       assert.equal(previewFrameAncestor(bad), null, String(bad))
   })
 

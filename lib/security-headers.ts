@@ -31,7 +31,11 @@ export function contentSecurityPolicy({ dev = false, frameAncestor }: { dev?: bo
 export function previewFrameAncestor(raw: string | undefined): string | null {
   try {
     const url = new URL(raw?.trim() ?? "")
-    return url.protocol === "https:" || url.protocol === "http:" ? url.origin : null
+    // The value goes into a CSP header: a plain DNS name or IP only, so `*`, `;` or a quote can
+    // never widen the policy or add a directive.
+    const plainHost = /^[a-z0-9]([a-z0-9.-]*[a-z0-9])?$/i.test(url.hostname)
+    const web = url.protocol === "https:" || url.protocol === "http:"
+    return web && plainHost && !url.username && !url.password ? url.origin : null
   } catch {
     return null
   }
