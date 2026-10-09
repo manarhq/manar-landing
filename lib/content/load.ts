@@ -1,8 +1,10 @@
 import "server-only"
 
+import { cookies, draftMode } from "next/headers"
 import { cache } from "react"
 
 import type { Locale } from "@/lib/i18n/config"
+import { PREVIEW_COOKIE, safePreviewToken } from "@/lib/preview/paths"
 
 import { bundledContent } from "./index"
 import { publishedContentSchema, type SiteContent } from "./schema"
@@ -25,11 +27,44 @@ export function siteApiOrigin(): string | null {
 }
 
 /**
- * The published content for a locale, from manar-site (GET /public/content/:locale), cached with
+ * The unpublished draft for a locale (GET /public/content/:locale/preview?token=), never cached.
+ * Null when the token is refused, the API is unreachable, or the draft fails the schema.
+ */
+export async function fetchPreviewContent(locale: Locale, token: string): Promise<SiteContent | null> {
+  const origin = siteApiOrigin()
+  if (!origin) return null
+  try {
+    const response = await fetch(`${origin}/public/content/${locale}/preview?token=${encodeURIComponent(token)}`, {
+      cache: "no-store",
+      signal: AbortSignal.timeout(TIMEOUT_MS),
+    })
+    if (!response.ok) return null
+    const parsed = publishedContentSchema.safeParse(await response.json())
+    if (!parsed.success) console.warn("site_content_preview_invalid", { locale, issues: parsed.error.issues.length })
+    return parsed.success ? parsed.data.content : null
+  } catch {
+    return null
+  }
+}
+
+/** True while this browser is in preview (draft mode on and a preview token cookie set). */
+export const isPreviewing = cache(async (): Promise<boolean> => {
+  if (!(await draftMode()).isEnabled) return false
+  return Boolean(safePreviewToken((await cookies()).get(PREVIEW_COOKIE)?.value ?? null))
+})
+
+/**
+ * The content for a locale: in preview, the draft; otherwise the published document from manar-site (GET /public/content/:locale), cached with
  * the "site-content" tag. Falls back to the bundled document when SITE_API_URL is unset, the API is
  * unreachable or slow, or the answer does not validate, so the site never breaks on the CMS.
  */
 export const getContent = cache(async (locale: Locale): Promise<SiteContent> => {
+  // Preview: draft mode makes Next render per request, so the draft is never cached or shared.
+  if (await isPreviewing()) {
+    const token = safePreviewToken((await cookies()).get(PREVIEW_COOKIE)?.value ?? null)
+    const draft = token ? await fetchPreviewContent(locale, token) : null
+    if (draft) return draft
+  }
   const origin = siteApiOrigin()
   if (!origin) return bundledContent[locale]
   try {

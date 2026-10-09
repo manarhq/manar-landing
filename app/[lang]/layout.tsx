@@ -3,8 +3,9 @@ import type { Viewport } from "next"
 import { notFound } from "next/navigation"
 import { preload } from "react-dom"
 
+import { PreviewBar } from "@/components/site/preview-bar"
 import { SiteChrome } from "@/components/site/site-chrome"
-import { getContent } from "@/lib/content/load"
+import { getContent, isPreviewing } from "@/lib/content/load"
 import { fontVariables, localeFontPreloads } from "@/lib/fonts"
 import { isLocale, localeDirection, localeTag, locales } from "@/lib/i18n/config"
 import { consentPendingScript } from "@/lib/consent"
@@ -39,6 +40,7 @@ export default async function RootLayout({ children, params }: LayoutProps<"/[la
   const { lang } = await params
   if (!isLocale(lang)) notFound()
   const dict = await getContent(lang)
+  const preview = await isPreviewing()
   const dir = localeDirection[lang]
   for (const href of localeFontPreloads[lang]) preload(href, { as: "font", type: "font/woff2", crossOrigin: "anonymous" })
 
@@ -60,6 +62,7 @@ export default async function RootLayout({ children, params }: LayoutProps<"/[la
           {dict.common.skipToContent}
         </a>
         <DirectionProvider direction={dir}>
+          {preview ? <PreviewBar locale={lang} /> : null}
           {children}
           <SiteChrome locale={lang} dict={dict} />
         </DirectionProvider>
