@@ -36,6 +36,8 @@ npm run dev                  # http://localhost:3000 → redirects to /en
 | `POST /api/demo-request` | Validates a demo request and emails it (Node.js runtime) |
 | `/api/meet/*` | Same-origin proxy to manar-site `/public/meet/*` (allowlisted routes only) |
 | `POST /api/revalidate` | Refreshes published content; `Authorization: Bearer $REVALIDATE_SECRET` |
+| `/media/<uuid>.<ext>` | Images uploaded in the admin, forwarded from manar-site `/public/media/*` (png, jpg, webp, avif only) |
+| `/<locale>[/page]?preview=<token>` | Admin draft preview: redirects to `/api/preview`, which checks the token with manar-site, turns on draft mode for that browser and keeps the token in an httpOnly cookie. Draft pages are rendered per request, never cached, sent with `X-Robots-Tag: noindex` and show a Preview bar. `/api/preview/exit` leaves |
 
 Unsupported locales return 404 (`dynamicParams = false`).
 

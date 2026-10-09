@@ -13,7 +13,7 @@ export const cookies: Record<Locale, LegalDoc> = {
         id: "summary",
         heading: "In short",
         blocks: [
-          "The Manar website sets no cookies of its own. It stores a few small items in your browser to remember your choices. Analytics are optional, off by default, and only load after you accept them.",
+          "The Manar website sets no cookies for visitors. It stores a few small items in your browser to remember your choices. Analytics are optional, off by default, and only load after you accept them.",
         ],
       },
       {
@@ -27,6 +27,7 @@ export const cookies: Record<Locale, LegalDoc> = {
                 ["manar-theme", "Local storage", "Remembers your light, dark, or system theme choice", "Until you change it or clear site data", "Necessary"],
                 ["manar-consent", "Local storage", "Records whether you accepted analytics, and when", "12 months, then we ask again", "Necessary"],
                 ["manar-utm", "Session storage", "Keeps campaign tags from the link you arrived by, so they can be attached to a demo request you submit", "Until you close the tab", "Analytics (only with consent)"],
+                ["__prerender_bypass, manar-preview", "Cookies set by this website, for VAX staff only", "Let staff preview unpublished content from the editor. Never set for other visitors", "Until the browser closes; manar-preview at most 1 hour", "Necessary"],
                 ["__cf_bm", "Cookie set by Cloudflare", "Tells people apart from automated traffic when bot protection runs", "30 minutes", "Necessary"],
                 ["cf_clearance", "Cookie set by Cloudflare", "Remembers that a security challenge was passed, so it is not shown again", "As set in our Cloudflare challenge settings, 30 minutes by default", "Necessary"],
               ],
@@ -76,7 +77,7 @@ export const cookies: Record<Locale, LegalDoc> = {
         id: "summary",
         heading: "باختصار",
         blocks: [
-          "لا يضع موقع منار أي ملفات تعريف ارتباط خاصة به، بل يحفظ في متصفحك عناصر صغيرة قليلة ليتذكر خياراتك. أما التحليلات فهي اختيارية ومعطلة افتراضيًا، ولا تُحمَّل إلا بعد موافقتك.",
+          "لا يضع موقع منار أي ملفات تعريف ارتباط للزوار، بل يحفظ في متصفحك عناصر صغيرة قليلة ليتذكر خياراتك. أما التحليلات فهي اختيارية ومعطلة افتراضيًا، ولا تُحمَّل إلا بعد موافقتك.",
         ],
       },
       {
@@ -90,6 +91,7 @@ export const cookies: Record<Locale, LegalDoc> = {
                 ["manar-theme", "التخزين المحلي", "يتذكر اختيارك للمظهر الفاتح أو الداكن أو مظهر النظام", "حتى تغيّره أو تمسح بيانات الموقع", "ضروري"],
                 ["manar-consent", "التخزين المحلي", "يسجّل ما إذا كنت قد وافقت على التحليلات، ومتى", "12 شهرًا، ثم نسألك مجددًا", "ضروري"],
                 ["manar-utm", "تخزين الجلسة", "يحفظ وسوم الحملة من الرابط الذي وصلت منه لإرفاقها بطلب العرض التوضيحي إن أرسلته", "حتى تغلق علامة التبويب", "تحليلات (بموافقتك فقط)"],
+                ["__prerender_bypass وmanar-preview", "ملفات تعريف ارتباط يضعها هذا الموقع لموظفي VAX فقط", "تتيح للموظفين معاينة المحتوى غير المنشور من المحرر، ولا تُوضع لأي زائر آخر", "حتى إغلاق المتصفح، وmanar-preview لمدة ساعة كحد أقصى", "ضروري"],
                 ["__cf_bm", "ملف تعريف ارتباط تضعه Cloudflare", "يميّز الزوار من الحركة الآلية عند تشغيل الحماية من برامج الروبوت", "30 دقيقة", "ضروري"],
                 ["cf_clearance", "ملف تعريف ارتباط تضعه Cloudflare", "يتذكر أنك اجتزت التحقق الأمني حتى لا يُعرض عليك مجددًا", "بحسب إعدادات التحقق لدينا في Cloudflare، 30 دقيقة افتراضيًا", "ضروري"],
               ],

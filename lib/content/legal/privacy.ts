@@ -118,7 +118,7 @@ export const privacy: Record<Locale, LegalDoc> = {
         id: "analytics-and-storage",
         heading: "Analytics and browser storage",
         blocks: [
-          "The website itself sets no cookies. Analytics are off until you accept them, and the analytics script is not loaded before that. If your browser sends a Global Privacy Control or Do Not Track signal, we treat it as a refusal and do not ask. You can change your choice at any time with Cookie settings in the footer.",
+          "The website itself sets no cookies for visitors. Analytics are off until you accept them, and the analytics script is not loaded before that. If your browser sends a Global Privacy Control or Do Not Track signal, we treat it as a refusal and do not ask. You can change your choice at any time with Cookie settings in the footer.",
           "Our cookie and storage policy lists every item stored in your browser, why, and for how long.",
         ],
       },
@@ -247,7 +247,7 @@ export const privacy: Record<Locale, LegalDoc> = {
         id: "analytics-and-storage",
         heading: "التحليلات والتخزين في المتصفح",
         blocks: [
-          "لا يضع الموقع نفسه أي ملفات تعريف ارتباط. وتبقى التحليلات معطلة حتى توافق عليها، ولا يُحمَّل برنامجها قبل ذلك. وإذا أرسل متصفحك إشارة التحكم العالمي في الخصوصية أو عدم التتبّع، نعدّها رفضًا ولا نسألك. ويمكنك تغيير خيارك في أي وقت من إعدادات ملفات تعريف الارتباط أسفل الصفحة.",
+          "لا يضع الموقع نفسه أي ملفات تعريف ارتباط للزوار. وتبقى التحليلات معطلة حتى توافق عليها، ولا يُحمَّل برنامجها قبل ذلك. وإذا أرسل متصفحك إشارة التحكم العالمي في الخصوصية أو عدم التتبّع، نعدّها رفضًا ولا نسألك. ويمكنك تغيير خيارك في أي وقت من إعدادات ملفات تعريف الارتباط أسفل الصفحة.",
           "تسرد سياسة ملفات تعريف الارتباط والتخزين كل عنصر يُحفظ في متصفحك، والغرض منه، ومدة بقائه.",
         ],
       },
