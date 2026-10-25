@@ -49,3 +49,7 @@ design/*
 /.release/
 /.ci-bin/
 /.npm/
+
+# Local agent and package-manager state, never committed
+.claude/
+.pnpm-store/
