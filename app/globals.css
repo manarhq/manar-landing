@@ -28,6 +28,7 @@
   --brand-hover: #0285c7;
   --brand-text: #02070a;
   --brand-soft: #e3f3fb;
+  --orange: #fc734d;
   --allow: #0277b6;
   --allow-soft: #eef8fd;
   --wait: #b4451f;
@@ -69,6 +70,7 @@
   --brand-hover: #38b6f5;
   --brand-text: #02070a;
   --brand-soft: #04283a;
+  --orange: #fc734d;
   --allow: #38b6f5;
   --allow-soft: #021b28;
   --wait: #fc734d;
@@ -144,6 +146,7 @@
   --color-brand-hover: var(--brand-hover);
   --color-brand-text: var(--brand-text);
   --color-brand-soft: var(--brand-soft);
+  --color-orange: var(--orange);
   --color-allow: var(--allow);
   --color-allow-soft: var(--allow-soft);
   --color-wait: var(--wait);

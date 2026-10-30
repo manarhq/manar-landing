@@ -6,17 +6,17 @@
  * request to mint a nonce for, and the inline App Router payload differs per page, so it cannot be
  * hashed in a static header. A nonce CSP would make every page dynamic. What limits the exposure
  * instead: no visitor input is ever rendered as HTML, CMS content is plain text validated by the
- * shared schema, and script origins are an allow-list of two (the consent-gated Cloudflare beacon,
- * and Turnstile on the booking pages).
+ * shared schema, and script origins are an allow-list of two (consent-gated PostHog (bundled; it only
+ * connects to the EU host) and Turnstile on the booking pages).
  */
 export function contentSecurityPolicy({ dev = false, frameAncestor }: { dev?: boolean; frameAncestor?: string } = {}) {
   return [
     "default-src 'self'",
-    `script-src 'self' 'unsafe-inline'${dev ? " 'unsafe-eval'" : ""} https://static.cloudflareinsights.com https://challenges.cloudflare.com`,
+    `script-src 'self' 'unsafe-inline'${dev ? " 'unsafe-eval'" : ""} https://eu-assets.i.posthog.com https://challenges.cloudflare.com`,
     "style-src 'self' 'unsafe-inline'",
     "img-src 'self' data: blob:",
     "font-src 'self'",
-    "connect-src 'self' https://cloudflareinsights.com https://challenges.cloudflare.com",
+    "connect-src 'self' https://eu.i.posthog.com https://eu-assets.i.posthog.com https://challenges.cloudflare.com",
     "frame-src https://challenges.cloudflare.com",
     "worker-src 'self' blob:",
     `frame-ancestors ${frameAncestor ?? "'none'"}`,

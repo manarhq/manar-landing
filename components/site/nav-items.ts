@@ -1,13 +1,16 @@
-import type { Dictionary } from "@/lib/i18n/dictionaries"
+import { launchCopy } from "@/lib/launch/copy"
+import { links } from "@/lib/launch/links"
 import type { Locale } from "@/lib/i18n/config"
 
-export type NavItem = { href: string; label: string }
+export type NavItem = { href: string; label: string; external?: boolean }
 
-/** Section anchors on the localized homepage. Absolute paths so they also work from /demo. */
-export function navItems(locale: Locale, dict: Dictionary): NavItem[] {
+/** Header and footer links: Pricing and Coverage are sections on the home page, Docs is its own route. */
+export function navItems(locale: Locale): NavItem[] {
+  const n = launchCopy[locale].nav
   return [
-    { href: `/${locale}#how-it-works`, label: dict.nav.howItWorks },
-    { href: `/${locale}#platform`, label: dict.nav.platform },
-    { href: `/${locale}#deployment`, label: dict.nav.deployment },
+    { href: `/${locale}#coverage`, label: n.coverage },
+    { href: `/${locale}#pricing`, label: n.pricing },
+    { href: `/${locale}/docs`, label: n.docs },
+    { href: links.github, label: n.github, external: true },
   ]
 }

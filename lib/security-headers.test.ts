@@ -18,9 +18,9 @@ describe("security headers", () => {
     )
   })
 
-  it("allows only the two third-party script origins it uses", () => {
+  it("allows only the third-party script origins it uses", () => {
     const origins = directive(contentSecurityPolicy(), "script-src")!.split(" ").filter((s) => s.startsWith("https://"))
-    assert.deepEqual(origins, ["https://static.cloudflareinsights.com", "https://challenges.cloudflare.com"])
+    assert.deepEqual(origins, ["https://eu-assets.i.posthog.com", "https://challenges.cloudflare.com"])
   })
 
   it("takes only an http(s) origin as the preview framer", () => {

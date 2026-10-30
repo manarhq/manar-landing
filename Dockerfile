@@ -19,11 +19,11 @@ WORKDIR /app
 # prerendered. Changing it at runtime has no effect.
 ARG SITE_URL
 # Optional: inlined into the client bundle at build time (see .env.example).
-ARG NEXT_PUBLIC_CF_BEACON_TOKEN=""
+ARG NEXT_PUBLIC_POSTHOG_KEY=""
 ARG NEXT_PUBLIC_TURNSTILE_SITE_KEY=""
 ENV NEXT_TELEMETRY_DISABLED=1 \
     SITE_URL=${SITE_URL} \
-    NEXT_PUBLIC_CF_BEACON_TOKEN=${NEXT_PUBLIC_CF_BEACON_TOKEN} \
+    NEXT_PUBLIC_POSTHOG_KEY=${NEXT_PUBLIC_POSTHOG_KEY} \
     NEXT_PUBLIC_TURNSTILE_SITE_KEY=${NEXT_PUBLIC_TURNSTILE_SITE_KEY}
 
 COPY --from=dependencies /app/node_modules ./node_modules
