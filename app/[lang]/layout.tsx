@@ -6,7 +6,7 @@ import { preload } from "react-dom"
 import { PreviewBar } from "@/components/site/preview-bar"
 import { SiteChrome } from "@/components/site/site-chrome"
 import { getContent, isPreviewing } from "@/lib/content/load"
-import { fontVariables, localeFontPreloads } from "@/lib/fonts"
+import { localeFontPreloads } from "@/lib/fonts"
 import { isLocale, localeDirection, localeTag, locales } from "@/lib/i18n/config"
 import { consentPendingScript } from "@/lib/consent"
 import { CF_BEACON_TOKEN, THEME_STORAGE_KEY } from "@/lib/site"
@@ -28,8 +28,8 @@ export function generateStaticParams() {
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: "(prefers-color-scheme: dark)", color: "#121212" },
-    { media: "(prefers-color-scheme: light)", color: "#f4f4f2" },
+    { media: "(prefers-color-scheme: dark)", color: "#02070a" },
+    { media: "(prefers-color-scheme: light)", color: "#f5f8fa" },
   ],
 }
 
@@ -48,7 +48,6 @@ export default async function RootLayout({ children, params }: LayoutProps<"/[la
     <html
       lang={localeTag[lang]}
       dir={dir}
-      className={fontVariables}
       suppressHydrationWarning
     >
       <head>

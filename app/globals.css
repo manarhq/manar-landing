@@ -6,38 +6,42 @@
 @custom-variant dark (&:is(.dark *));
 
 /*
- * Manar design system: Stone + UAE red (docs/design/DESIGN-SYSTEM.md section 2).
- * The same token names and values live in manar-web. Change both repos on the same day.
- * Light values on :root, dark values on .dark (set before paint by the layout script).
+ * Manar design system, Midnight identity (public launch spec 4.8). Midnight #02070A, electric blue
+ * #0297DE for brand, actions and allowed, orange #FC734D for "needs you" only, stop red for blocked.
+ * Button labels are Midnight on blue and orange. Text shades for the light theme are #0277B6 and #B4451F.
+ * The same token names live in manar-web. Light values on :root, dark values on .dark (set before paint
+ * by the layout script). Contrast of every text and fill pair is pinned by lib/design-tokens.test.ts.
  */
 :root {
-  --page: #f4f4f2;
-  --surface: #fafaf8;
-  --elevated: #fffffe;
-  --subtle: #ededea;
-  --line: #dcdcd6;
-  --line-strong: #8c8c87;
-  --text: #17171a;
-  --muted-text: #5c5c61;
-  --ink: #17171a;
-  --ink-hover: #2e2e33;
-  --ink-text: #fafaf8;
-  --brand: #b3261e;
-  --brand-hover: #951f18;
-  --brand-text: #fffffe;
-  --brand-soft: #f6e3e1;
-  --allow: #1e6f48;
-  --allow-soft: #e1f0e7;
-  --wait: #8a5300;
-  --wait-soft: #f7ebd6;
-  --deny: #b3261e;
-  --deny-soft: #f6e3e1;
-  --focus: #b3261e;
-  --scrim: rgb(23 23 26 / 0.32);
-  --shadow-overlay: 0 8px 24px rgb(23 23 26 / 0.12);
+  --page: #f5f8fa;
+  --surface: #ffffff;
+  --elevated: #ffffff;
+  --subtle: #e9eff3;
+  --line: #d9e2e8;
+  --line-strong: #6e808c;
+  --text: #02070a;
+  --muted-text: #5b6b76;
+  --ink: #02070a;
+  --ink-hover: #16242e;
+  --ink-text: #f5f8fa;
+  --brand: #0297de;
+  --brand-hover: #0285c7;
+  --brand-text: #02070a;
+  --brand-soft: #e3f3fb;
+  --allow: #0277b6;
+  --allow-soft: #eef8fd;
+  --wait: #b4451f;
+  --wait-soft: #ffe9e3;
+  --deny: #c8102e;
+  --deny-hover: #a30d26;
+  --deny-text: #ffffff;
+  --deny-soft: #fbecee;
+  --focus: #0277b6;
+  --scrim: rgb(2 7 10 / 0.32);
+  --shadow-overlay: 0 8px 24px rgb(2 7 10 / 0.12);
 
-  --app-font-sans: var(--font-plex-sans), ui-sans-serif, system-ui, sans-serif;
-  --app-font-mono: var(--font-plex-mono), ui-monospace, monospace;
+  --app-font-sans: var(--font-readex), ui-sans-serif, system-ui, sans-serif;
+  --app-font-mono: var(--font-jb-mono), ui-monospace, monospace;
 
   /* Layering scale. Use these, never ad-hoc z values. */
   --z-header: 40;
@@ -50,41 +54,39 @@
 }
 
 .dark {
-  --page: #121212;
-  --surface: #1a1a1b;
-  --elevated: #222224;
-  --subtle: #262628;
-  --line: #2e2e31;
-  --line-strong: #6e6e73;
-  --text: #ededeb;
-  --muted-text: #a6a6a9;
-  --ink: #ededeb;
-  --ink-hover: #d4d4d1;
-  --ink-text: #121212;
-  --brand: #f0675e;
-  --brand-hover: #f4847c;
-  --brand-text: #121212;
-  --brand-soft: #3a1d1b;
-  --allow: #5bc891;
-  --allow-soft: #173326;
-  --wait: #f0b44c;
-  --wait-soft: #3a2c12;
-  --deny: #f0675e;
-  --deny-soft: #3a1d1b;
-  --focus: #f0675e;
-  --scrim: rgb(0 0 0 / 0.6);
-  --shadow-overlay: 0 8px 24px rgb(0 0 0 / 0.5);
+  --page: #02070a;
+  --surface: #0a141b;
+  --elevated: #0f1d27;
+  --subtle: #0f1d27;
+  --line: #1a2a35;
+  --line-strong: #5e7686;
+  --text: #e8f1f6;
+  --muted-text: #8fa3b0;
+  --ink: #e8f1f6;
+  --ink-hover: #c9d8e1;
+  --ink-text: #02070a;
+  --brand: #0297de;
+  --brand-hover: #38b6f5;
+  --brand-text: #02070a;
+  --brand-soft: #04283a;
+  --allow: #38b6f5;
+  --allow-soft: #021b28;
+  --wait: #fc734d;
+  --wait-soft: #251613;
+  --deny: #ff5470;
+  --deny-hover: #ff7a90;
+  --deny-text: #02070a;
+  --deny-soft: #201016;
+  --focus: #38b6f5;
+  --scrim: rgb(0 0 0 / 0.65);
+  --shadow-overlay: 0 8px 24px rgb(0 0 0 / 0.55);
 
   color-scheme: dark;
 }
 
-:root:lang(ar) {
-  --app-font-sans: var(--font-plex-arabic), var(--font-plex-sans), ui-sans-serif, system-ui, sans-serif;
-}
-
 /*
  * shadcn's semantic slots, mapped onto the design tokens (DESIGN-SYSTEM.md section 2). The
- * landing's primary is the brand red; the console's is ink. Everything else matches manar-web.
+ * landing's primary is the brand blue; the console's is ink. Everything else matches manar-web.
  */
 :root,
 .dark {
@@ -148,6 +150,8 @@
   --color-wait-soft: var(--wait-soft);
   --color-deny: var(--deny);
   --color-deny-soft: var(--deny-soft);
+  --color-deny-hover: var(--deny-hover);
+  --color-deny-text: var(--deny-text);
 
   --font-sans: var(--app-font-sans);
   --font-heading: var(--app-font-sans);
@@ -287,12 +291,12 @@
 @media print {
   :root,
   .dark {
-    --page: #fffffe;
-    --surface: #fffffe;
-    --elevated: #fffffe;
-    --text: #17171a;
-    --muted-text: #3a3a3e;
-    --line: #c4c4bd;
+    --page: #ffffff;
+    --surface: #ffffff;
+    --elevated: #ffffff;
+    --text: #02070a;
+    --muted-text: #3a4650;
+    --line: #b8c4cc;
     color-scheme: light;
   }
   [data-print="hide"],
