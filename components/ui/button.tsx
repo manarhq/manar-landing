@@ -3,7 +3,7 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "cn"
 
 /**
- * DESIGN-SYSTEM.md section 8. Landing primary is red. Hover changes the fill only (120 ms colour
+ * DESIGN-SYSTEM.md section 8. Landing primary is blue. Hover changes the fill only (120 ms colour
  * transition, never opacity); press moves down one pixel. Heights: 32 compact, 36 default, 44 CTA.
  */
 const buttonVariants = cva(
@@ -15,7 +15,7 @@ const buttonVariants = cva(
         secondary:
           "border-line bg-surface text-foreground hover:bg-subtle aria-expanded:bg-subtle",
         ghost: "text-foreground hover:bg-subtle aria-expanded:bg-subtle",
-        destructive: "bg-deny text-brand-text hover:bg-brand-hover",
+        destructive: "bg-deny text-deny-text hover:bg-deny-hover",
         link: "h-auto px-0 text-foreground underline underline-offset-4 decoration-line-strong hover:decoration-current",
       },
       size: {
