@@ -36,7 +36,9 @@ const linuxBlock: Cell = { id: "linux_yes_windows_vault" }
 export const coverageRows: CoverageRow[] = [
   { id: "claude-code", name: "Claude Code", seen: yes, approve: { id: "yes_hook" }, alert: yes, blocked: yes },
   { id: "cursor", name: "Cursor, Windsurf", seen: yes, approve: { id: "yes_hook" }, alert: yes, blocked: yes },
-  { id: "cli-agents", name: "Gemini CLI, Codex CLI, Copilot CLI", seen: yes, approve: { id: "yes_hook" }, alert: yes, blocked: yes },
+  { id: "cli-agents", name: "Gemini CLI, Copilot CLI", seen: yes, approve: { id: "yes_hook" }, alert: yes, blocked: yes },
+  // Codex asks its owner to review any new hook before it runs, and Manar cannot see that happen.
+  { id: "codex-cli", name: "Codex CLI", seen: yes, approve: { id: "gateway_mcp" }, alert: yes, blocked: linuxBlock },
   { id: "editors", name: "VS Code + Copilot", seen: yes, approve: { id: "mcp_only" }, alert: yes, blocked: linuxBlock },
   { id: "desktop", name: "Claude desktop", seen: yes, approve: { id: "mcp_only" }, alert: yes, blocked: linuxBlock },
   { id: "chatgpt-desktop", name: "ChatGPT desktop", seen: yes, approve: { id: "observed_only" }, alert: yes, blocked: linuxBlock },
@@ -113,7 +115,8 @@ export const coverageText: Record<Locale, CoverageText> = {
     caption: "جدول التغطية",
     rowNames: {
       "claude-code": "Claude Code",
-      "cli-agents": "Gemini CLI وCodex CLI وCopilot CLI",
+      "cli-agents": "Gemini CLI وCopilot CLI",
+      "codex-cli": "Codex CLI",
       cursor: "Cursor وWindsurf",
       editors: "VS Code مع Copilot",
       desktop: "تطبيق Claude لسطح المكتب",
