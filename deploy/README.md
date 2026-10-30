@@ -1,10 +1,13 @@
 # manar.vax.sh deployment
 
+> The addresses in this document (192.0.2.0/24) and the host `edge.example.com` are placeholders from
+> documentation ranges. Substitute your own node and edge addresses.
+
 ```text
 Internet
   -> Cloudflare (DNS manar.vax.sh proxied, SSL/TLS mode Full (strict))
-  -> edge Nginx :443 on edge-vm (Let's Encrypt wildcard, Cloudflare/LAN-only peers, real IP restore, edge rate limit)
-  -> K3s ServiceLB / Traefik on 10.0.0.11 / .12 / .13 :8080 (HTTP)
+  -> edge Nginx :443 on the edge VM (Let's Encrypt wildcard, Cloudflare/LAN-only peers, real IP restore, edge rate limit)
+  -> K3s ServiceLB / Traefik on 192.0.2.46 / .32 / .138 :8080 (HTTP)
   -> Ingress manar.vax.sh (namespace manar-landing)
   -> Service manar-landing :80
   -> 2–4 Next.js pods :3000 (non-root, read-only root filesystem)
@@ -100,10 +103,10 @@ re-joins on the control plane's k3s version. `node-c` and `node-b` were removed 
 Verify from inside the LAN before touching the edge:
 
 ```bash
-curl -s -H 'Host: manar.vax.sh' http://10.0.0.11:8080/api/health
+curl -s -H 'Host: manar.vax.sh' http://192.0.2.46:8080/api/health
 ```
 
-## 4. Edge Nginx (edge-vm, 10.0.0.20)
+## 4. Edge Nginx (edge VM, 192.0.2.12)
 
 The edge already has what this site needs:
 - a Let's Encrypt certificate for `manar.vax.sh` and `*.manar.vax.sh` at `/etc/letsencrypt/live/manar.vax.sh/`
@@ -111,7 +114,7 @@ The edge already has what this site needs:
 - `conf.d/00-cloudflare-real-ip.conf`, which restores the visitor IP from `CF-Connecting-IP` for Cloudflare peers.
 
 `deploy/nginx/manar.conf` replaces the retired Manar console config (`manar.vax.sh`, `api.`, `auth.` pointing at the
-App VM 10.0.0.30). It proxies `manar.vax.sh` to Traefik, drops non-Cloudflare/non-LAN peers with 444, and closes
+App VM 192.0.2.109). It proxies `manar.vax.sh` to Traefik, drops non-Cloudflare/non-LAN peers with 444, and closes
 every other `*.manar.vax.sh` name with 444. `apply-edge.sh` also removes the old agent mTLS passthrough
 (`stream-conf.d/agents-mtls.conf`, port 3443).
 
@@ -119,8 +122,8 @@ Install (backs up, installs, tests, reloads, and restores automatically if `ngin
 
 ```bash
 scp deploy/nginx/manar.conf deploy/nginx/snippets/manar-*.conf deploy/nginx/apply-edge.sh \
-  admin@edge.example.internal:manar-edge/
-ssh -t admin@edge.example.internal 'cd ~/manar-edge && sudo bash apply-edge.sh'
+  deploy@edge.example.com:manar-edge/
+ssh -t deploy@edge.example.com 'cd ~/manar-edge && sudo bash apply-edge.sh'
 ```
 
 The router/firewall source-NATs the 80/443 port-forward, so nginx sees every inbound connection as coming from the
@@ -133,7 +136,7 @@ Recommended once for all sites on this edge (certbot has no reload hook, so rene
 up until nginx is reloaded):
 
 ```bash
-ssh -t admin@edge.example.internal "printf '#!/bin/sh\nsystemctl reload nginx\n' | sudo tee /etc/letsencrypt/renewal-hooks/deploy/reload-nginx >/dev/null && sudo chmod 755 /etc/letsencrypt/renewal-hooks/deploy/reload-nginx"
+ssh -t deploy@edge.example.com "printf '#!/bin/sh\nsystemctl reload nginx\n' | sudo tee /etc/letsencrypt/renewal-hooks/deploy/reload-nginx >/dev/null && sudo chmod 755 /etc/letsencrypt/renewal-hooks/deploy/reload-nginx"
 ```
 
 Cloudflare: `manar.vax.sh` proxied (orange cloud), SSL/TLS mode **Full (strict)**. Delete the DNS records of retired
