@@ -1,5 +1,6 @@
 /**
- * The published coverage matrix. ONE source for the home-page section and the /docs coverage page
+ * The published coverage matrix. Day-1 verification (30 Oct 2026, official docs; see
+ * docs/superpowers/plans/2026-10-31-coverage.md in the workspace) settled the hook cells. ONE source for the home-page section and the /docs coverage page
  * (public launch spec section 6). Update here and both change. A label is never shown above what a
  * tool has earned: cells that depend on hook verification say "Being verified" until Day 1 settles
  * them, and carry the guaranteed minimum as `floor`.
@@ -13,6 +14,7 @@ export type CellId =
   | "gateway_mcp"
   | "mcp_only"
   | "verifying"
+  | "observed_only"
   | "linux_yes_windows_vault"
   | "na"
 
@@ -33,31 +35,11 @@ const linuxBlock: Cell = { id: "linux_yes_windows_vault" }
 
 export const coverageRows: CoverageRow[] = [
   { id: "claude-code", name: "Claude Code", seen: yes, approve: { id: "yes_hook" }, alert: yes, blocked: yes },
-  {
-    id: "cursor",
-    name: "Cursor",
-    seen: yes,
-    approve: { id: "verifying", floor: "mcp_only" },
-    alert: yes,
-    blocked: { id: "verifying", floor: "linux_yes_windows_vault" },
-  },
-  {
-    id: "cli-agents",
-    name: "Gemini CLI, Codex CLI, Copilot CLI",
-    seen: yes,
-    approve: { id: "verifying", floor: "gateway_mcp" },
-    alert: yes,
-    blocked: { id: "verifying", floor: "linux_yes_windows_vault" },
-  },
-  { id: "editors", name: "VS Code + Copilot, Windsurf", seen: yes, approve: { id: "mcp_only" }, alert: yes, blocked: linuxBlock },
-  {
-    id: "desktop",
-    name: "ChatGPT desktop, Claude desktop",
-    seen: yes,
-    approve: { id: "mcp_only" },
-    alert: yes,
-    blocked: linuxBlock,
-  },
+  { id: "cursor", name: "Cursor, Windsurf", seen: yes, approve: { id: "yes_hook" }, alert: yes, blocked: yes },
+  { id: "cli-agents", name: "Gemini CLI, Codex CLI, Copilot CLI", seen: yes, approve: { id: "yes_hook" }, alert: yes, blocked: yes },
+  { id: "editors", name: "VS Code + Copilot", seen: yes, approve: { id: "mcp_only" }, alert: yes, blocked: linuxBlock },
+  { id: "desktop", name: "Claude desktop", seen: yes, approve: { id: "mcp_only" }, alert: yes, blocked: linuxBlock },
+  { id: "chatgpt-desktop", name: "ChatGPT desktop", seen: yes, approve: { id: "observed_only" }, alert: yes, blocked: linuxBlock },
   {
     id: "cloud",
     name: "Cloud agents (ChatGPT, Claude, Copilot Studio)",
@@ -98,13 +80,14 @@ export const coverageText: Record<Locale, CoverageText> = {
       gateway_mcp: "Gateway and MCP",
       mcp_only: "MCP tools only",
       verifying: "Being verified",
+      observed_only: "Seen and alerted only",
       linux_yes_windows_vault: "Linux yes, Windows vault only",
       na: "Not applicable",
     },
     floorPrefix: "At least:",
     vaultNote:
       "Vault only means that on Windows, AWS and SSH keys moved into the Secret vault are blocked for every tool, while other secret files are alert-only.",
-    honesty: "Cells marked Being verified show the minimum that holds today. We update them once each hook is confirmed.",
+    honesty: "Each hook was checked against the tool\u2019s own documentation. Where a tool offers no way to gate its actions, we say so.",
     caption: "Coverage matrix",
   },
   ar: {
@@ -119,19 +102,22 @@ export const coverageText: Record<Locale, CoverageText> = {
       gateway_mcp: "البوابة وMCP",
       mcp_only: "أدوات MCP فقط",
       verifying: "قيد التحقق",
+      observed_only: "مرصودة مع تنبيه فقط",
       linux_yes_windows_vault: "نعم على لينكس، وعلى ويندوز عبر خزنة الأسرار فقط",
       na: "لا ينطبق",
     },
     floorPrefix: "على الأقل:",
     vaultNote:
       "عبارة خزنة الأسرار فقط تعني أن مفاتيح AWS وSSH التي نُقلت إلى خزنة الأسرار على ويندوز تُحجب عن كل الأدوات، أما بقية ملفات الأسرار فيقتصر الأمر فيها على التنبيه.",
-    honesty: "الخلايا المكتوب فيها قيد التحقق تعرض الحد الأدنى المضمون اليوم. نحدّثها عند تأكيد كل ربط.",
+    honesty: "راجعنا كل ربط في وثائق الأداة نفسها. وحيث لا توفر الأداة وسيلة لضبط إجراءاتها نذكر ذلك صراحة.",
     caption: "جدول التغطية",
     rowNames: {
       "claude-code": "Claude Code",
       "cli-agents": "Gemini CLI وCodex CLI وCopilot CLI",
-      editors: "VS Code مع Copilot وWindsurf",
-      desktop: "تطبيقا ChatGPT وClaude لسطح المكتب",
+      cursor: "Cursor وWindsurf",
+      editors: "VS Code مع Copilot",
+      desktop: "تطبيق Claude لسطح المكتب",
+      "chatgpt-desktop": "تطبيق ChatGPT لسطح المكتب",
       cloud: "الوكلاء السحابيون (ChatGPT وClaude وCopilot Studio)",
     },
   },
