@@ -1,3 +1,4 @@
+import createMDX from "@next/mdx"
 import type { NextConfig } from "next"
 
 import { contentSecurityPolicy, STATIC_SECURITY_HEADERS } from "./lib/security-headers"
@@ -8,6 +9,7 @@ const isDev = process.env.NODE_ENV !== "production"
 const csp = contentSecurityPolicy({ dev: isDev })
 
 const nextConfig: NextConfig = {
+  pageExtensions: ["ts", "tsx", "mdx"],
   // Minimal self-contained server for the container image (see Dockerfile).
   output: "standalone",
   poweredByHeader: false,
@@ -58,4 +60,4 @@ const nextConfig: NextConfig = {
   },
 }
 
-export default nextConfig
+export default createMDX({})(nextConfig)

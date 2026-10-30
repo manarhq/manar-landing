@@ -127,7 +127,7 @@ container-check:
       --opt filename=Dockerfile
       --opt platform=linux/amd64
       --opt build-arg:SITE_URL="$SITE_URL"
-      --opt build-arg:NEXT_PUBLIC_CF_BEACON_TOKEN="${NEXT_PUBLIC_CF_BEACON_TOKEN:-}"
+      --opt build-arg:NEXT_PUBLIC_POSTHOG_KEY="${NEXT_PUBLIC_POSTHOG_KEY:-}"
       --opt build-arg:NEXT_PUBLIC_TURNSTILE_SITE_KEY="${NEXT_PUBLIC_TURNSTILE_SITE_KEY:-}"
       --opt build-arg:BUILD_DATE="$CI_COMMIT_TIMESTAMP"
       --opt build-arg:VCS_REF="$CI_COMMIT_SHA"
@@ -185,7 +185,7 @@ container:
       --opt filename=Dockerfile
       --opt platform=linux/amd64
       --opt build-arg:SITE_URL="$SITE_URL"
-      --opt build-arg:NEXT_PUBLIC_CF_BEACON_TOKEN="${NEXT_PUBLIC_CF_BEACON_TOKEN:-}"
+      --opt build-arg:NEXT_PUBLIC_POSTHOG_KEY="${NEXT_PUBLIC_POSTHOG_KEY:-}"
       --opt build-arg:NEXT_PUBLIC_TURNSTILE_SITE_KEY="${NEXT_PUBLIC_TURNSTILE_SITE_KEY:-}"
       --opt build-arg:BUILD_DATE="$CI_COMMIT_TIMESTAMP"
       --opt build-arg:VCS_REF="$CI_COMMIT_SHA"

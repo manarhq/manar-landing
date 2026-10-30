@@ -1,137 +1,248 @@
-import type { Locale } from "@/lib/i18n/config"
+import type { Locale } from "../../i18n/config.ts"
 
 import type { LegalDoc } from "../schema.ts"
 
+/*
+ * Launch draft (31 Oct 2026), written by Claude and approved by the founder to launch with, with no
+ * lawyer review (decision #19). Provider and contracting party: Fixio. Bracketed values are
+ * placeholders the founder fills in before Sunday (listed in the PR).
+ */
 export const terms: Record<Locale, LegalDoc> = {
   en: {
-    title: "Terms of use",
-    description: "The terms that apply when you use the Manar website, including illustrative content, intellectual property, and links.",
-    updated: "2026-10-09",
+    title: "Terms of Service",
+    description: "The terms for using Manar, a product of Fixio: accounts, plans and billing, the device software, acceptable use and liability.",
+    updated: "2026-10-31",
     sections: [
       {
         id: "about",
-        heading: "About these terms",
+        heading: "Who we are and what these terms cover",
         blocks: [
-          "These terms apply to your use of the Manar website at manar.vax.sh, operated by VAX Labs Cloud Computing Services L.L.C S.P.C (VAX), 1st Oud Maitha Street, Al Wathba Tower 1402, Abu Dhabi, United Arab Emirates. By using the website you agree to them.",
-          "They cover the website only. Use of the Manar product is governed by a separate written agreement.",
+          "Manar is a product of Fixio (Fixio, we, us). These terms are a contract between you and Fixio, [Fixio registered address], tax registration number [TRN]. They cover the Manar website at manar.vax.sh, the Manar console at console-manar.vax.sh, the Manar device software (manar-edge) and the hosted service together (the Service).",
+          "By creating an account, installing the device software or using the Service you agree to these terms. If you use Manar for a company, you confirm you may bind that company, and it is the customer.",
+          "Customers on an Enterprise plan or a customer-hosted install sign a separate written agreement. If it conflicts with these terms, the written agreement wins.",
         ],
       },
       {
-        id: "using-the-site",
-        heading: "Using the website",
+        id: "accounts",
+        heading: "Your account",
         blocks: [
-          "You may browse the website and request a demo for your own business purposes. Please do not:",
+          "You sign in with Microsoft, GitHub or an email link. You must give accurate information, keep your sign-in methods secure and tell us at once if you think someone else has access.",
+          "You must be at least 18, or the age of majority where you live. You are responsible for what happens under your account.",
+          "One person may hold one free personal workspace. We may close extra free workspaces opened to get around plan limits.",
+        ],
+      },
+      {
+        id: "service",
+        heading: "The Service and its plans",
+        blocks: [
+          "Manar watches the AI tools on the computers you enrol, can ask you before risky actions where a tool allows it, warns when a tool touches secrets, and keeps a signed record. What Manar can do for each tool is stated on the coverage page. That page, and not marketing wording, is the statement of what we provide.",
           {
-            list: [
-              "attempt to disrupt, overload, or gain unauthorised access to the website or its infrastructure;",
-              "submit false details, other people's data without permission, or automated form submissions;",
-              "copy the website's content for resale or to present it as your own.",
-            ],
+            table: {
+              head: ["Plan", "Price (USD)", "Limits"],
+              rows: [
+                ["Free", "$0", "3 devices, 10 agents, 30-day audit, 1 cloud agent"],
+                ["Personal Pro", "$9 per month or $90 per year", "10 devices, unlimited agents, 1-year audit, 5 cloud agents, TLS inspection, priority email support"],
+                ["Company", "$15 per user per month, plus $5 per extra device", "3 devices per user included. A billable user is anyone with an enrolled device or a console sign-in that month. 30-day trial with 25 devices and all features"],
+                ["Enterprise", "By quotation", "Signed licence. Hub and federation, air-gapped installs, government deployments, TPM attestation and compliance packs"],
+              ],
+            },
           },
-          "A demo request is an enquiry. It does not create an agreement or any obligation on either side.",
+          "We may improve, change or retire features. If we remove a paid feature, we will tell you in advance and refund the unused part of what you paid for it.",
         ],
       },
       {
-        id: "illustrative-content",
-        heading: "Illustrative content",
+        id: "billing",
+        heading: "Payment, tax and trials",
         blocks: [
-          "The workspace views, decision examples, names, counts, and events shown on the website are illustrative sample data. They are not connected to a live environment and do not describe any real organization.",
-          "Descriptions of capabilities and deployment options are general information. What applies to you is confirmed in writing during scoping. The website is provided as is, and to the extent the law allows we give no warranty that it is complete, current, or free of errors.",
+          "Prices are in US dollars. For buyers in the UAE we add 5% VAT. Stripe, our payment processor, takes your card details; we never see or store them. Fixio is the merchant of record and appears on your receipt.",
+          "Paid plans renew each month or year until you cancel in the billing portal. Cancelling stops the next renewal. You keep the paid features until the period you paid for ends. Fees already paid are not refunded, except where the law requires it or we say otherwise in writing.",
+          "Company usage is counted daily and billed for the month. A company trial lasts 30 days. If it ends without payment, the workspace becomes read-only with export.",
+          "If you move to a lower plan or a payment fails, devices already enrolled stay protected. New devices are refused until you are under the limit. Audit older than the new plan allows is hidden, not deleted, for 30 days and then dropped. Cloud agents over the limit are paused, not deleted.",
         ],
       },
       {
-        id: "intellectual-property",
-        heading: "Intellectual property",
+        id: "software",
+        heading: "The device software",
         blocks: [
-          "The Manar name, the lighthouse mark, and the website's text, design, and code belong to VAX or its licensors. These terms do not grant you any licence to use them, other than viewing and sharing links to the website.",
+          "You may install the device software only on computers you own or are authorised to manage. If a computer belongs to your employer or someone else, get their permission first.",
+          "The installer and the binaries are not code-signed yet, so Windows SmartScreen may warn you. The installer prints the SHA-256 of what it installs. You can check it against the SHA256SUMS published with each release.",
+          "The software edits settings of the AI tools on your computer, always after backing up the original. The page What Manar changes on your computer lists every file. You can turn protection off for a tool, which restores its backup, or uninstall Manar, which restores all of them.",
+          "The software is licensed under Apache-2.0 where it is open source. These terms govern the hosted Service.",
         ],
       },
       {
-        id: "links",
-        heading: "Links to other websites",
+        id: "acceptable-use",
+        heading: "Acceptable use",
         blocks: [
-          "The website links to other websites, such as vax.sh. We do not control them and are not responsible for their content or privacy practices.",
+          "You must follow the Acceptable Use policy, which is part of these terms.",
+        ],
+      },
+      {
+        id: "your-data",
+        heading: "Your data",
+        blocks: [
+          "You own your data. You give us the right to host, process and show it only to run the Service for you. The Privacy Policy explains what we collect and why.",
+          "You may export your audit record at any time. You may delete your account whenever you like: the workspace is deleted after a 30-day grace period that you can cancel, and we offer an export first.",
+          "A free workspace with no activity for 60 days is archived, and after the archive period it is dropped. We email you a warning before each step.",
+        ],
+      },
+      {
+        id: "limits",
+        heading: "What Manar cannot promise",
+        blocks: [
+          "Manar reduces risk. It does not remove it. Some tools allow Manar to approve or deny their actions, and some only let it observe, as the coverage page says. A tool can change how it works without telling us, and software on a computer can be bypassed by someone with enough access to that computer.",
+          "AI tools make mistakes and act on their own. You stay responsible for what the tools you run do, and for your own decisions on approval requests.",
+        ],
+      },
+      {
+        id: "open-source",
+        heading: "Open source and trademarks",
+        blocks: [
+          "The open core of Manar is released under the Apache-2.0 licence in the manarhq organisation on GitHub. The Manar name and mark are trademarks of Fixio. The licence does not grant rights in them.",
+        ],
+      },
+      {
+        id: "suspension",
+        heading: "Suspension and ending",
+        blocks: [
+          "You can stop using Manar at any time. We may suspend or close an account that breaks these terms, puts the Service or other people at risk, or does not pay. Where we can, we warn you first and give you a chance to export.",
+          "Sections that by their nature should survive ending, such as payment owed, liability and governing law, do.",
         ],
       },
       {
         id: "liability",
-        heading: "Liability and changes",
+        heading: "Warranty and liability",
         blocks: [
-          "To the extent the law allows, VAX is not liable for losses arising from use of, or inability to use, the website. Nothing in these terms limits liability that cannot be limited by law.",
-          "We may update these terms or the website at any time. The date at the top shows the last real change to these terms.",
-          "These terms are governed by the laws of the United Arab Emirates as applied in the Emirate of Abu Dhabi. The courts of Abu Dhabi have jurisdiction over any dispute about them.",
+          "The Service is provided as is and as available. To the extent the law allows, we give no warranty that it is error free, always available or fits a particular purpose.",
+          "To the extent the law allows, Fixio is not liable for indirect or consequential loss, lost profit or lost data. Our total liability for any claim is limited to the amount you paid us in the 12 months before the claim, or USD 100 for free accounts. Nothing here limits liability that the law does not allow to be limited.",
         ],
       },
       {
-        id: "contact",
-        heading: "Contact",
-        blocks: ["Questions about these terms can be sent to info@fixio.ae."],
+        id: "law",
+        heading: "Governing law and changes",
+        blocks: [
+          "These terms are governed by the laws of the United Arab Emirates as applied in [emirate of Fixio registration]. The courts of [emirate of Fixio registration] have jurisdiction, unless the law gives you the right to go elsewhere.",
+          "We may change these terms. For a material change we email account owners at least 14 days before it takes effect. Using the Service after that means you accept the change.",
+          "Questions: support@fixio.ae.",
+        ],
       },
     ],
   },
   ar: {
-    title: "شروط الاستخدام",
-    description: "الشروط التي تنطبق عند استخدامك موقع منار، بما في ذلك المحتوى التوضيحي والملكية الفكرية والروابط.",
-    updated: "2026-10-09",
+    title: "شروط الخدمة",
+    description: "شروط استخدام منار، وهو منتج من Fixio: الحسابات والخطط والفوترة وبرنامج الجهاز والاستخدام المقبول والمسؤولية.",
+    updated: "2026-10-31",
     sections: [
       {
         id: "about",
-        heading: "حول هذه الشروط",
+        heading: "من نحن وما الذي تغطيه هذه الشروط",
         blocks: [
-          "تنطبق هذه الشروط على استخدامك موقع منار على العنوان manar.vax.sh، الذي تشغّله شركة \u2068VAX Labs Cloud Computing Services L.L.C S.P.C (VAX), 1st Oud Maitha Street, Al Wathba Tower 1402, Abu Dhabi, United Arab Emirates\u2069 (أبوظبي، الإمارات العربية المتحدة). وباستخدامك الموقع فإنك توافق عليها.",
-          "وتقتصر هذه الشروط على الموقع، أما استخدام منصة منار فتحكمه اتفاقية مكتوبة منفصلة.",
+          "منار منتج من Fixio (ويُشار إليها بنحن). هذه الشروط عقد بينك وبين Fixio، [عنوان Fixio المسجّل]، رقم التسجيل الضريبي [TRN]. وهي تغطي موقع منار على manar.vax.sh ولوحة تحكم منار على console-manar.vax.sh وبرنامج جهاز منار (manar-edge) والخدمة المستضافة معاً (الخدمة).",
+          "بإنشاء حساب أو تثبيت برنامج الجهاز أو استخدام الخدمة فإنك توافق على هذه الشروط. وإذا استخدمت منار باسم شركة فإنك تؤكد أن لك صلاحية إلزامها، وتكون هي العميل.",
+          "العملاء على خطة المؤسسات أو على تثبيت مستضاف لدى العميل يوقّعون اتفاقية مكتوبة منفصلة. وإذا تعارضت معها هذه الشروط فالاتفاقية المكتوبة هي المعتمدة.",
         ],
       },
       {
-        id: "using-the-site",
-        heading: "استخدام الموقع",
+        id: "accounts",
+        heading: "حسابك",
         blocks: [
-          "يمكنك تصفح الموقع وطلب عرض توضيحي لأغراض عملك. ونرجو منك ألا:",
+          "تسجّل الدخول عبر Microsoft أو GitHub أو رابط بريد إلكتروني. عليك تقديم معلومات صحيحة وحماية طرق تسجيل الدخول وإبلاغنا فوراً إذا ظننت أن أحداً آخر وصل إلى حسابك.",
+          "يجب ألا يقل عمرك عن 18 عاماً أو سن الرشد في بلد إقامتك. وأنت مسؤول عما يحدث عبر حسابك.",
+          "يجوز للشخص الواحد امتلاك مساحة عمل شخصية مجانية واحدة. ويجوز لنا إغلاق مساحات العمل المجانية الإضافية التي فُتحت للالتفاف على حدود الخطة.",
+        ],
+      },
+      {
+        id: "service",
+        heading: "الخدمة وخططها",
+        blocks: [
+          "يراقب منار أدوات الذكاء الاصطناعي على الحواسيب التي تسجّلها، ويستطيع سؤالك قبل الإجراءات الخطرة حيثما تسمح الأداة بذلك، وينبّهك عندما تلمس أداة ما أسراراً، ويحتفظ بسجل موقّع. ما يستطيع منار فعله لكل أداة مبيّن في صفحة التغطية، وتلك الصفحة، لا العبارات التسويقية، هي البيان المعتمد لما نقدمه.",
           {
-            list: [
-              "تحاول تعطيل الموقع أو إثقاله أو الوصول غير المصرح به إليه أو إلى بنيته التحتية؛",
-              "ترسل بيانات غير صحيحة، أو بيانات أشخاص آخرين دون إذنهم، أو طلبات آلية عبر النموذج؛",
-              "تنسخ محتوى الموقع لإعادة بيعه أو لتقديمه على أنه من عملك.",
-            ],
+            table: {
+              head: ["الخطة", "السعر (بالدولار الأمريكي)", "الحدود"],
+              rows: [
+                ["مجاني", "$0", "3 أجهزة و10 وكلاء وسجل تدقيق 30 يوماً ووكيل سحابي واحد"],
+                ["Personal Pro", "$9 شهرياً أو $90 سنوياً", "10 أجهزة ووكلاء غير محدودين وسجل تدقيق سنة و5 وكلاء سحابيين وفحص TLS ودعم أولوية عبر البريد"],
+                ["الشركات", "$15 لكل مستخدم شهرياً، و$5 لكل جهاز إضافي", "3 أجهزة لكل مستخدم ضمن السعر. المستخدم المحتسب هو كل من لديه جهاز مسجّل أو دخل إلى لوحة التحكم في ذلك الشهر. تجربة 30 يوماً بحد 25 جهازاً وجميع الميزات"],
+                ["المؤسسات", "بعرض سعر", "ترخيص موقّع. المركز والاتحاد بين البيئات وتثبيت معزول عن الشبكة ونشر للجهات الحكومية وإثبات TPM وحزم الامتثال"],
+              ],
+            },
           },
-          "طلب العرض التوضيحي استفسار فقط، ولا ينشئ اتفاقًا أو أي التزام على أي من الطرفين.",
+          "يجوز لنا تحسين الميزات أو تغييرها أو إيقافها. وإذا أزلنا ميزة مدفوعة فسنبلغك مسبقاً ونردّ لك الجزء غير المستخدم مما دفعته مقابلها.",
         ],
       },
       {
-        id: "illustrative-content",
-        heading: "المحتوى التوضيحي",
+        id: "billing",
+        heading: "الدفع والضريبة والتجارب",
         blocks: [
-          "واجهات مساحة العمل وأمثلة القرارات والأسماء والأعداد والأحداث المعروضة على الموقع بيانات توضيحية، غير متصلة ببيئة فعلية ولا تصف أي جهة حقيقية.",
-          "أوصاف الإمكانات وخيارات النشر معلومات عامة، ويُؤكَّد ما ينطبق عليك كتابيًا أثناء تحديد النطاق. ويُقدَّم الموقع كما هو، وفي الحدود التي يسمح بها القانون لا نقدّم أي ضمان بأنه كامل أو محدّث أو خالٍ من الأخطاء.",
+          "الأسعار بالدولار الأمريكي. وللمشترين داخل الإمارات نضيف ضريبة قيمة مضافة بنسبة 5%. تتولى Stripe، معالج الدفع لدينا، بيانات بطاقتك، ولا نراها ولا نخزّنها. وFixio هي البائع المسجّل وتظهر في إيصالك.",
+          "تتجدد الخطط المدفوعة شهرياً أو سنوياً حتى تلغيها من بوابة الفوترة. الإلغاء يوقف التجديد التالي، وتحتفظ بالميزات المدفوعة حتى نهاية المدة التي دفعت عنها. الرسوم المدفوعة لا تُسترد إلا إذا أوجب القانون ذلك أو ذكرنا خلاف ذلك كتابةً.",
+          "يُحتسب استخدام الشركات يومياً ويُفوتر عن الشهر. تجربة الشركات مدتها 30 يوماً، وإذا انتهت دون دفع تصبح مساحة العمل للقراءة فقط مع إمكانية التصدير.",
+          "إذا انتقلت إلى خطة أدنى أو تعذّر الدفع فإن الأجهزة المسجّلة سابقاً تبقى محمية، ويُرفض تسجيل أجهزة جديدة حتى تصبح ضمن الحد. أما التدقيق الأقدم مما تسمح به الخطة الجديدة فيُخفى ولا يُحذف لمدة 30 يوماً ثم يُسقط. والوكلاء السحابيون الزائدون عن الحد يُوقفون مؤقتاً ولا يُحذفون.",
         ],
       },
       {
-        id: "intellectual-property",
-        heading: "الملكية الفكرية",
+        id: "software",
+        heading: "برنامج الجهاز",
         blocks: [
-          "اسم منار وشعار المنارة ونصوص الموقع وتصميمه وشيفرته مملوكة لـ VAX أو للجهات المرخِّصة لها. ولا تمنحك هذه الشروط أي ترخيص لاستخدامها سوى تصفح الموقع ومشاركة روابطه.",
+          "يجوز لك تثبيت برنامج الجهاز فقط على الحواسيب التي تملكها أو المخوّل لك إدارتها. وإذا كان الحاسوب لجهة عملك أو لشخص آخر فاحصل على إذنه أولاً.",
+          "المثبّت والملفات التنفيذية غير موقّعة رقمياً حالياً، لذلك قد يحذّرك Windows SmartScreen. يعرض المثبّت قيمة SHA-256 لما يثبّته، ويمكنك مقارنتها بملف SHA256SUMS المنشور مع كل إصدار.",
+          "يعدّل البرنامج إعدادات أدوات الذكاء الاصطناعي على حاسوبك، وذلك دائماً بعد نسخ الأصل احتياطياً. وتسرد صفحة ما الذي يغيّره منار في حاسوبك كل ملف. ويمكنك إيقاف الحماية لأداة ما فتُستعاد نسختها الاحتياطية، أو إزالة منار فتُستعاد جميعها.",
+          "يُرخَّص البرنامج بموجب Apache-2.0 حيثما كان مفتوح المصدر. وتحكم هذه الشروط الخدمة المستضافة.",
         ],
       },
       {
-        id: "links",
-        heading: "روابط لمواقع أخرى",
+        id: "acceptable-use",
+        heading: "الاستخدام المقبول",
+        blocks: ["عليك الالتزام بسياسة الاستخدام المقبول، وهي جزء من هذه الشروط."],
+      },
+      {
+        id: "your-data",
+        heading: "بياناتك",
         blocks: [
-          "يتضمن الموقع روابط لمواقع أخرى مثل vax.sh. ولا نتحكم في هذه المواقع، ولسنا مسؤولين عن محتواها أو ممارساتها في الخصوصية.",
+          "بياناتك ملك لك. وأنت تمنحنا حق استضافتها ومعالجتها وعرضها فقط لتشغيل الخدمة لك. وتشرح سياسة الخصوصية ما نجمعه ولماذا.",
+          "يمكنك تصدير سجل التدقيق في أي وقت. ويمكنك حذف حسابك متى شئت: تُحذف مساحة العمل بعد مهلة مدتها 30 يوماً يمكنك إلغاؤها، ونعرض عليك التصدير أولاً.",
+          "مساحة العمل المجانية التي لا نشاط فيها لمدة 60 يوماً تُؤرشف، وبعد مدة الأرشفة تُسقط. ونرسل إليك بريداً تحذيرياً قبل كل خطوة.",
+        ],
+      },
+      {
+        id: "limits",
+        heading: "ما لا يستطيع منار الوعد به",
+        blocks: [
+          "يقلّل منار المخاطر ولا يزيلها. بعض الأدوات تتيح لمنار الموافقة على إجراءاتها أو رفضها، وبعضها لا يتيح إلا المراقبة، كما تبيّن صفحة التغطية. وقد تغيّر الأداة طريقة عملها دون إبلاغنا، ويمكن لمن يملك صلاحيات كافية على الحاسوب تجاوز أي برنامج عليه.",
+          "تخطئ أدوات الذكاء الاصطناعي وتتصرف من تلقاء نفسها. وتبقى مسؤولاً عمّا تفعله الأدوات التي تشغّلها وعن قراراتك في طلبات الموافقة.",
+        ],
+      },
+      {
+        id: "open-source",
+        heading: "المصدر المفتوح والعلامات التجارية",
+        blocks: [
+          "النواة المفتوحة لمنار منشورة بترخيص Apache-2.0 في منظمة manarhq على GitHub. واسم منار وشعاره علامتان تجاريتان لـ Fixio، ولا يمنح الترخيص أي حقوق فيهما.",
+        ],
+      },
+      {
+        id: "suspension",
+        heading: "التعليق والإنهاء",
+        blocks: [
+          "يمكنك التوقف عن استخدام منار في أي وقت. ويجوز لنا تعليق أو إغلاق حساب يخالف هذه الشروط أو يعرّض الخدمة أو الآخرين للخطر أو لا يسدد المستحقات. وحيثما أمكن ننبّهك أولاً ونتيح لك التصدير.",
+          "البنود التي تقتضي طبيعتها استمرارها بعد الإنهاء، مثل المبالغ المستحقة والمسؤولية والقانون الواجب التطبيق، تظل سارية.",
         ],
       },
       {
         id: "liability",
-        heading: "المسؤولية والتعديلات",
+        heading: "الضمان والمسؤولية",
         blocks: [
-          "في الحدود التي يسمح بها القانون، لا تتحمل VAX المسؤولية عن الخسائر الناشئة عن استخدام الموقع أو تعذّر استخدامه. ولا يحدّ أي شيء في هذه الشروط من مسؤولية لا يجوز الحد منها قانونًا.",
-          "قد نحدّث هذه الشروط أو الموقع في أي وقت. ويبيّن التاريخ في أعلى الصفحة آخر تعديل فعلي على هذه الشروط.",
-          "تخضع هذه الشروط لقوانين دولة الإمارات العربية المتحدة كما تُطبَّق في إمارة أبوظبي، وتختص محاكم أبوظبي بالنظر في أي نزاع بشأنها.",
+          "تُقدَّم الخدمة كما هي وحسب توافرها. وفي حدود ما يسمح به القانون لا نضمن خلوها من الأخطاء أو توافرها دائماً أو ملاءمتها لغرض معيّن.",
+          "وفي حدود ما يسمح به القانون لا تتحمل Fixio أي خسارة غير مباشرة أو تبعية أو فوات ربح أو فقدان بيانات. ويقتصر إجمالي مسؤوليتنا عن أي مطالبة على المبلغ الذي دفعته لنا خلال الاثني عشر شهراً السابقة للمطالبة، أو 100 دولار أمريكي للحسابات المجانية. ولا يحدّ شيء هنا من مسؤولية لا يجيز القانون تحديدها.",
         ],
       },
       {
-        id: "contact",
-        heading: "التواصل",
-        blocks: ["للاستفسار عن هذه الشروط، راسلنا على info@fixio.ae."],
+        id: "law",
+        heading: "القانون الواجب التطبيق والتعديلات",
+        blocks: [
+          "تخضع هذه الشروط لقوانين دولة الإمارات العربية المتحدة كما تُطبَّق في [إمارة تسجيل Fixio]، وتختص محاكم [إمارة تسجيل Fixio] بالنظر فيها، ما لم يمنحك القانون الحق في اللجوء إلى جهة أخرى.",
+          "يجوز لنا تعديل هذه الشروط. وعند أي تعديل جوهري نرسل بريداً إلى مالكي الحسابات قبل 14 يوماً على الأقل من سريانه. واستمرارك في استخدام الخدمة بعد ذلك يعني قبولك للتعديل.",
+          "للاستفسار: support@fixio.ae.",
+        ],
       },
     ],
   },

@@ -9,7 +9,7 @@ import { getContent, isPreviewing } from "@/lib/content/load"
 import { localeFontPreloads } from "@/lib/fonts"
 import { isLocale, localeDirection, localeTag, locales } from "@/lib/i18n/config"
 import { consentPendingScript } from "@/lib/consent"
-import { CF_BEACON_TOKEN, THEME_STORAGE_KEY } from "@/lib/site"
+import { POSTHOG_KEY, THEME_STORAGE_KEY } from "@/lib/site"
 
 import "../globals.css"
 
@@ -51,7 +51,7 @@ export default async function RootLayout({ children, params }: LayoutProps<"/[la
       suppressHydrationWarning
     >
       <head>
-        <script dangerouslySetInnerHTML={{ __html: `${themeScript};${consentPendingScript(Boolean(CF_BEACON_TOKEN))}` }} />
+        <script dangerouslySetInnerHTML={{ __html: `${themeScript};${consentPendingScript(Boolean(POSTHOG_KEY))}` }} />
       </head>
       <body className="flex min-h-dvh flex-col overflow-x-clip">
         <a

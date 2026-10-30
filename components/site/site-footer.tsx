@@ -3,89 +3,77 @@ import Link from "next/link"
 
 import type { Locale } from "@/lib/i18n/config"
 import type { Dictionary } from "@/lib/i18n/dictionaries"
+import { launchCopy } from "@/lib/launch/copy"
+import { links } from "@/lib/launch/links"
 import { bookingHref } from "@/lib/site"
 
 import { BrandMark } from "./brand"
 import { CookieSettingsButton } from "./cookie-settings-button"
-import { navItems } from "./nav-items"
 
 const linkClass =
-  "inline-flex min-h-9 items-center text-sm text-muted-foreground transition-colors duration-[120ms] hover:text-foreground"
+  "inline-flex min-h-9 items-center gap-1 text-sm text-muted-foreground transition-colors duration-[120ms] hover:text-foreground"
 
 export function SiteFooter({ locale, dict }: { locale: Locale; dict: Dictionary }) {
   const year = new Date().getFullYear()
-  const f = dict.footer
+  const f = launchCopy[locale].footer
+  const n = launchCopy[locale].nav
+  const home = `/${locale}`
 
   return (
     <footer className="mt-auto border-t border-line bg-surface" data-print="hide">
       <div className="shell grid gap-12 py-16 md:grid-cols-12 md:gap-8">
-        <div className="md:col-span-12 lg:col-span-6">
-          <Link href={`/${locale}`} aria-label={dict.common.homeLink} className="inline-flex items-center gap-2 rounded-md">
-            <BrandMark src={dict.images.logo.src} className="h-8" />
+        <div className="md:col-span-12 lg:col-span-5">
+          <Link href={home} aria-label={dict.common.homeLink} className="inline-flex items-center rounded-md">
+            <BrandMark />
             <span className="text-lg font-semibold text-foreground">{dict.common.brandName}</span>
           </Link>
           <p className="mt-4 text-base font-medium text-foreground">{f.tagline}</p>
-          <p className="mt-2 max-w-[48ch] text-sm text-muted-foreground">{f.hackathon}</p>
-          <a
-            href={dict.links.vax}
-            target="_blank"
-            rel="noopener"
-            aria-label={`${dict.common.endorsement}. ${dict.common.endorsementLink}`}
-            className="mt-4 inline-flex min-h-9 items-center gap-1 rounded-sm text-sm font-medium text-muted-foreground transition-colors duration-[120ms] hover:text-foreground"
-          >
-            {dict.common.endorsement}
-            <ArrowUpRightIcon aria-hidden className="size-3.5 rtl:-scale-x-100" />
-          </a>
+          <p className="mt-2 max-w-[48ch] text-sm text-muted-foreground">{f.fixio}</p>
         </div>
 
-        <nav aria-label={f.sectionsTitle} className="md:col-span-4 lg:col-span-2">
-          <h2 className="text-sm font-semibold text-foreground">{f.sectionsTitle}</h2>
+        <nav aria-label={f.product} className="md:col-span-4 lg:col-span-2">
+          <h2 className="text-sm font-semibold text-foreground">{f.product}</h2>
           <ul className="mt-3">
-            {navItems(locale, dict).map((item) => (
-              <li key={item.href}>
-                <Link href={item.href} className={linkClass}>
-                  {item.label}
-                </Link>
-              </li>
-            ))}
+            <li><Link href={`${home}#coverage`} className={linkClass}>{n.coverage}</Link></li>
+            <li><Link href={`${home}#pricing`} className={linkClass}>{n.pricing}</Link></li>
+            <li><Link href={`${home}/docs`} className={linkClass}>{n.docs}</Link></li>
+            <li>
+              <a href={links.console} className={linkClass}>{n.startFree}</a>
+            </li>
           </ul>
         </nav>
 
-        <nav aria-label={f.legalTitle} className="md:col-span-4 lg:col-span-2">
-          <h2 className="text-sm font-semibold text-foreground">{f.legalTitle}</h2>
+        <nav aria-label={f.legal} className="md:col-span-4 lg:col-span-2">
+          <h2 className="text-sm font-semibold text-foreground">{f.legal}</h2>
           <ul className="mt-3">
-            <li>
-              <Link href={`/${locale}/privacy`} className={linkClass}>
-                {f.privacy}
-              </Link>
-            </li>
-            <li>
-              <Link href={`/${locale}/cookies`} className={linkClass}>
-                {f.cookies}
-              </Link>
-            </li>
-            <li>
-              <Link href={`/${locale}/terms`} className={linkClass}>
-                {f.terms}
-              </Link>
-            </li>
+            <li><Link href={`${home}/terms`} className={linkClass}>{f.terms}</Link></li>
+            <li><Link href={`${home}/privacy`} className={linkClass}>{f.privacy}</Link></li>
+            <li><Link href={`${home}/acceptable-use`} className={linkClass}>{f.aup}</Link></li>
+            <li><Link href={`${home}/cookies`} className={linkClass}>{f.cookies}</Link></li>
             <li>
               <CookieSettingsButton label={f.cookieSettings} className={`${linkClass} cursor-pointer text-start`} />
             </li>
           </ul>
         </nav>
 
-        <div className="md:col-span-4 lg:col-span-2">
-          <h2 className="text-sm font-semibold text-foreground">{f.contactTitle}</h2>
+        <div className="md:col-span-4 lg:col-span-3">
+          <h2 className="text-sm font-semibold text-foreground">{f.resources}</h2>
           <ul className="mt-3">
             <li>
-              <a href={`mailto:${dict.links.email}`} className={`ltr-fragment ${linkClass}`}>
-                {dict.links.email}
+              <a href={links.github} rel="noopener" className={linkClass}>
+                {n.github}
+                <ArrowUpRightIcon aria-hidden className="size-3.5 rtl:-scale-x-100" />
               </a>
             </li>
             <li>
-              <a href={`mailto:${dict.links.support}`} className={linkClass}>
-                {dict.footer.support}:&nbsp;<span className="ltr-fragment">{dict.links.support}</span>
+              <a href={links.status} rel="noopener" className={linkClass}>
+                {n.status}
+                <ArrowUpRightIcon aria-hidden className="size-3.5 rtl:-scale-x-100" />
+              </a>
+            </li>
+            <li>
+              <a href={`mailto:${dict.links.support}`} className={`ltr-fragment ${linkClass}`}>
+                {dict.links.support}
               </a>
             </li>
             <li>
@@ -99,7 +87,7 @@ export function SiteFooter({ locale, dict }: { locale: Locale; dict: Dictionary 
 
       <div className="border-t border-line">
         <p className="shell py-6 text-sm text-muted-foreground">
-          © <span className="ltr-fragment">{year}</span> VAX Labs Cloud Computing Services L.L.C S.P.C. {f.rights}
+          © <span className="ltr-fragment">{year}</span> Fixio. {f.fixio} {f.rights}
         </p>
       </div>
     </footer>

@@ -4,10 +4,12 @@ import { defaultLocale, localeTag, locales, ogLocale, otherLocale, type Locale }
 
 export const THEME_STORAGE_KEY = "manar-theme"
 
-/** Cloudflare Web Analytics token. Analytics and the consent banner exist only when it is set. */
-export const CF_BEACON_TOKEN = process.env.NEXT_PUBLIC_CF_BEACON_TOKEN?.trim() || ""
+/** PostHog (EU) project key. Analytics and the consent banner exist only when it is set. */
+export const POSTHOG_KEY = process.env.NEXT_PUBLIC_POSTHOG_KEY?.trim() || ""
+/** PostHog EU ingestion host. */
+export const POSTHOG_HOST = "https://eu.i.posthog.com"
 
-export type SitePath = "" | "/meet" | "/demo" | "/privacy" | "/cookies" | "/terms"
+export type SitePath = "" | "/meet" | "/demo" | "/privacy" | "/cookies" | "/terms" | "/acceptable-use" | "/docs" | `/docs/${string}`
 
 /** Where every "Book a meeting" link goes. The path is content (links.booking), editable in the CMS. */
 export function bookingHref(locale: Locale, content: { links: { booking: string } }): string {

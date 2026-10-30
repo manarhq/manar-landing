@@ -31,11 +31,10 @@ export function homeStructuredData({
       {
         "@type": "Organization",
         "@id": orgId,
-        name: "VAX",
-        legalName: "VAX Labs Cloud Computing Services L.L.C S.P.C",
-        url: vaxUrl,
+        name: "Fixio",
+        legalName: "Fixio",
+        url: site,
         email,
-        address: { "@type": "PostalAddress", addressLocality: "Abu Dhabi", addressCountry: "AE" },
         brand: { "@type": "Brand", name: "Manar", logo: new URL(logo, origin).href },
       },
       {

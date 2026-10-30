@@ -48,17 +48,17 @@ Unsupported locales return 404 (`dynamicParams = false`).
 | `SITE_URL`        | Sitemap/robots/metadata | Public origin; defaults to `https://manar.vax.sh`. Read at **build time**. Overrides must be absolute HTTP(S) origins with no credentials, path, query, or fragment. Invalid values fail the build. Docker requires an explicit build argument; CI already supplies it. |
 | `RESEND_API_KEY`  | Sending demo requests | Server-only. |
 | `DEMO_FROM_EMAIL` | Sending demo requests | Sender on a domain verified in Resend, e.g. `Manar <demo@mail.your-domain>`. |
-| `NEXT_PUBLIC_CF_BEACON_TOKEN` | Optional analytics | Cloudflare Web Analytics token, read at **build time** (Docker build argument, passed by CI from the masked variable of the same name). Enables the consent banner; the beacon loads only after opt-in. Unset: no banner, no beacon. |
+| `NEXT_PUBLIC_POSTHOG_KEY` | Optional analytics | PostHog EU project key (cookieless, public by design), read at **build time** (Docker build argument, passed by CI from the masked variable of the same name). Enables the consent banner; the beacon loads only after opt-in. Unset: no banner, no beacon. |
 | `NEXT_PUBLIC_TURNSTILE_SITE_KEY` | Booking | Cloudflare Turnstile site key, **build time** (CI build argument from the variable of the same name). |
 | `SITE_API_URL` | Content and booking | manar-site origin, **runtime**, server only. Unset or unreachable: bundled content, and `/meet` offers the request form. |
 | `REVALIDATE_SECRET` | Content publishing | At least 32 characters, **runtime**, server only. Unset: `/api/revalidate` returns 404. |
 
-### Turning on analytics (Cloudflare Web Analytics)
+### Turning on analytics (PostHog EU analytics)
 
 1. Cloudflare dashboard: **Analytics and Logs → Web Analytics → Add a site**, hostname `manar.vax.sh`, and
    choose the JavaScript snippet (not automatic setup, which injects the beacon without consent).
    Copy only the `token` value from the snippet.
-2. GitLab `manar/landing`: **Settings → CI/CD → Variables → Add variable**, key `NEXT_PUBLIC_CF_BEACON_TOKEN`,
+2. GitLab `manar/landing`: **Settings → CI/CD → Variables → Add variable**, key `NEXT_PUBLIC_POSTHOG_KEY`,
    the token as value, **Masked** and **Protected** on (protected so only `main` builds see it).
 3. The next merge to `main` builds it in. Check: the banner appears on a first visit; nothing loads from
    `static.cloudflareinsights.com` until **Accept analytics**; with Global Privacy Control on, no banner.
@@ -157,11 +157,11 @@ the client IP for rate limiting; set it only when every request passes a proxy t
 
 ## Brand tokens and theme
 
-- Design system: `docs/design/DESIGN-SYSTEM.md` in the workspace repo (Stone + UAE red). Tokens live once in
+- Design system: `docs/design/DESIGN-SYSTEM.md` in the workspace repo (Midnight). Tokens live once in
   `app/globals.css` with the same names and values as manar-web: light on `:root`, dark on `.dark`. shadcn's
   slots (`--primary`, `--muted`, ...) map onto them; the landing's primary is the brand red.
 - One radius: 6px (4px for badges). Spacing steps 4, 8, 12, 16, 24, 32, 48, 64, 96 only.
-- Fonts: IBM Plex Sans and Plex Sans Arabic self-hosted (`app/fonts.css`), IBM Plex Mono via `next/font` (ids and action names).
+- Fonts: Readex Pro (Arabic and Latin) and JetBrains Mono self-hosted (`app/fonts.css`).
 - Theme: follows the system by default; an explicit choice is stored in `localStorage` (`manar-theme`) and
   applied by an inline script before first paint (`app/[lang]/layout.tsx`).
 - Motion: colour transitions only, plus one hero animation (the example request moving to approved). No
