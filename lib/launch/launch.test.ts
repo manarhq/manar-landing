@@ -39,27 +39,23 @@ describe("launch strings", () => {
 
 describe("coverage matrix (spec section 6)", () => {
   const row = (id: string) => coverageRows.find((r) => r.id === id)!
-  it("has the six rows in spec order", () => {
-    assert.deepEqual(coverageRows.map((r) => r.id), ["claude-code", "cursor", "cli-agents", "editors", "desktop", "cloud"])
+  it("has the rows in spec order", () => {
+    assert.deepEqual(coverageRows.map((r) => r.id), ["claude-code", "cursor", "cli-agents", "editors", "desktop", "chatgpt-desktop", "cloud"])
   })
-  it("claims hooks only for Claude Code", () => {
-    assert.equal(row("claude-code").approve.id, "yes_hook")
-    assert.equal(row("claude-code").blocked.id, "yes")
+  it("claims hooks only for tools whose docs confirm a pre-action hook", () => {
+    for (const id of ["claude-code", "cursor", "cli-agents"]) assert.equal(row(id).approve.id, "yes_hook")
+    for (const id of ["claude-code", "cursor", "cli-agents"]) assert.equal(row(id).blocked.id, "yes")
     for (const id of ["editors", "desktop"]) {
       assert.equal(row(id).approve.id, "mcp_only")
       assert.equal(row(id).blocked.id, "linux_yes_windows_vault")
     }
   })
-  it("shows Being verified, with the guaranteed minimum, where the spec says if hooks verified", () => {
-    for (const id of ["cursor", "cli-agents"]) {
-      assert.equal(row(id).approve.id, "verifying")
-      assert.equal(row(id).blocked.id, "verifying")
-      assert.ok(row(id).approve.floor && row(id).blocked.floor)
-    }
-    assert.equal(row("cursor").approve.floor, "mcp_only")
-    assert.equal(row("cli-agents").approve.floor, "gateway_mcp")
-    assert.equal(row("cursor").blocked.floor, "linux_yes_windows_vault")
-    assert.equal(cellLabel("en", row("cursor").approve).text, "Being verified")
+  it("ChatGPT desktop cannot be gated, and the table says so", () => {
+    assert.equal(row("chatgpt-desktop").approve.id, "observed_only")
+    assert.equal(cellLabel("en", row("chatgpt-desktop").approve).text, "Seen and alerted only")
+  })
+  it("no cell is left as Being verified", () => {
+    for (const r of coverageRows) for (const c of [r.seen, r.approve, r.alert, r.blocked]) assert.notEqual(c.id, "verifying")
   })
   it("cloud agents: gated by the MCP gateway, secrets not applicable", () => {
     assert.equal(row("cloud").approve.id, "yes_mcp_gateway")
