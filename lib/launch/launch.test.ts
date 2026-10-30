@@ -40,7 +40,7 @@ describe("launch strings", () => {
 describe("coverage matrix (spec section 6)", () => {
   const row = (id: string) => coverageRows.find((r) => r.id === id)!
   it("has the rows in spec order", () => {
-    assert.deepEqual(coverageRows.map((r) => r.id), ["claude-code", "cursor", "cli-agents", "editors", "desktop", "chatgpt-desktop", "cloud"])
+    assert.deepEqual(coverageRows.map((r) => r.id), ["claude-code", "cursor", "cli-agents", "codex-cli", "editors", "desktop", "chatgpt-desktop", "cloud"])
   })
   it("claims hooks only for tools whose docs confirm a pre-action hook", () => {
     for (const id of ["claude-code", "cursor", "cli-agents"]) assert.equal(row(id).approve.id, "yes_hook")
@@ -49,6 +49,9 @@ describe("coverage matrix (spec section 6)", () => {
       assert.equal(row(id).approve.id, "mcp_only")
       assert.equal(row(id).blocked.id, "linux_yes_windows_vault")
     }
+  })
+  it("Codex CLI is not claimed as a hook: its owner must review the hook first", () => {
+    assert.equal(row("codex-cli").approve.id, "gateway_mcp")
   })
   it("ChatGPT desktop cannot be gated, and the table says so", () => {
     assert.equal(row("chatgpt-desktop").approve.id, "observed_only")
