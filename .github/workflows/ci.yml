@@ -1,0 +1,99 @@
+# manar-landing: lint, typecheck, tests, dependency audit, the usual security scans, and the site
+# image on every PR (built and scanned, never pushed). Releases and the production rollout are not
+# done here: manar-infra picks up new commits on main, builds, scans, signs, publishes and deploys
+# them (pull model), so this repo holds no registry or cluster secrets.
+#
+# Private repo: jobs run on the self-hosted `manar` runner. Public repo: GitHub-hosted runners, so
+# code from a fork never reaches our machines.
+name: ci
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  quality:
+    runs-on: ${{ github.event.repository.private && fromJSON('["self-hosted","manar"]') || 'ubuntu-24.04' }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: '24.18.0' # same as the GitLab image
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm audit --omit=dev --audit-level=high
+
+  # Secrets, misconfig and HIGH/CRITICAL fixable vulns in the source tree.
+  source-scan:
+    runs-on: ${{ github.event.repository.private && fromJSON('["self-hosted","manar"]') || 'ubuntu-24.04' }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - run: >-
+          docker run --rm -v "$PWD:$PWD" -w "$PWD" aquasec/trivy:0.74.0
+          filesystem --scanners secret,misconfig,vuln --severity HIGH,CRITICAL --ignore-unfixed
+          --exit-code 1 --no-progress --skip-version-check
+          --skip-dirs node_modules --skip-dirs .next --skip-dirs .git --skip-dirs .npm --skip-dirs design .
+
+  # Secrets across the full history; any finding fails.
+  gitleaks:
+    runs-on: ${{ github.event.repository.private && fromJSON('["self-hosted","manar"]') || 'ubuntu-24.04' }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - run: >-
+          docker run --rm -v "$PWD:$PWD" -w "$PWD" ghcr.io/gitleaks/gitleaks:v8.30.1
+          git --log-opts="--all" --redact -v --exit-code 1 .
+
+  # SAST: ERROR findings block.
+  semgrep:
+    runs-on: ${{ github.event.repository.private && fromJSON('["self-hosted","manar"]') || 'ubuntu-24.04' }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - run: >-
+          docker run --rm -v "$PWD:$PWD" -w "$PWD" semgrep/semgrep:1.172.0
+          semgrep scan --config auto --severity ERROR --error .
+
+  # Build the same Dockerfile and scan it. Nothing is pushed.
+  image:
+    if: github.event_name == 'pull_request'
+    needs: [quality, source-scan, gitleaks, semgrep]
+    runs-on: ${{ github.event.repository.private && fromJSON('["self-hosted","manar"]') || 'ubuntu-24.04' }}
+    env:
+      TAG: manar-landing:ci-${{ github.run_id }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - run: >-
+          docker build --platform linux/amd64
+          --build-arg SITE_URL=https://manar.vax.sh
+          --build-arg BUILD_DATE="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          --build-arg VCS_REF="$GITHUB_SHA"
+          --build-arg IMAGE_VERSION="${GITHUB_SHA::8}"
+          -t "$TAG" .
+      - run: docker save "$TAG" -o landing.tar
+      - run: >-
+          docker run --rm -v "$PWD:$PWD" -w "$PWD" aquasec/trivy:0.74.0
+          image --input landing.tar --scanners vuln --severity HIGH,CRITICAL --ignore-unfixed
+          --exit-code 1 --no-progress --skip-version-check
+      - if: always()
+        run: docker rmi "$TAG" || true; rm -f landing.tar
