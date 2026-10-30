@@ -20,7 +20,11 @@ type Load = { kind: "loading" } | { kind: "ok"; summary: BookingSummary } | { ki
 /** The manage link from every booking email: see the call, move it (same host) or cancel it. */
 export function ManageView({ t, locale, meetHref }: { t: Dictionary["meet"]; locale: "en" | "ar"; meetHref: string }) {
   const m = t.manage
-  const token = useSearchParams().get("token")
+  const urlToken = useSearchParams().get("token")
+  // Read the token once, then drop it from the address bar (as confirm-view does) and keep it here.
+  const [kept, setKept] = useState<string | null>(null)
+  if (urlToken && kept !== urlToken) setKept(urlToken)
+  const token = kept ?? urlToken
   const [load, setLoad] = useState<Load>(token ? { kind: "loading" } : { kind: "invalid" })
   const [version, setVersion] = useState(0)
   const [message, setMessage] = useState<{ tone: Tone; title?: string; body: string } | null>(null)
@@ -29,6 +33,13 @@ export function ManageView({ t, locale, meetHref }: { t: Dictionary["meet"]; loc
   const [busy, setBusy] = useState(false)
   const [cancelOpen, setCancelOpen] = useState(false)
   const [reason, setReason] = useState("")
+
+  useEffect(() => {
+    if (!urlToken) return
+    const url = new URL(window.location.href)
+    url.searchParams.delete("token")
+    window.history.replaceState(window.history.state, "", url)
+  }, [urlToken])
 
   useEffect(() => {
     if (!token) return

@@ -17,6 +17,7 @@ import {
 } from "@/lib/consent"
 import type { Locale } from "@/lib/i18n/config"
 import type { Dictionary } from "@/lib/i18n/dictionaries"
+import { isMeetPath, scrubEvent } from "@/lib/analytics-privacy"
 import { POSTHOG_HOST, POSTHOG_KEY } from "@/lib/site"
 
 import { OPEN_CONSENT_EVENT } from "./events"
@@ -71,7 +72,8 @@ export function Consent({ locale, labels }: { locale: Locale; labels: Dictionary
       try {
         if (Object.keys(utm).length) sessionStorage.setItem(UTM_STORAGE_KEY, JSON.stringify(utm))
       } catch {}
-      if (!loaded.current) {
+      // Booking links carry a token in the query string: no analytics at all on /meet/*.
+      if (!loaded.current && !isMeetPath(window.location.pathname)) {
         loaded.current = true
         // Cookieless: memory persistence, nothing written to cookies or storage. Loaded only after opt-in.
         import("posthog-js").then(({ default: posthog }) => {
@@ -82,6 +84,8 @@ export function Consent({ locale, labels }: { locale: Locale; labels: Dictionary
             disable_session_recording: true,
             capture_pageview: "history_change",
             respect_dnt: true,
+            // Path only: never send a query string or hash to the provider.
+            before_send: (event) => scrubEvent(event),
           })
         })
       }
