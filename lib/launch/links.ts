@@ -5,8 +5,8 @@ export const GITHUB_URL = "https://github.com/manarhq"
 
 export const links = {
   console: CONSOLE_URL,
-  /** Sample workspace entry (identity track owns the console route; adjust here if it differs). */
-  sample: `${CONSOLE_URL}/?sample=1`,
+  /** Sample workspace (features track builds it; signed-out users go to sign-in first). */
+  sample: `${CONSOLE_URL}/sample`,
   status: STATUS_URL,
   github: GITHUB_URL,
 } as const
