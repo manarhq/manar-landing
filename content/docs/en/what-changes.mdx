@@ -16,14 +16,14 @@ Manar changes up to three kinds of setting: a hook that asks Manar before an act
 | Claude Code | A PreToolUse hook | `~/.claude/settings.json` |
 | Claude desktop | MCP servers wrapped | `claude_desktop_config.json` in the app's data folder |
 | Cursor | Hooks before shell, read and MCP actions, and MCP servers wrapped | `~/.cursor/hooks.json`, `~/.cursor/mcp.json` |
-| Windsurf | MCP servers wrapped | `~/.codeium/windsurf/mcp_config.json` |
+| Windsurf | Hooks, and MCP servers wrapped | `~/.codeium/windsurf/`, `mcp_config.json` |
 | VS Code with GitHub Copilot | MCP servers wrapped | `mcp.json` in the VS Code user folder |
-| Copilot CLI | Hooks and MCP servers wrapped, where verified | `~/.copilot/` |
-| Codex CLI | Hooks where verified, MCP servers wrapped, and the API base address | `~/.codex/config.toml` |
-| Gemini CLI | Hooks where verified, MCP servers wrapped | `~/.gemini/settings.json` |
-| ChatGPT desktop | MCP servers wrapped, where the app has a configuration file | the app's data folder |
+| Copilot CLI | Hooks, and MCP servers wrapped | `~/.copilot/` |
+| Codex CLI | MCP servers wrapped and the API base address, so requests pass the local gateway. No hook: Codex asks its owner to review a new hook before it runs | `~/.codex/config.toml` |
+| Gemini CLI | Hooks, and MCP servers wrapped | `~/.gemini/settings.json` |
+| ChatGPT desktop | Nothing. It is seen and alerted on only | none |
 
-Paths are the usual ones and can differ on your computer. Some hook support is still being verified, as the [coverage](/en/docs/coverage) page says. A tool that has no hook is seen and alerted on, and never claimed to be governed.
+Paths are the usual ones and can differ on your computer. Hook support was verified tool by tool, and the [coverage](/en/docs/coverage) page states the result. A tool that has no hook is seen and alerted on, and never claimed to be governed.
 
 ## Manar's own changes
 
