@@ -2,10 +2,10 @@ import type { Metadata } from "next"
 import { notFound } from "next/navigation"
 
 import { Closing } from "@/components/home/closing"
-import { Deployment } from "@/components/home/deployment"
+import { Coverage } from "@/components/home/coverage"
 import { Hero } from "@/components/home/hero"
 import { HowItWorks } from "@/components/home/how-it-works"
-import { Packs } from "@/components/home/packs"
+import { Pricing } from "@/components/home/pricing"
 import { SiteFooter } from "@/components/site/site-footer"
 import { SiteHeader } from "@/components/site/site-header"
 import { isLocale } from "@/lib/i18n/config"
@@ -49,10 +49,10 @@ export default async function HomePage({ params }: PageProps<"/[lang]">) {
       />
       <SiteHeader locale={lang} dict={dict} />
       <main id="main" tabIndex={-1} className="outline-none">
-        <Hero locale={lang} dict={dict} />
+        <Hero locale={lang} />
         <HowItWorks dict={dict} />
-        <Packs dict={dict} />
-        <Deployment dict={dict} />
+        <Coverage locale={lang} />
+        <Pricing locale={lang} dict={dict} />
         <Closing locale={lang} dict={dict} />
       </main>
       <SiteFooter locale={lang} dict={dict} />

@@ -1,0 +1,60 @@
+Manar installs with one line on Windows 10 and 11 and on Linux. macOS is not supported yet.
+
+## Install
+
+Open Add device in the console to get a personal code. The code is valid for 1 hour and one computer, and the device lands as Pending until you approve it.
+
+**Windows** (PowerShell):
+
+```powershell
+irm https://console-manar.vax.sh/i/<code> | iex
+```
+
+**Linux** (terminal):
+
+```sh
+curl -fsSL https://console-manar.vax.sh/i/<code>.sh | sudo sh
+```
+
+Replace `<code>` with the code the console shows you.
+
+## What the installer does
+
+1. Downloads the release binary from the public manar-edge release on GitHub.
+2. Checks its SHA-256 against a value built into the script, and stops if it does not match.
+3. Installs Manar as a service.
+4. On Windows, installs the WireGuard prerequisite from the official signed MSI, checked by checksum.
+5. Enrols the computer with your code.
+6. Finds your AI tools, protects them and prints each change it made.
+7. Ends with "Done, approve it in the console".
+
+You can read the script first by opening the address in a browser. The script is the same text the command runs. The code is used up only when the computer registers, not when the script is fetched.
+
+## Unsigned installer
+
+The installer and the binaries are not code-signed yet. Windows SmartScreen may warn you and ask you to choose Run anyway. Every release publishes a `SHA256SUMS` file on GitHub so you can check the files yourself.
+
+## Uninstall
+
+One line removes Manar completely. It restores every tool's original settings from the backups, moves any secrets you placed in the Secret vault back to their files, stops and removes the service and deletes Manar's files.
+
+**Windows** (PowerShell):
+
+```powershell
+irm https://console-manar.vax.sh/i/uninstall | iex
+```
+
+**Linux** (terminal):
+
+```sh
+curl -fsSL https://console-manar.vax.sh/i/uninstall.sh | sudo sh
+```
+
+The same thing is available as a command, `manar-edge uninstall`.
+
+To stop protecting one tool without removing Manar, turn off Protect for it on the AI tools page. Manar then restores that tool's backup.
+
+## Requirements
+
+- Windows 10 or 11, or a Linux computer with systemd and `sudo`.
+- Outbound access to `agents-manar.vax.sh` on TCP 3443 and to `console-manar.vax.sh` on 443.

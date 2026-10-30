@@ -52,7 +52,7 @@ const en: Omit<SiteContent, "legal"> = {
     },
     consent: {
       title: "Analytics on this site",
-      body: "We would like to count page views with Cloudflare Web Analytics. It sets no cookies. Nothing loads unless you accept.",
+      body: "We would like to count page views with PostHog (EU). It sets no cookies. Nothing loads unless you accept.",
       accept: "Accept analytics",
       reject: "Reject",
       preferences: "Settings",
@@ -60,7 +60,7 @@ const en: Omit<SiteContent, "legal"> = {
       necessaryTitle: "Necessary",
       necessaryBody: "Remembers your theme and your privacy choice on this device. Always on.",
       analyticsTitle: "Analytics",
-      analyticsBody: "Cloudflare Web Analytics: page views and loading times. No cookies, no advertising, no profile of you.",
+      analyticsBody: "PostHog (EU): page views and basic usage events. No cookies, no advertising, no profile of you.",
       signalNote: "Your browser sends a Global Privacy Control or Do Not Track signal, so analytics stay off.",
       policy: "Cookie policy",
       privacy: "Privacy notice",
