@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Install the manar.vax.sh edge config on edge-vm and retire the old Manar console routes.
+# Install the manar.vax.sh edge config on the edge VM and retire the old Manar console routes.
 # Run as root from the directory containing manar.conf and the snippets:
 #   sudo bash apply-edge.sh
 # Backs up every file it replaces or removes, and restores them if `nginx -t` fails.
