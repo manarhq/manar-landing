@@ -30,10 +30,13 @@ export type LaunchCopy = {
     cookies: string
     cookieSettings: string
     contact: string
+    discord: string
     tagline: string
     fixio: string
     rights: string
   }
+  /** Launch offer counter. `left` has {remaining} and {total}. */
+  offer: { title: string; left: string; ended: string }
   closing: { title: string; body: string; cta: string }
   docs: { title: string; body: string; menu: string; next: string; updated: string; pages: Record<DocSlug, { title: string; description: string }> }
 }
@@ -84,9 +87,15 @@ export const launchCopy: Record<Locale, LaunchCopy> = {
       cookies: "Cookie policy",
       cookieSettings: "Cookie settings",
       contact: "Contact",
+      discord: "Community on Discord",
       tagline: "Every AI action has an owner.",
       fixio: "Manar is a product of Fixio.",
       rights: "All rights reserved.",
+    },
+    offer: {
+      title: "Launch offer: Pro free for 3 months, no card.",
+      left: "{remaining} of {total} left",
+      ended: "The launch offer has ended.",
     },
     closing: {
       title: "Bring one action that worries you.",
@@ -152,9 +161,15 @@ export const launchCopy: Record<Locale, LaunchCopy> = {
       cookies: "سياسة ملفات تعريف الارتباط",
       cookieSettings: "إعدادات ملفات تعريف الارتباط",
       contact: "التواصل",
+      discord: "المجتمع على Discord",
       tagline: "لكل إجراء للذكاء الاصطناعي مسؤول.",
       fixio: "منار منتج من Fixio.",
       rights: "جميع الحقوق محفوظة.",
+    },
+    offer: {
+      title: "عرض الإطلاق: Pro مجاناً لمدة 3 أشهر، دون بطاقة.",
+      left: "متبقٍ {remaining} من {total}",
+      ended: "انتهى عرض الإطلاق.",
     },
     closing: {
       title: "احضر إجراءً واحداً يقلقك.",
