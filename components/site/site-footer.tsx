@@ -5,6 +5,7 @@ import type { Locale } from "@/lib/i18n/config"
 import type { Dictionary } from "@/lib/i18n/dictionaries"
 import { launchCopy } from "@/lib/launch/copy"
 import { links } from "@/lib/launch/links"
+import { discordUrl } from "@/lib/launch/offer"
 import { bookingHref } from "@/lib/site"
 
 import { BrandMark } from "./brand"
@@ -18,6 +19,7 @@ export function SiteFooter({ locale, dict }: { locale: Locale; dict: Dictionary 
   const f = launchCopy[locale].footer
   const n = launchCopy[locale].nav
   const home = `/${locale}`
+  const discord = discordUrl()
 
   return (
     <footer className="mt-auto border-t border-line bg-surface" data-print="hide">
@@ -65,6 +67,14 @@ export function SiteFooter({ locale, dict }: { locale: Locale; dict: Dictionary 
                 <ArrowUpRightIcon aria-hidden className="size-3.5 rtl:-scale-x-100" />
               </a>
             </li>
+            {discord ? (
+              <li>
+                <a href={discord} rel="noopener" className={linkClass}>
+                  {f.discord}
+                  <ArrowUpRightIcon aria-hidden className="size-3.5 rtl:-scale-x-100" />
+                </a>
+              </li>
+            ) : null}
             <li>
               <a href={links.status} rel="noopener" className={linkClass}>
                 {n.status}

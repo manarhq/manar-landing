@@ -138,3 +138,31 @@ describe("legal drafts", () => {
     }
   })
 })
+
+describe("launch offer counter", async () => {
+  const { parseOffer, discordUrl } = await import("./offer.ts")
+  it("accepts only a well-formed counter", () => {
+    assert.deepEqual(parseOffer({ enabled: true, total: 100, claimed: 63, remaining: 37 }), { enabled: true, total: 100, claimed: 63, remaining: 37 })
+    for (const bad of [null, "x", {}, { enabled: true, total: 100, claimed: -1, remaining: 3 }, { enabled: "yes", total: 1, claimed: 0, remaining: 1 }, { enabled: true, total: 1.5, claimed: 0, remaining: 1 }])
+      assert.equal(parseOffer(bad), null)
+  })
+  it("shows the Discord link only for an https URL", () => {
+    const prev = process.env.MANAR_DISCORD_URL
+    try {
+      process.env.MANAR_DISCORD_URL = "https://discord.gg/abc"
+      assert.equal(discordUrl(), "https://discord.gg/abc")
+      for (const bad of ["", "javascript:alert(1)", "http://discord.gg/abc", "nonsense"]) {
+        process.env.MANAR_DISCORD_URL = bad
+        assert.equal(discordUrl(), null)
+      }
+    } finally {
+      if (prev === undefined) delete process.env.MANAR_DISCORD_URL
+      else process.env.MANAR_DISCORD_URL = prev
+    }
+  })
+  it("has the placeholders in both languages", () => {
+    for (const l of ["en", "ar"] as const) {
+      assert.ok(launchCopy[l].offer.left.includes("{remaining}") && launchCopy[l].offer.left.includes("{total}"))
+    }
+  })
+})

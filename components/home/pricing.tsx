@@ -8,6 +8,7 @@ import { links } from "@/lib/launch/links"
 import { planOrder, pricingText, type PlanCta } from "@/lib/launch/pricing"
 import { bookingHref } from "@/lib/site"
 
+import { LaunchCounter } from "./launch-counter"
 import { SectionHeading } from "./section-heading"
 
 export function Pricing({ locale, dict }: { locale: Locale; dict: Dictionary }) {
@@ -45,6 +46,7 @@ export function Pricing({ locale, dict }: { locale: Locale; dict: Dictionary }) 
                     </li>
                   ))}
                 </ul>
+                {id === "pro" ? <LaunchCounter locale={locale} className="mt-4 text-sm text-muted-foreground" /> : null}
                 {p.note ? <p className="mt-4 text-xs text-muted-foreground">{p.note}</p> : null}
                 {p.ctaKind === "talk" ? (
                   <Link href={href(p.ctaKind)} className={`${buttonVariants({ variant: "secondary", size: "lg" })} mt-6`}>

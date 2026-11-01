@@ -6,6 +6,8 @@ import { launchCopy } from "@/lib/launch/copy"
 import { links } from "@/lib/launch/links"
 import { cn } from "@/lib/utils"
 
+import { LaunchCounter } from "./launch-counter"
+
 const pill = {
   allowed: { cls: "bg-allow-soft text-allow", Icon: CheckIcon },
   asks: { cls: "bg-wait-soft text-wait", Icon: HourglassMediumIcon },
@@ -45,6 +47,7 @@ export function Hero({ locale }: { locale: Locale }) {
             </a>
           </div>
           <p className="mt-4 text-sm text-muted-foreground">{h.fine}</p>
+          <LaunchCounter locale={locale} className="mt-3 text-sm text-muted-foreground" />
         </div>
 
         <figure aria-label={h.feed.label} className="rounded-xl border border-line bg-surface p-1.5">
