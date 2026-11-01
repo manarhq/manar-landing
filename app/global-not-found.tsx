@@ -2,7 +2,6 @@ import type { Metadata } from "next"
 
 import { buttonVariants } from "@/components/ui/button"
 import { bundledContent } from "@/lib/content"
-import { fontVariables } from "@/lib/fonts"
 import { bookingHref, THEME_STORAGE_KEY } from "@/lib/site"
 
 import "./globals.css"
@@ -21,7 +20,7 @@ const themeScript = `(function(){var d;try{var t=localStorage.getItem("${THEME_S
  */
 export default function GlobalNotFound() {
   return (
-    <html lang="en" className={fontVariables} suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>

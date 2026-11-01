@@ -4,10 +4,12 @@ import Link from "next/link"
 import { buttonVariants } from "@/components/ui/button"
 import type { Locale } from "@/lib/i18n/config"
 import type { Dictionary } from "@/lib/i18n/dictionaries"
+import { launchCopy } from "@/lib/launch/copy"
+import { links } from "@/lib/launch/links"
 import { bookingHref } from "@/lib/site"
 
 export function Closing({ locale, dict }: { locale: Locale; dict: Dictionary }) {
-  const c = dict.closing
+  const c = launchCopy[locale].closing
   return (
     <section aria-labelledby="closing-title" className="border-t border-line py-16 md:py-24">
       <div className="shell flex flex-col gap-8 md:flex-row md:items-end md:justify-between">
@@ -17,10 +19,15 @@ export function Closing({ locale, dict }: { locale: Locale; dict: Dictionary }) 
           </h2>
           <p className="mt-4 text-lg text-muted-foreground">{c.body}</p>
         </div>
-        <Link href={bookingHref(locale, dict)} className={buttonVariants({ size: "lg" })}>
-          {c.cta}
-          <ArrowRightIcon aria-hidden className="rtl:-scale-x-100" />
-        </Link>
+        <div className="flex flex-col gap-3 sm:flex-row">
+          <a href={links.console} className={buttonVariants({ size: "lg" })}>
+            {c.cta}
+            <ArrowRightIcon aria-hidden className="rtl:-scale-x-100" />
+          </a>
+          <Link href={bookingHref(locale, dict)} className={buttonVariants({ size: "lg", variant: "secondary" })}>
+            {dict.common.bookDemo}
+          </Link>
+        </div>
       </div>
     </section>
   )

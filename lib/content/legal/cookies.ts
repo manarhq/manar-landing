@@ -1,4 +1,4 @@
-import type { Locale } from "@/lib/i18n/config"
+import type { Locale } from "../../i18n/config.ts"
 
 import type { LegalDoc } from "../schema.ts"
 
@@ -7,13 +7,13 @@ export const cookies: Record<Locale, LegalDoc> = {
     title: "Cookie and storage policy",
     description:
       "Every cookie and browser storage item used on the Manar website, why it is used, how long it lasts, and how to change your choice.",
-    updated: "2026-10-09",
+    updated: "2026-10-31",
     sections: [
       {
         id: "summary",
         heading: "In short",
         blocks: [
-          "The Manar website sets no cookies for visitors. It stores a few small items in your browser to remember your choices. Analytics are optional, off by default, and only load after you accept them.",
+          "The Manar website sets no cookies for visitors, and the optional analytics run without cookies. It stores a few small items in your browser to remember your choices. Analytics are optional, off by default, and only load after you accept them.",
         ],
       },
       {
@@ -27,7 +27,7 @@ export const cookies: Record<Locale, LegalDoc> = {
                 ["manar-theme", "Local storage", "Remembers your light, dark, or system theme choice", "Until you change it or clear site data", "Necessary"],
                 ["manar-consent", "Local storage", "Records whether you accepted analytics, and when", "12 months, then we ask again", "Necessary"],
                 ["manar-utm", "Session storage", "Keeps campaign tags from the link you arrived by, so they can be attached to a demo request you submit", "Until you close the tab", "Analytics (only with consent)"],
-                ["__prerender_bypass, manar-preview", "Cookies set by this website, for VAX staff only", "Let staff preview unpublished content from the editor. Never set for other visitors", "Until the browser closes; manar-preview at most 1 hour", "Necessary"],
+                ["__prerender_bypass, manar-preview", "Cookies set by this website, for Fixio staff only", "Let staff preview unpublished content from the editor. Never set for other visitors", "Until the browser closes; manar-preview at most 1 hour", "Necessary"],
                 ["__cf_bm", "Cookie set by Cloudflare", "Tells people apart from automated traffic when bot protection runs", "30 minutes", "Necessary"],
                 ["cf_clearance", "Cookie set by Cloudflare", "Remembers that a security challenge was passed, so it is not shown again", "As set in our Cloudflare challenge settings, 30 minutes by default", "Necessary"],
               ],
@@ -40,7 +40,7 @@ export const cookies: Record<Locale, LegalDoc> = {
         id: "analytics",
         heading: "Optional analytics",
         blocks: [
-          "If you accept analytics, we load Cloudflare Web Analytics from static.cloudflareinsights.com. It records page views and page performance timings to help us improve the website. It does not set cookies and does not build a profile of you across other websites.",
+          "If you accept analytics, we load PostHog, hosted in the European Union (eu.i.posthog.com). It runs in cookieless mode: it sets no cookies, writes nothing to your browser storage and keeps its identifier in memory for that page view only. It records page views and basic usage events to help us improve Manar. It does not build a profile of you across other websites. The console at console-manar.vax.sh is separate: it sets the cookies needed to keep you signed in.",
           "If you reject analytics, the script is never loaded and no campaign tags are stored. If your browser sends a Global Privacy Control or Do Not Track signal, we treat it as a rejection and do not show the banner.",
         ],
       },
@@ -62,7 +62,7 @@ export const cookies: Record<Locale, LegalDoc> = {
               "You can also clear this website's data in your browser settings. We will then ask for your choice again.",
             ],
           },
-          "Questions about this policy can be sent to info@fixio.ae.",
+          "Questions about this policy can be sent to support@fixio.ae.",
         ],
       },
     ],
@@ -71,7 +71,7 @@ export const cookies: Record<Locale, LegalDoc> = {
     title: "سياسة ملفات تعريف الارتباط والتخزين",
     description:
       "كل ملف تعريف ارتباط وكل عنصر تخزين يستخدمه موقع منار، والغرض منه، ومدة بقائه، وكيف تغيّر خيارك.",
-    updated: "2026-10-09",
+    updated: "2026-10-31",
     sections: [
       {
         id: "summary",
@@ -91,7 +91,7 @@ export const cookies: Record<Locale, LegalDoc> = {
                 ["manar-theme", "التخزين المحلي", "يتذكر اختيارك للمظهر الفاتح أو الداكن أو مظهر النظام", "حتى تغيّره أو تمسح بيانات الموقع", "ضروري"],
                 ["manar-consent", "التخزين المحلي", "يسجّل ما إذا كنت قد وافقت على التحليلات، ومتى", "12 شهرًا، ثم نسألك مجددًا", "ضروري"],
                 ["manar-utm", "تخزين الجلسة", "يحفظ وسوم الحملة من الرابط الذي وصلت منه لإرفاقها بطلب العرض التوضيحي إن أرسلته", "حتى تغلق علامة التبويب", "تحليلات (بموافقتك فقط)"],
-                ["__prerender_bypass وmanar-preview", "ملفات تعريف ارتباط يضعها هذا الموقع لموظفي VAX فقط", "تتيح للموظفين معاينة المحتوى غير المنشور من المحرر، ولا تُوضع لأي زائر آخر", "حتى إغلاق المتصفح، وmanar-preview لمدة ساعة كحد أقصى", "ضروري"],
+                ["__prerender_bypass وmanar-preview", "ملفات تعريف ارتباط يضعها هذا الموقع لموظفي Fixio فقط", "تتيح للموظفين معاينة المحتوى غير المنشور من المحرر، ولا تُوضع لأي زائر آخر", "حتى إغلاق المتصفح، وmanar-preview لمدة ساعة كحد أقصى", "ضروري"],
                 ["__cf_bm", "ملف تعريف ارتباط تضعه Cloudflare", "يميّز الزوار من الحركة الآلية عند تشغيل الحماية من برامج الروبوت", "30 دقيقة", "ضروري"],
                 ["cf_clearance", "ملف تعريف ارتباط تضعه Cloudflare", "يتذكر أنك اجتزت التحقق الأمني حتى لا يُعرض عليك مجددًا", "بحسب إعدادات التحقق لدينا في Cloudflare، 30 دقيقة افتراضيًا", "ضروري"],
               ],
@@ -104,7 +104,7 @@ export const cookies: Record<Locale, LegalDoc> = {
         id: "analytics",
         heading: "التحليلات الاختيارية",
         blocks: [
-          "إذا وافقت على التحليلات، نحمّل خدمة Cloudflare Web Analytics من static.cloudflareinsights.com. وهي تسجّل مشاهدات الصفحات وقياسات أداء التحميل لنحسّن الموقع، ولا تضع ملفات تعريف ارتباط، ولا تبني ملفًا عنك عبر المواقع الأخرى.",
+          "إذا وافقت على التحليلات، نحمّل PostHog المستضافة في الاتحاد الأوروبي (eu.i.posthog.com). وهي تعمل بوضع بلا ملفات تعريف ارتباط: لا تضع ملفات ولا تكتب شيئاً في تخزين متصفحك وتبقي معرّفها في الذاكرة طوال مشاهدة الصفحة فقط. وتسجّل مشاهدات الصفحات وأحداث استخدام أساسية لنحسّن منار، ولا تبني ملفاً عنك عبر المواقع الأخرى. أما لوحة التحكم على console-manar.vax.sh فمنفصلة، وتضع ملفات تعريف الارتباط اللازمة لإبقائك مسجّلاً للدخول.",
           "وإذا رفضت التحليلات، فلن يُحمَّل برنامجها أبدًا ولن تُحفظ أي وسوم حملات. وإذا أرسل متصفحك إشارة التحكم العالمي في الخصوصية أو عدم التتبّع، نعدّها رفضًا ولا نعرض الشريط.",
         ],
       },
@@ -126,7 +126,7 @@ export const cookies: Record<Locale, LegalDoc> = {
               "ويمكنك أيضًا مسح بيانات هذا الموقع من إعدادات متصفحك، وعندها سنسألك عن خيارك من جديد.",
             ],
           },
-          "للاستفسار عن هذه السياسة، راسلنا على info@fixio.ae.",
+          "للاستفسار عن هذه السياسة، راسلنا على support@fixio.ae.",
         ],
       },
     ],

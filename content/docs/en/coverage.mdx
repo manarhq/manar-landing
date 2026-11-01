@@ -1,0 +1,20 @@
+Manar is precise about what it can do for each tool. The table below is the whole statement. Manar never shows a tool as governed unless the tool earns it.
+
+<CoverageTable />
+
+## How to read it
+
+- **Seen** means Manar finds the tool on your computer and shows it in the AI tools page.
+- **Approve or deny** means a request can wait for your answer before the action runs. It needs a hook in the tool or a route through Manar's gateway.
+- **Secrets alert** means you are warned when the tool touches a secret file.
+- **Secrets blocked** means Manar can stop the read.
+
+## Labels in the console
+
+- **governed:** the tool can be approved or denied.
+- **observed-only:** the tool is only seen and alerted on.
+- **monitoring unavailable:** the computer is offline or the watcher is down.
+
+## Verification
+
+We verified each tool's hooks one by one. If a cell ever says Being verified, it also shows the minimum that holds today. The table here and in the console come from the same source, so they change together.

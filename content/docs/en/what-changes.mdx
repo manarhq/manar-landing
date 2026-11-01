@@ -1,0 +1,58 @@
+When Manar finds an AI tool it protects it at once, with no prompt. This page lists what that means. The AI tools page in the console shows the exact list for your computer, and the installer prints the same list when it finishes.
+
+## The rules Manar follows
+
+- **Backup first.** Before editing any tool's configuration file, Manar saves the original.
+- **Everything is listed.** Each change appears in the installer output and in the console.
+- **One switch per tool.** Turning off Protect for a tool restores that tool's backup.
+- **Uninstall restores all.** Removing Manar restores every backup and every secret in the Secret vault.
+
+## What Manar edits, per tool
+
+Manar changes up to three kinds of setting: a hook that asks Manar before an action, MCP servers that are wrapped so their calls pass through Manar's gateway, and the API base address for tools that accept one, which then goes through a gateway on your own computer (`127.0.0.1:8480`).
+
+| Tool | What changes | Typical file |
+|---|---|---|
+| Claude Code | A PreToolUse hook | `~/.claude/settings.json` |
+| Claude desktop | MCP servers wrapped | `claude_desktop_config.json` in the app's data folder |
+| Cursor | Hooks before shell, read and MCP actions, and MCP servers wrapped | `~/.cursor/hooks.json`, `~/.cursor/mcp.json` |
+| Windsurf | Hooks, and MCP servers wrapped | `~/.codeium/windsurf/`, `mcp_config.json` |
+| VS Code with GitHub Copilot | MCP servers wrapped | `mcp.json` in the VS Code user folder |
+| Copilot CLI | Hooks, and MCP servers wrapped | `~/.copilot/` |
+| Codex CLI | MCP servers wrapped and the API base address, so requests pass the local gateway. No hook: Codex asks its owner to review a new hook before it runs | `~/.codex/config.toml` |
+| Gemini CLI | Hooks, and MCP servers wrapped | `~/.gemini/settings.json` |
+| ChatGPT desktop | Nothing. It is seen and alerted on only | none |
+
+Paths are the usual ones and can differ on your computer. Hook support was verified tool by tool, and the [coverage](/en/docs/coverage) page states the result. A tool that has no hook is seen and alerted on, and never claimed to be governed.
+
+## Manar's own changes
+
+- A background service that runs the Manar device software.
+- On Windows, the WireGuard prerequisite, and the Audit File System policy turned on so secret-file reads can be attributed.
+- On Linux, file watching on the secret list with fanotify.
+- Manar's program files and its state folder, including the backups of everything above.
+
+## Secrets watcher
+
+Manar watches a list of secret files and alerts you when any AI tool, or any other process, touches one. The alert names the tool, the process and the type of file.
+
+- `~/.aws/credentials` and `config`
+- private keys in `~/.ssh/`
+- `~/.azure`, `~/.config/gcloud`, `~/.kube/config` and `~/.docker/config.json`
+- browser cookie and login databases
+- `.env` files under your project folders, found at install and rescanned daily
+
+On Windows Manar sets audit entries on those files and reads the Security log. On Linux it uses fanotify. Manar never reads or sends the contents of these files.
+
+Blocking depends on the tool. Tools with a hook are blocked or approved through the hook on every system. On Linux, Manar can also deny reads by the AI tool's own processes, while a terminal you type in only alerts, so your own git, ssh and deploys keep working. On Windows, tools without a hook are alert only. If the watcher fails, it stops watching and shows monitoring unavailable. It never freezes your computer.
+
+## Secret vault
+
+You can opt in, one secret at a time, from the Secrets page. It is offered after the first alert.
+
+- **AWS keys** move into your operating system's key store. `~/.aws/credentials` is replaced with an entry that asks Manar for the key when a program needs it.
+- **SSH private keys** are loaded into the system SSH agent and the key file is removed from disk.
+
+Each new program that asks for a secret prompts you once: Allow once, Allow for 8 hours, Always for this program, or Deny. Your answer is recorded. Restore to file undoes it exactly, and uninstalling restores everything first.
+
+`.env` files have no helper protocol, so they stay alert only, apart from the tools and systems named above. Azure and Google Cloud credentials come after launch.

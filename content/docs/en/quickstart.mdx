@@ -1,0 +1,48 @@
+You can go from nothing to your first approval in about five minutes. You need a Windows 10 or 11 computer, or a Linux computer with `sudo`.
+
+## 1. Sign in
+
+Go to [the console](https://console-manar.vax.sh) and choose Start free. Sign in with Microsoft, GitHub or an email link. Manar creates your free personal workspace on first sign-in. Accounts are never merged by email address: each sign-in method opens its own workspace until you link them from Settings while signed in.
+
+## 2. Pick how careful Manar should be
+
+You choose a start mode. You can change it later in Rules.
+
+- **Watch only:** record everything your AI tools do, never stop them.
+- **Ask me for risky things (recommended):** secrets, deleting files, pushing code and new websites wait for your yes. Everything else runs.
+- **Strict:** anything outside the project folder waits for you. Secrets are always blocked.
+
+You can also look around with sample data first, without installing anything.
+
+## 3. Add your computer
+
+The console shows a one-line command with a code that works once, for one hour, on one computer.
+
+On Windows, open PowerShell and paste:
+
+```powershell
+irm https://console-manar.vax.sh/i/<code> | iex
+```
+
+On Linux, open a terminal and paste:
+
+```sh
+curl -fsSL https://console-manar.vax.sh/i/<code>.sh | sudo sh
+```
+
+The installer finds your AI tools, protects them, prints every change it made and ends with "Done, approve it in the console". Windows may show a SmartScreen warning because the installer is not code-signed yet. See [Install and uninstall](/en/docs/install) for how to check what you run.
+
+## 4. Approve the device
+
+Your computer appears in the console as Pending. The waiting screen flips to Approve by itself. Approve it.
+
+## 5. Answer your first approval
+
+Ask one of your AI tools to do something risky, such as reading `~/.aws/credentials`. A prompt appears on your computer and in the console inbox with three choices: Approve once, Approve for 8 hours, or Deny. In the console you can press J and K to move, A to approve and D to deny.
+
+What you answered is saved in the signed record under Activity.
+
+## Next
+
+- [What Manar changes on your computer](/en/docs/what-changes)
+- [Coverage](/en/docs/coverage), to see exactly what each tool allows

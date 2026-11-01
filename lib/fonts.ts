@@ -1,23 +1,11 @@
-import { IBM_Plex_Mono } from "next/font/google"
-
 /*
- * IBM Plex Sans and Plex Sans Arabic are self-hosted (app/fonts.css, public/fonts) so each locale
- * preloads only its own files; next/font preloads every font on every page under a layout.
- * Mono stays on next/font: it is small, never preloaded, and the same for both locales.
- * One module, imported by both root layouts: a font declared twice is downloaded twice.
+ * Readex Pro (Arabic and Latin) and JetBrains Mono are self-hosted (app/fonts.css, public/fonts) so each
+ * locale preloads only its own files; next/font preloads every font on every page under a layout.
+ * The root layout needs no font class: the faces and the --font-* variables come from fonts.css.
  */
-export const plexMono = IBM_Plex_Mono({
-  subsets: ["latin"],
-  weight: ["400"],
-  variable: "--font-plex-mono",
-  display: "swap",
-  preload: false,
-})
 
-export const fontVariables = plexMono.variable
-
-/** The files each locale needs for its first paint: body text, and for Arabic the heading weight too. */
+/** The files each locale needs for its first paint. Arabic pages also show Latin (brand, code, numbers). */
 export const localeFontPreloads = {
-  en: ["/fonts/plex-sans-var-latin.woff2"],
-  ar: ["/fonts/plex-sans-arabic-400-arabic.woff2", "/fonts/plex-sans-arabic-600-arabic.woff2"],
+  en: ["/fonts/readex-pro-latin-wght-normal.woff2"],
+  ar: ["/fonts/readex-pro-arabic-wght-normal.woff2", "/fonts/readex-pro-latin-wght-normal.woff2"],
 } as const

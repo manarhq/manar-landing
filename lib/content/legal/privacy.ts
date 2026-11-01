@@ -1,26 +1,25 @@
-import type { Locale } from "@/lib/i18n/config"
+import type { Locale } from "../../i18n/config.ts"
 
 import type { LegalDoc } from "../schema.ts"
 
 /*
- * Structured for the UAE Federal Decree-Law No. 45 of 2021 on the Protection of Personal Data
- * (PDPL). The company is on the Abu Dhabi mainland (not DIFC or ADGM); the supervisory authority is
- * the UAE Data Office.
+ * Launch draft (31 Oct 2026), written by Claude and approved by the founder to launch with, with no
+ * lawyer review (decision #19). Structured for the UAE Federal Decree-Law No. 45 of 2021 on the
+ * Protection of Personal Data (PDPL); the supervisory authority is the UAE Data Office. Controller:
+ * Fixio. Bracketed values are placeholders for the founder (listed in the PR).
  */
 export const privacy: Record<Locale, LegalDoc> = {
   en: {
-    title: "Privacy notice",
-    description:
-      "How VAX handles personal data on the Manar website under the UAE PDPL: demo requests, meeting bookings, logs, optional analytics and your rights.",
-    updated: "2026-10-09",
+    title: "Privacy Policy",
+    description: "How Fixio handles personal data in Manar under the UAE PDPL: what we collect, where it is hosted, how long we keep it, and your rights.",
+    updated: "2026-10-31",
     sections: [
       {
         id: "who-we-are",
         heading: "Who is responsible",
         blocks: [
-          "This website presents Manar, a product of VAX. VAX is the controller of the personal data collected through this website.",
-          "Controller: VAX Labs Cloud Computing Services L.L.C S.P.C, 1st Oud Maitha Street, Al Wathba Tower 1402, Abu Dhabi, United Arab Emirates. Contact for privacy questions and requests: info@fixio.ae.",
-          "This notice covers the public website at manar.vax.sh, including demo requests and meeting bookings. It does not cover the Manar product, which is governed by the agreement with each customer.",
+          "Manar is a product of Fixio. Fixio is the controller of the personal data described here: Fixio, [Fixio registered address], tax registration number [TRN]. Privacy questions and requests: support@fixio.ae.",
+          "This policy covers the Manar website (manar.vax.sh), the console (console-manar.vax.sh), the device software and the hosted service. When a company uses Manar for its staff, that company decides what its workspace is used for and Fixio acts for it as a processor. A separate agreement with that company says so.",
           "We apply the UAE Federal Decree-Law No. 45 of 2021 on the Protection of Personal Data (PDPL).",
         ],
       },
@@ -28,18 +27,24 @@ export const privacy: Record<Locale, LegalDoc> = {
         id: "what-we-collect",
         heading: "What we collect",
         blocks: [
-          "We collect only what the website needs to work and what you choose to send us.",
           {
-            list: [
-              "Demo request form: your full name, work email and organisation, and optionally your role, where Manar would run, and a message.",
-              "Meeting booking (/meet): your full name, work email, organisation and role, an optional note, the person you chose and the time you picked, and the result of a security check.",
-              "Campaign tags: only if you accepted analytics, the tags in the link you arrived by (utm_source, utm_medium, utm_campaign, utm_term, utm_content) are attached to a demo request you send from the same browser tab.",
-              "Technical data: your IP address, the page requested, the time and your browser's user agent, recorded by our servers and our network provider.",
-              "Optional analytics: page views and loading times, only if you accept analytics.",
-              "Choices stored in your browser: your theme and your privacy choice (kept 12 months). They stay on your device and are not sent to us.",
-            ],
+            table: {
+              head: ["Data", "What it includes", "Where it comes from"],
+              rows: [
+                ["Account", "Your name, email address, the sign-in provider (Microsoft, GitHub or email) and its account identifier, and your workspace", "You, and your sign-in provider"],
+                ["Devices", "Computer name, operating system, a machine identifier, the Manar version, and the AI tools found on it with their versions", "The device software"],
+                ["AI activity record", "What an AI tool did: the tool, the action, its target such as a command or file path with your home folder masked, our decision, your approval answer and the time. It is signed so changes can be detected", "The device software"],
+                ["Secret alerts", "That a tool touched a secret file: the tool, the process, the type of file, a masked path and the time. Never the contents of the file", "The device software"],
+                ["Secret vault", "Secrets you choose to move into the vault stay in your computer's own key store. They are not sent to us", "You"],
+                ["Billing", "Plan, status, Stripe customer and subscription identifiers, and invoices. Card details stay with Stripe", "You and Stripe"],
+                ["Technical data", "IP address, browser, pages requested and time, in our server and security logs", "Your browser"],
+                ["Website forms", "Name, work email and organisation, and a message or booking details, if you send a request or book a meeting", "You"],
+                ["Analytics", "Page views and basic usage events, without cookies, only if you accept analytics", "Your browser"],
+              ],
+            },
           },
-          "Please do not put sensitive personal data in the message or note fields.",
+          "By default Manar records what an AI tool did, not the text of your prompts or the contents of your files. If you turn on TLS inspection (Personal Pro and above), traffic is inspected on your device for data loss checks. [Founder to confirm what inspection stores before launch.]",
+          "Please do not put sensitive personal data in free text fields.",
         ],
       },
       {
@@ -50,41 +55,41 @@ export const privacy: Record<Locale, LegalDoc> = {
             table: {
               head: ["Purpose", "Data", "Basis"],
               rows: [
-                [
-                  "Reply to your demo request",
-                  "Demo request form, campaign tags",
-                  "Your consent, given when you send the form, and steps you ask us to take before a possible agreement",
-                ],
-                [
-                  "Arrange, confirm and hold your meeting, and send the confirmation, invitation and change emails",
-                  "Meeting booking details",
-                  "Your consent, given when you book, and steps you ask us to take before a possible agreement",
-                ],
-                [
-                  "Keep the website secure: block automated submissions and limit repeated requests (at most 5 demo requests per 10 minutes from one IP address)",
-                  "Technical data, security check result",
-                  "Necessary to provide the website and the service you asked for securely",
-                ],
-                ["Understand how the website is used", "Page views and loading times", "Your consent, which you can withdraw at any time"],
+                ["Run the Service: sign you in, show your devices and activity, ask for your approval, keep the signed record", "Account, devices, AI activity, secret alerts", "Necessary to provide the Service you asked for, and your consent when you add a device"],
+                ["Bill you and collect VAT", "Account, billing", "Necessary for the contract, and legal duties on tax"],
+                ["Keep the Service secure and stop abuse: rate limits, bot checks, investigating incidents", "Technical data, account", "Necessary to provide the Service securely"],
+                ["Send service emails such as sign-in links, trial and idle warnings, billing notices", "Account", "Necessary for the contract"],
+                ["Reply to requests and arrange meetings", "Website forms", "Your consent, and steps you ask us to take before a contract"],
+                ["Understand how the product is used and improve it", "Analytics", "Your consent, which you can withdraw at any time"],
               ],
             },
           },
-          "We do not send marketing emails, sell personal data, use it for advertising, or make automated decisions about you based on it.",
+          "We do not sell personal data, use it for advertising, or train AI models on your activity record. We send no marketing email unless you ask for it.",
+        ],
+      },
+      {
+        id: "hosting",
+        heading: "Where your data is hosted",
+        blocks: [
+          "The hosted Service runs on Microsoft Azure in the UAE North region. Each personal workspace has its own database. Cloudflare sits in front of the website and console to deliver and protect them.",
+          "Your AI tools and files stay on your computer. Manar's checks on what a tool is allowed to do run on the device itself, and your AI traffic does not pass through our servers.",
         ],
       },
       {
         id: "who-we-share-with",
         heading: "Who receives it",
         blocks: [
-          "We use a small number of service providers who process data on our behalf, under written terms:",
+          "We use a small number of service providers who process data for us under written terms:",
           {
             table: {
               head: ["Provider", "Purpose", "Data", "Where"],
               rows: [
-                ["Cloudflare", "Network delivery and security, the booking security check (Turnstile), and Web Analytics with your consent", "IP address, request details, security check, analytics events", "Cloudflare's global network, including outside the UAE"],
-                ["Resend", "Delivers demo request emails to our team and booking emails to you", "Form and booking details, your email address", "United States"],
-                ["Microsoft 365", "Calendar invitations for booked meetings, from the calendar of the person you book with", "Your name, email, organisation and the meeting time", "Microsoft data centres for the calendar's tenant"],
-                ["VAX infrastructure", "Hosts the website and the booking service on servers operated by VAX", "Server and access logs, booking records", "Servers operated by VAX"],
+                ["Microsoft Azure", "Hosting, databases, and email delivery (Azure Communication Services)", "All Service data, email addresses", "UAE North"],
+                ["Cloudflare", "Network delivery, DNS, security and the bot check (Turnstile)", "IP address and request details", "Global network, including outside the UAE"],
+                ["Stripe", "Card payments, invoices, tax", "Name, email, billing details, card details", "Stripe's infrastructure, including outside the UAE"],
+                ["PostHog (EU)", "Product analytics, only with your consent, without cookies", "Page views and usage events", "European Union"],
+                ["Resend", "Delivers website request and booking emails", "Form details, email address", "United States"],
+                ["Microsoft and GitHub", "Sign-in. They tell us who you are when you choose them", "Name, email, account identifier", "Their own infrastructure"],
               ],
             },
           },
@@ -95,8 +100,7 @@ export const privacy: Record<Locale, LegalDoc> = {
         id: "transfers",
         heading: "Transfers outside the UAE",
         blocks: [
-          "Cloudflare and Resend, and Microsoft where its data centres are outside the UAE, may process personal data outside the United Arab Emirates. We transfer data only as the PDPL allows: we rely on each provider's data processing terms, which bind it to protect the data and use it only on our instructions, and for analytics also on your consent.",
-          "You can ask us for more detail about these safeguards at info@fixio.ae.",
+          "Some providers above process data outside the United Arab Emirates. We transfer data only as the PDPL allows: we rely on each provider's data processing terms, which bind it to protect the data and use it only on our instructions, and for analytics also on your consent. Ask us at support@fixio.ae for more detail about these safeguards.",
         ],
       },
       {
@@ -105,11 +109,14 @@ export const privacy: Record<Locale, LegalDoc> = {
         blocks: [
           {
             list: [
-              "Demo requests and meeting bookings: 12 months after our last contact with you, then deleted.",
-              "An unconfirmed booking is released when its hold runs out.",
-              "Server access logs: 30 days.",
-              "Rate limit counters are held in server memory for 10 minutes and are lost when the server restarts.",
-              "Campaign tags in your browser are cleared when you close the tab.",
+              "AI activity record: for the audit period of your plan, which is 30 days on Free and 1 year on Personal Pro. Company workspaces follow the period set for the workspace. Older records are hidden for 30 days, then dropped. You can export your record at any time.",
+              "Account and devices: while your account is open.",
+              "Account deletion: you can delete your account at any time. We first offer an export. The workspace, including its signed record, is dropped after a 30-day grace period that you can cancel.",
+              "Idle free workspaces: a free workspace with no activity for 60 days is archived and then dropped. We email you a warning before each step.",
+              "Billing records: as long as tax law requires.",
+              "Server logs: 30 days.",
+              "Backups: encrypted backups roll off on their normal cycle, no later than 7 days after deletion.",
+              "Website requests and bookings: 12 months after our last contact with you.",
             ],
           },
         ],
@@ -118,8 +125,7 @@ export const privacy: Record<Locale, LegalDoc> = {
         id: "analytics-and-storage",
         heading: "Analytics and browser storage",
         blocks: [
-          "The website itself sets no cookies for visitors. Analytics are off until you accept them, and the analytics script is not loaded before that. If your browser sends a Global Privacy Control or Do Not Track signal, we treat it as a refusal and do not ask. You can change your choice at any time with Cookie settings in the footer.",
-          "Our cookie and storage policy lists every item stored in your browser, why, and for how long.",
+          "Analytics are off until you accept them. We use PostHog in the EU in cookieless mode: it sets no cookies and keeps no identifier on your device. If your browser sends a Global Privacy Control or Do Not Track signal, we treat it as a refusal and do not ask. You can change your choice at any time with Cookie settings in the footer. The cookie policy lists every item stored in your browser.",
         ],
       },
       {
@@ -138,94 +144,122 @@ export const privacy: Record<Locale, LegalDoc> = {
               "withdraw your consent at any time, without affecting processing done before you withdrew it.",
             ],
           },
-          "To use any of these rights, email info@fixio.ae. We may need to confirm who you are before we act, and we answer within the time the law sets.",
-          "If you are unhappy with how we handled your data, you can complain to the UAE Data Office.",
+          "Most of this you can do yourself in the console: export your record and delete your account. For anything else write to support@fixio.ae. We answer within 30 days. If you are not satisfied you may complain to the UAE Data Office.",
         ],
       },
       {
+        id: "security",
+        heading: "How we protect it",
+        blocks: [
+          "Each workspace has its own database. Devices talk to the Service over mutually authenticated TLS. Access is limited by role, secrets are held in a managed secret store, and the activity record is signed so changes can be detected. No system is perfectly secure, and we will tell you and the authorities about a breach as the law requires.",
+        ],
+      },
+      {
+        id: "children",
+        heading: "Children",
+        blocks: ["Manar is not for people under 18, and we do not knowingly collect their data."],
+      },
+      {
         id: "changes",
-        heading: "Changes to this notice",
-        blocks: ["We update this notice when our data handling changes. The date at the top shows the last real change."],
+        heading: "Changes",
+        blocks: [
+          "We may update this policy. For a material change we email account owners at least 14 days before it takes effect, and the date above changes.",
+        ],
       },
     ],
   },
   ar: {
-    title: "إشعار الخصوصية",
-    description:
-      "كيف تتعامل VAX مع البيانات الشخصية على موقع منار وفق القانون الإماراتي لحماية البيانات الشخصية: الطلبات والحجوزات والسجلات والتحليلات وحقوقك.",
-    updated: "2026-10-09",
+    title: "سياسة الخصوصية",
+    description: "كيف تتعامل Fixio مع البيانات الشخصية في منار وفق قانون حماية البيانات الشخصية الإماراتي: ما نجمعه وأين يُستضاف ومدة حفظه وحقوقك.",
+    updated: "2026-10-31",
     sections: [
       {
         id: "who-we-are",
-        heading: "الجهة المسؤولة",
+        heading: "من المسؤول",
         blocks: [
-          "يعرض هذا الموقع منار، وهي أحد منتجات VAX. وVAX هي المتحكم في البيانات الشخصية التي تُجمع عبر هذا الموقع.",
-          "المتحكم: \u2068VAX Labs Cloud Computing Services L.L.C S.P.C, 1st Oud Maitha Street, Al Wathba Tower 1402, Abu Dhabi, United Arab Emirates\u2069 (أبوظبي، الإمارات العربية المتحدة). للاستفسارات والطلبات المتعلقة بالخصوصية: info@fixio.ae.",
-          "يشمل هذا الإشعار الموقع العام manar.vax.sh، بما في ذلك طلبات العرض التوضيحي وحجوزات الاجتماعات، ولا يشمل منتج منار الذي تحكمه الاتفاقية المبرمة مع كل عميل.",
-          "نطبّق المرسوم بقانون اتحادي رقم 45 لسنة 2021 بشأن حماية البيانات الشخصية.",
+          "منار منتج من Fixio. وFixio هي المتحكّمة في البيانات الشخصية الموصوفة هنا: Fixio، [عنوان Fixio المسجّل]، رقم التسجيل الضريبي [TRN]. للأسئلة والطلبات المتعلقة بالخصوصية: support@fixio.ae.",
+          "تغطي هذه السياسة موقع منار (manar.vax.sh) ولوحة التحكم (console-manar.vax.sh) وبرنامج الجهاز والخدمة المستضافة. وعندما تستخدم شركة ما منار لموظفيها فهي التي تحدد أغراض استخدام مساحة عملها، وتعمل Fixio لصالحها بصفة معالِج، وتنص على ذلك اتفاقية منفصلة معها.",
+          "نطبّق المرسوم بقانون اتحادي رقم 45 لسنة 2021 بشأن حماية البيانات الشخصية في دولة الإمارات.",
         ],
       },
       {
         id: "what-we-collect",
-        heading: "البيانات التي نجمعها",
+        heading: "ما الذي نجمعه",
         blocks: [
-          "لا نجمع إلا ما يحتاجه الموقع ليعمل، وما تختار أن ترسله إلينا.",
           {
-            list: [
-              "نموذج طلب العرض التوضيحي: اسمك الكامل وبريدك الإلكتروني للعمل وجهتك، واختياريًا منصبك ومكان تشغيل منار ورسالة منك.",
-              "حجز اجتماع (/meet): اسمك الكامل وبريدك الإلكتروني للعمل وجهتك ومنصبك، وملاحظة اختيارية، والشخص الذي اخترته والوقت الذي حددته، ونتيجة التحقق الأمني.",
-              "وسوم الحملات: إذا وافقت على التحليلات فقط، تُرفق الوسوم الموجودة في الرابط الذي وصلت منه (utm_source وutm_medium وutm_campaign وutm_term وutm_content) بطلب العرض الذي ترسله من علامة التبويب نفسها.",
-              "البيانات التقنية: عنوان IP والصفحة المطلوبة والوقت ونوع المتصفح، كما تسجلها خوادمنا ومزود الشبكة.",
-              "التحليلات الاختيارية: مشاهدات الصفحات وأوقات التحميل، ولا تُجمع إلا بموافقتك.",
-              "خيارات محفوظة في متصفحك: المظهر الذي اخترته وخيار الخصوصية (يُحفظ 12 شهرًا). تبقى على جهازك ولا تُرسل إلينا.",
-            ],
+            table: {
+              head: ["البيانات", "ما تتضمنه", "مصدرها"],
+              rows: [
+                ["الحساب", "اسمك وبريدك الإلكتروني ومزوّد تسجيل الدخول (Microsoft أو GitHub أو البريد) ومعرّف حسابك لديه ومساحة عملك", "أنت ومزوّد تسجيل الدخول"],
+                ["الأجهزة", "اسم الحاسوب ونظام التشغيل ومعرّف الجهاز وإصدار منار وأدوات الذكاء الاصطناعي الموجودة عليه مع إصداراتها", "برنامج الجهاز"],
+                ["سجل نشاط الذكاء الاصطناعي", "ما فعلته أداة ذكاء اصطناعي: الأداة والإجراء وهدفه مثل أمر أو مسار ملف مع إخفاء مجلدك الرئيسي وقرارنا وإجابتك على طلب الموافقة والوقت. السجل موقّع لكشف أي تغيير", "برنامج الجهاز"],
+                ["تنبيهات الأسرار", "أن أداة لمست ملف أسرار: الأداة والعملية ونوع الملف ومساراً مخفياً جزئياً والوقت. لا نأخذ محتوى الملف أبداً", "برنامج الجهاز"],
+                ["خزنة الأسرار", "الأسرار التي تختار نقلها إلى الخزنة تبقى في مخزن المفاتيح الخاص بحاسوبك ولا تُرسل إلينا", "أنت"],
+                ["الفوترة", "الخطة والحالة ومعرّفات عميل Stripe واشتراكه والفواتير. وتبقى بيانات البطاقة لدى Stripe", "أنت وStripe"],
+                ["بيانات تقنية", "عنوان IP والمتصفح والصفحات المطلوبة والوقت، في سجلات الخوادم والأمان لدينا", "متصفحك"],
+                ["نماذج الموقع", "الاسم والبريد المهني والمؤسسة ورسالة أو تفاصيل حجز إذا أرسلت طلباً أو حجزت اجتماعاً", "أنت"],
+                ["التحليلات", "مشاهدات الصفحات وأحداث استخدام أساسية، دون ملفات تعريف ارتباط، فقط إذا قبلت التحليلات", "متصفحك"],
+              ],
+            },
           },
-          "نرجو ألا تضع أي بيانات شخصية حساسة في حقل الرسالة أو الملاحظة.",
+          "يسجّل منار افتراضياً ما فعلته أداة الذكاء الاصطناعي، لا نص رسائلك ولا محتوى ملفاتك. وإذا فعّلت فحص TLS (في Personal Pro وما فوقها) يُفحص الحركة على جهازك للتحقق من تسرّب البيانات. [على المؤسس تأكيد ما يخزّنه الفحص قبل الإطلاق.]",
+          "نرجو ألا تضع بيانات شخصية حساسة في حقول النص الحر.",
         ],
       },
       {
         id: "how-we-use",
-        heading: "لماذا نستخدمها وعلى أي أساس",
+        heading: "لماذا نستخدمها وما الأساس",
         blocks: [
           {
             table: {
               head: ["الغرض", "البيانات", "الأساس"],
               rows: [
-                ["الرد على طلب العرض التوضيحي", "نموذج الطلب ووسوم الحملات", "موافقتك التي تمنحها عند إرسال النموذج، وخطوات تطلبها منا قبل أي اتفاق محتمل"],
-                ["ترتيب اجتماعك وتأكيده وحجز موعده، وإرسال رسائل التأكيد والدعوة والتغيير", "بيانات حجز الاجتماع", "موافقتك التي تمنحها عند الحجز، وخطوات تطلبها منا قبل أي اتفاق محتمل"],
-                ["حماية الموقع: منع الإرسال الآلي والحد من تكرار الطلبات (5 طلبات عرض كحد أقصى كل 10 دقائق من عنوان IP واحد)", "البيانات التقنية ونتيجة التحقق الأمني", "ضرورية لتقديم الموقع والخدمة التي طلبتها بأمان"],
-                ["فهم طريقة استخدام الموقع", "مشاهدات الصفحات وأوقات التحميل", "موافقتك، ويمكنك سحبها في أي وقت"],
+                ["تشغيل الخدمة: تسجيل دخولك وعرض أجهزتك ونشاطك وطلب موافقتك وحفظ السجل الموقّع", "الحساب والأجهزة ونشاط الذكاء الاصطناعي وتنبيهات الأسرار", "لازمة لتقديم الخدمة التي طلبتها، وموافقتك عند إضافة جهاز"],
+                ["فوترتك وتحصيل ضريبة القيمة المضافة", "الحساب والفوترة", "لازمة للعقد وللالتزامات القانونية الضريبية"],
+                ["حماية الخدمة ومنع إساءة الاستخدام: حدود الطلبات وفحوص الروبوتات والتحقيق في الحوادث", "البيانات التقنية والحساب", "لازمة لتقديم الخدمة بأمان"],
+                ["إرسال رسائل الخدمة مثل روابط الدخول وتحذيرات التجربة والخمول وإشعارات الفوترة", "الحساب", "لازمة للعقد"],
+                ["الرد على الطلبات وترتيب الاجتماعات", "نماذج الموقع", "موافقتك، وخطوات تطلبها منا قبل التعاقد"],
+                ["فهم كيفية استخدام المنتج وتحسينه", "التحليلات", "موافقتك، ويمكنك سحبها في أي وقت"],
               ],
             },
           },
-          "لا نرسل رسائل تسويقية، ولا نبيع البيانات الشخصية، ولا نستخدمها لأغراض إعلانية، ولا نتخذ بشأنك قرارات آلية بناءً عليها.",
+          "لا نبيع البيانات الشخصية ولا نستخدمها للإعلان ولا ندرّب نماذج ذكاء اصطناعي على سجل نشاطك. ولا نرسل بريداً تسويقياً ما لم تطلبه.",
+        ],
+      },
+      {
+        id: "hosting",
+        heading: "أين تُستضاف بياناتك",
+        blocks: [
+          "تعمل الخدمة المستضافة على Microsoft Azure في منطقة UAE North. ولكل مساحة عمل شخصية قاعدة بيانات خاصة بها. وتقف Cloudflare أمام الموقع ولوحة التحكم لتوصيلهما وحمايتهما.",
+          "تبقى أدوات الذكاء الاصطناعي وملفاتك على حاسوبك. وتجري فحوص منار لما تُسمح به الأداة على الجهاز نفسه، ولا تمر حركة الذكاء الاصطناعي لديك عبر خوادمنا.",
         ],
       },
       {
         id: "who-we-share-with",
-        heading: "من يتلقى البيانات",
+        heading: "من يستلمها",
         blocks: [
-          "نستعين بعدد محدود من مزودي الخدمات الذين يعالجون البيانات نيابة عنا بموجب شروط مكتوبة:",
+          "نستعين بعدد قليل من مزوّدي الخدمة الذين يعالجون البيانات لحسابنا بموجب شروط مكتوبة:",
           {
             table: {
-              head: ["المزود", "الغرض", "البيانات", "المكان"],
+              head: ["المزوّد", "الغرض", "البيانات", "الموقع"],
               rows: [
-                ["Cloudflare", "توصيل المحتوى عبر الشبكة والحماية، والتحقق الأمني عند الحجز (Turnstile)، والتحليلات عند موافقتك", "عنوان IP وتفاصيل الطلب والتحقق الأمني وأحداث التحليلات", "شبكة Cloudflare العالمية، بما فيها خارج الإمارات"],
-                ["Resend", "إيصال رسائل طلبات العرض إلى فريقنا ورسائل الحجز إليك", "بيانات النموذج والحجز وبريدك الإلكتروني", "الولايات المتحدة"],
-                ["Microsoft 365", "دعوات التقويم للاجتماعات المحجوزة، من تقويم الشخص الذي حجزت معه", "اسمك وبريدك الإلكتروني وجهتك وموعد الاجتماع", "مراكز بيانات Microsoft الخاصة بمستأجر التقويم"],
-                ["البنية التحتية لـ VAX", "استضافة الموقع وخدمة الحجز على خوادم تشغّلها VAX", "سجلات الخادم والوصول وسجلات الحجز", "خوادم تشغّلها VAX"],
+                ["Microsoft Azure", "الاستضافة وقواعد البيانات وإرسال البريد (Azure Communication Services)", "كل بيانات الخدمة وعناوين البريد", "UAE North"],
+                ["Cloudflare", "توصيل الشبكة وDNS والأمان وفحص الروبوتات (Turnstile)", "عنوان IP وتفاصيل الطلب", "شبكة عالمية تشمل خارج الإمارات"],
+                ["Stripe", "مدفوعات البطاقات والفواتير والضريبة", "الاسم والبريد وتفاصيل الفوترة وبيانات البطاقة", "بنية Stripe التحتية، وتشمل خارج الإمارات"],
+                ["PostHog (الاتحاد الأوروبي)", "تحليلات المنتج، بموافقتك فقط ودون ملفات تعريف ارتباط", "مشاهدات الصفحات وأحداث الاستخدام", "الاتحاد الأوروبي"],
+                ["Resend", "إرسال بريد طلبات الموقع والحجوزات", "تفاصيل النموذج والبريد الإلكتروني", "الولايات المتحدة"],
+                ["Microsoft وGitHub", "تسجيل الدخول. يخبراننا بهويتك عندما تختارهما", "الاسم والبريد ومعرّف الحساب", "بنيتهما التحتية"],
               ],
             },
           },
-          "وقد نفصح عن البيانات إذا ألزمنا القانون بذلك.",
+          "وقد نفصح عن البيانات أيضاً عندما يطلب القانون ذلك.",
         ],
       },
       {
         id: "transfers",
-        heading: "نقل البيانات خارج الإمارات",
+        heading: "النقل خارج الدولة",
         blocks: [
-          "قد تعالج Cloudflare وResend، وMicrosoft عندما تكون مراكز بياناتها خارج الدولة، بيانات شخصية خارج الإمارات العربية المتحدة. ولا ننقل البيانات إلا بما يسمح به القانون: نعتمد على شروط معالجة البيانات لدى كل مزود، التي تلزمه بحماية البيانات وعدم استخدامها إلا بتعليماتنا، ونعتمد أيضًا على موافقتك في ما يخص التحليلات.",
-          "يمكنك أن تطلب منا مزيدًا من التفاصيل عن هذه الضمانات على info@fixio.ae.",
+          "يعالج بعض المزوّدين أعلاه البيانات خارج دولة الإمارات العربية المتحدة. ولا ننقل البيانات إلا وفق ما يسمح به القانون: نعتمد على شروط معالجة البيانات لدى كل مزوّد، وهي تلزمه بحمايتها واستخدامها بتعليماتنا فقط، وفي التحليلات نعتمد أيضاً على موافقتك. اطلب منا تفاصيل أكثر عن هذه الضمانات عبر support@fixio.ae.",
         ],
       },
       {
@@ -234,11 +268,14 @@ export const privacy: Record<Locale, LegalDoc> = {
         blocks: [
           {
             list: [
-              "طلبات العرض التوضيحي وحجوزات الاجتماعات: 12 شهرًا من آخر تواصل بيننا، ثم تُحذف.",
-              "يُلغى الحجز غير المؤكد عند انتهاء مدة حجز الموعد.",
-              "سجلات الوصول إلى الخادم: 30 يومًا.",
-              "تُحفظ عدادات الحد من الطلبات في ذاكرة الخادم لمدة 10 دقائق، وتُفقد عند إعادة تشغيله.",
-              "تُحذف وسوم الحملات من متصفحك عند إغلاق علامة التبويب.",
+              "سجل نشاط الذكاء الاصطناعي: طوال مدة التدقيق في خطتك، وهي 30 يوماً في المجانية وسنة في Personal Pro. وتتبع مساحات عمل الشركات المدة المحددة لمساحة العمل. وتُخفى السجلات الأقدم 30 يوماً ثم تُسقط. ويمكنك تصدير سجلك في أي وقت.",
+              "الحساب والأجهزة: ما دام حسابك مفتوحاً.",
+              "حذف الحساب: يمكنك حذف حسابك في أي وقت. ونعرض عليك التصدير أولاً. وتُسقط مساحة العمل، بما فيها سجلها الموقّع، بعد مهلة 30 يوماً يمكنك إلغاؤها.",
+              "مساحات العمل المجانية الخاملة: تُؤرشف مساحة العمل المجانية التي لا نشاط فيها لمدة 60 يوماً ثم تُسقط. ونرسل إليك بريداً تحذيرياً قبل كل خطوة.",
+              "سجلات الفوترة: بالقدر الذي يوجبه قانون الضرائب.",
+              "سجلات الخوادم: 30 يوماً.",
+              "النسخ الاحتياطية: تُحذف النسخ الاحتياطية المشفرة وفق دورتها المعتادة، وفي موعد لا يتجاوز 7 أيام بعد الحذف.",
+              "طلبات الموقع والحجوزات: 12 شهراً بعد آخر تواصل معك.",
             ],
           },
         ],
@@ -247,34 +284,46 @@ export const privacy: Record<Locale, LegalDoc> = {
         id: "analytics-and-storage",
         heading: "التحليلات والتخزين في المتصفح",
         blocks: [
-          "لا يضع الموقع نفسه أي ملفات تعريف ارتباط للزوار. وتبقى التحليلات معطلة حتى توافق عليها، ولا يُحمَّل برنامجها قبل ذلك. وإذا أرسل متصفحك إشارة التحكم العالمي في الخصوصية أو عدم التتبّع، نعدّها رفضًا ولا نسألك. ويمكنك تغيير خيارك في أي وقت من إعدادات ملفات تعريف الارتباط أسفل الصفحة.",
-          "تسرد سياسة ملفات تعريف الارتباط والتخزين كل عنصر يُحفظ في متصفحك، والغرض منه، ومدة بقائه.",
+          "التحليلات متوقفة حتى تقبلها. نستخدم PostHog في الاتحاد الأوروبي بوضع بلا ملفات تعريف ارتباط: لا يضع ملفات ولا يحفظ معرّفاً على جهازك. وإذا أرسل متصفحك إشارة التحكم العالمي بالخصوصية أو إشارة عدم التتبع فإننا نعدّها رفضاً ولا نسألك. ويمكنك تغيير اختيارك في أي وقت من إعدادات ملفات تعريف الارتباط في أسفل الصفحة. وتسرد سياسة ملفات تعريف الارتباط كل عنصر يُخزَّن في متصفحك.",
         ],
       },
       {
         id: "your-rights",
         heading: "حقوقك",
         blocks: [
-          "يحق لك بموجب القانون:",
+          "بموجب قانون حماية البيانات الشخصية يمكنك:",
           {
             list: [
-              "الحصول على معلومات عن البيانات التي نحتفظ بها عنك وعلى نسخة منها؛",
-              "تصحيح البيانات غير الدقيقة واستكمال الناقصة منها؛",
-              "حذف بياناتك متى انتفت الحاجة إليها أو عند سحب موافقتك؛",
-              "تقييد استخدامنا لبياناتك ريثما يُحسم أي اعتراض بشأنها؛",
-              "الاعتراض على المعالجة، بما في ذلك أي معالجة آلية؛",
-              "الحصول على بياناتك بصيغة منظمة يمكن للأجهزة قراءتها ونقلها إلى متحكم آخر؛",
-              "سحب موافقتك في أي وقت، دون أن يؤثر ذلك في المعالجة التي سبقت السحب.",
+              "الحصول على معلومات عن البيانات التي نحتفظ بها عنك ونسخة منها؛",
+              "تصحيح البيانات غير الدقيقة واستكمال غير المكتملة؛",
+              "محو بياناتك عندما لا تعود لازمة أو عند سحب موافقتك؛",
+              "تقييد استخدامنا لبياناتك ريثما يُحسم سؤال بشأنها؛",
+              "الاعتراض على المعالجة، بما فيها أي معالجة آلية؛",
+              "تسلّم بياناتك بصيغة منظّمة مقروءة آلياً وإرسالها إلى متحكّم آخر؛",
+              "سحب موافقتك في أي وقت دون التأثير على المعالجة التي تمت قبل السحب.",
             ],
           },
-          "لممارسة أي من هذه الحقوق، راسلنا على info@fixio.ae. وقد نحتاج إلى التحقق من هويتك قبل التنفيذ، ونرد خلال المدة التي يحددها القانون.",
-          "وإذا لم تكن راضيًا عن طريقة تعاملنا مع بياناتك، فيمكنك تقديم شكوى إلى مكتب الإمارات للبيانات.",
+          "يمكنك تنفيذ معظم ذلك بنفسك في لوحة التحكم: تصدير سجلك وحذف حسابك. ولأي أمر آخر راسل support@fixio.ae. نرد خلال 30 يوماً. وإذا لم ترضَ فيمكنك الشكوى إلى مكتب بيانات دولة الإمارات.",
         ],
       },
       {
+        id: "security",
+        heading: "كيف نحميها",
+        blocks: [
+          "لكل مساحة عمل قاعدة بيانات خاصة بها. وتتصل الأجهزة بالخدمة عبر TLS بمصادقة متبادلة. والوصول محدود بحسب الدور، والأسرار محفوظة في مخزن أسرار مُدار، وسجل النشاط موقّع لكشف أي تغيير. ولا يوجد نظام آمن تماماً، وسنبلغك والجهات المختصة بأي اختراق وفق ما يوجبه القانون.",
+        ],
+      },
+      {
+        id: "children",
+        heading: "الأطفال",
+        blocks: ["منار ليس لمن هم دون 18 عاماً، ولا نجمع بياناتهم عن علم."],
+      },
+      {
         id: "changes",
-        heading: "التعديلات على هذا الإشعار",
-        blocks: ["نحدّث هذا الإشعار عندما تتغير طريقة تعاملنا مع البيانات. ويبيّن التاريخ في أعلى الصفحة آخر تعديل فعلي."],
+        heading: "التعديلات",
+        blocks: [
+          "قد نحدّث هذه السياسة. وعند أي تعديل جوهري نرسل بريداً إلى مالكي الحسابات قبل 14 يوماً على الأقل من سريانه، ويتغير التاريخ أعلاه.",
+        ],
       },
     ],
   },

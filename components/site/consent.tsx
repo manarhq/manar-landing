@@ -17,15 +17,15 @@ import {
 } from "@/lib/consent"
 import type { Locale } from "@/lib/i18n/config"
 import type { Dictionary } from "@/lib/i18n/dictionaries"
-import { CF_BEACON_TOKEN } from "@/lib/site"
+import { isMeetPath, scrubEvent } from "@/lib/analytics-privacy"
+import { POSTHOG_HOST, POSTHOG_KEY } from "@/lib/site"
 
 import { OPEN_CONSENT_EVENT } from "./events"
 
 /** The settings dialog loads only when someone opens it, so it stays off the first-paint path. */
 const ConsentSettings = dynamic(() => import("./consent-settings").then((m) => m.ConsentSettings), { ssr: false })
 
-const BEACON_SRC = "https://static.cloudflareinsights.com/beacon.min.js"
-const TOKEN = Boolean(CF_BEACON_TOKEN)
+const TOKEN = Boolean(POSTHOG_KEY)
 
 const useConsent = () => useSyncExternalStore(subscribeConsent, readConsent, () => null)
 /** GPC / Do Not Track. Read on the client only; the server snapshot assumes no signal. */
@@ -40,7 +40,7 @@ export function useConsentPending() {
 }
 
 /**
- * Consent for the only optional processing on the site, Cloudflare Web Analytics.
+ * Consent for the only optional processing on the site, PostHog analytics.
  * Opt-in: nothing optional runs before a choice. Accept and Reject carry equal weight.
  * A browser privacy signal (GPC or DNT) counts as a rejection, and the banner is not shown.
  * Without a configured beacon token there is nothing optional, so there is no banner at all.
@@ -72,16 +72,25 @@ export function Consent({ locale, labels }: { locale: Locale; labels: Dictionary
       try {
         if (Object.keys(utm).length) sessionStorage.setItem(UTM_STORAGE_KEY, JSON.stringify(utm))
       } catch {}
-      if (!document.querySelector(`script[src="${BEACON_SRC}"]`)) {
-        const script = document.createElement("script")
-        script.src = BEACON_SRC
-        script.defer = true
-        script.dataset.cfBeacon = JSON.stringify({ token: CF_BEACON_TOKEN, spa: true })
-        document.head.appendChild(script)
+      // Booking links carry a token in the query string: no analytics at all on /meet/*.
+      if (!loaded.current && !isMeetPath(window.location.pathname)) {
         loaded.current = true
+        // Cookieless: memory persistence, nothing written to cookies or storage. Loaded only after opt-in.
+        import("posthog-js").then(({ default: posthog }) => {
+          posthog.init(POSTHOG_KEY, {
+            api_host: POSTHOG_HOST,
+            persistence: "memory",
+            autocapture: false,
+            disable_session_recording: true,
+            capture_pageview: "history_change",
+            respect_dnt: true,
+            // Path only: never send a query string or hash to the provider.
+            before_send: (event) => scrubEvent(event),
+          })
+        })
       }
     } else if (loaded.current) {
-      // The beacon cannot be unloaded in place; a reload is the honest way to stop it.
+      // The analytics code cannot be unloaded in place; a reload is the honest way to stop it.
       window.location.reload()
     }
   }, [analytics])
