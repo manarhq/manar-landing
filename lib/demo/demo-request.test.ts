@@ -2,7 +2,7 @@ import assert from "node:assert/strict"
 import { describe, it } from "node:test"
 
 import { buildDemoRequestEmail, escapeHtml } from "./email-content.ts"
-import { DEMO_REQUEST_RECIPIENT, handleDemoRequest, type DemoRequestDeps } from "./handle-request.ts"
+import { DEMO_REQUEST_RECIPIENT, demoFailureEvent, handleDemoRequest, type DemoRequestDeps } from "./handle-request.ts"
 import { createRateLimiter } from "./rate-limit.ts"
 import { createAcsTransport, type OutboundEmail, type SendResult } from "./acs.ts"
 import { validateDemoRequest } from "./validation.ts"
@@ -168,6 +168,15 @@ describe("handleDemoRequest", () => {
       assert.deepEqual(response.body, { ok: false, error: "unavailable" })
       assert.deepEqual(failures, [reason])
     }
+  })
+
+  it("logs a failed send as a structured event that carries no lead data", async () => {
+    const lines: string[] = []
+    const { transport } = recordingTransport({ ok: false, reason: "rejected" })
+    await handleDemoRequest(request(valid), deps({ transport, logFailure: (r) => lines.push(demoFailureEvent(r)) }))
+    assert.equal(lines.length, 1)
+    assert.deepEqual(JSON.parse(lines[0]), { event: "demo_request_email_failed", reason: "rejected" })
+    for (const value of Object.values(valid)) assert.ok(!lines[0].includes(String(value)))
   })
 
   it("never reports success when email is not configured", async () => {

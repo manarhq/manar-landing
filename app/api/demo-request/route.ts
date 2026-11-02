@@ -1,4 +1,4 @@
-import { handleDemoRequest, MAX_BODY_BYTES } from "@/lib/demo/handle-request"
+import { demoFailureEvent, handleDemoRequest, MAX_BODY_BYTES } from "@/lib/demo/handle-request"
 import { clientKey, readBoundedText } from "@/lib/http"
 import { demoFromAddress, demoRequestLimiter, sendDemoRequestEmail } from "@/lib/demo/server"
 
@@ -16,7 +16,7 @@ export async function POST(request: Request) {
       transport: sendDemoRequestEmail,
       fromAddress: demoFromAddress(),
       limiter: demoRequestLimiter,
-      logFailure: (reason) => console.error(JSON.stringify({ event: "demo_request_email_failed", reason })),
+      logFailure: (reason) => console.error(demoFailureEvent(reason)),
     }
   )
 
