@@ -2,7 +2,7 @@
 
 # Manar marketing site. Three stages: install, build, and a minimal runtime that
 # contains only the traced `.next/standalone` server (see `output` in next.config.ts).
-# Same pinned base image as the other Next.js sites deployed to the vax K3s cluster.
+# Same pinned base image as the other Next.js sites deployed by Manar.
 
 ARG NODE_IMAGE=docker.io/library/node:24.18.0-bookworm-slim@sha256:6f7b03f7c2c8e2e784dcf9295400527b9b1270fd37b7e9a7285cf83b6951452d
 

@@ -45,7 +45,7 @@ const contactEmail = z
   })
 
 /** The only external hosts the site links to. Compared exactly against the parsed hostname. */
-export const EXTERNAL_HOSTS = ["vax.sh", "www.vax.sh", "manar.fixio.ae"] as const
+export const EXTERNAL_HOSTS = ["fixio.ae", "www.fixio.ae", "manar.fixio.ae"] as const
 
 const httpsUrl = z
   .string()

@@ -46,18 +46,18 @@ describe("bundled content", () => {
       copy.links.vax = vax
       return siteContentSchema.safeParse(copy).success
     }
-    assert.equal(link("https://vax.sh"), true)
+    assert.equal(link("https://fixio.ae"), true)
     assert.equal(link("https://manar.fixio.ae/en"), true)
-    assert.equal(link("http://vax.sh"), false)
+    assert.equal(link("http://fixio.ae"), false)
     assert.equal(link("https://evil.example"), false)
-    assert.equal(link("https://vax.sh.evil.example"), false)
-    assert.equal(link("https://vax.sh@evil.example"), false)
-    assert.equal(link("https://user:pw@vax.sh"), false)
-    assert.equal(link("https://vax.sh\\@evil.example"), false)
-    assert.equal(link("https://evil.example\\vax.sh"), false)
-    assert.equal(link("https://vax.sh/\u0000x"), false)
+    assert.equal(link("https://fixio.ae.evil.example"), false)
+    assert.equal(link("https://fixio.ae@evil.example"), false)
+    assert.equal(link("https://user:pw@fixio.ae"), false)
+    assert.equal(link("https://fixio.ae\\@evil.example"), false)
+    assert.equal(link("https://evil.example\\fixio.ae"), false)
+    assert.equal(link("https://fixio.ae/\u0000x"), false)
     assert.equal(link("javascript:alert(1)"), false)
-    assert.equal(link("//vax.sh"), false)
+    assert.equal(link("//fixio.ae"), false)
   })
 
   it("normalises with NFKC before the dash, word and markup checks", () => {
