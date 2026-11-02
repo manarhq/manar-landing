@@ -5,10 +5,10 @@ import { homeStructuredData } from "./structured-data.ts"
 
 function parse() {
   const json = homeStructuredData({
-    origin: new URL("https://manar.vax.sh"),
+    origin: new URL("https://manar.fixio.ae"),
     lang: "en",
     description: "Not with </script> in it.",
-    vaxUrl: "https://vax.sh",
+    vaxUrl: "https://fixio.ae",
     email: "info@fixio.ae",
     logo: "/brand/manar-lighthouse.png",
   })

@@ -3,7 +3,7 @@
 #
 #   any branch / MR : quality + source scan + gitleaks + semgrep -> image build (no push) -> image scan
 #   main            : quality + source scan + gitleaks + semgrep -> image build (rootless BuildKit) -> image scan
-#                     -> rolling update of manar.vax.sh through the GitLab agent
+#                     -> rolling update of manar.fixio.ae through the GitLab agent
 #
 # The release swaps pods with zero downtime (maxUnavailable: 0) a few minutes after the push.
 # Setup and permissions: deploy/README.md, section "Continuous deployment".
@@ -27,8 +27,8 @@ default:
   tags: [manar]
 
 variables:
-  SITE_URL: "https://manar.vax.sh"
-  EXPECTED_REGISTRY_IMAGE: "registry.gitlab.vax.sh/manar/landing"
+  SITE_URL: "https://manar.fixio.ae"
+  EXPECTED_REGISTRY_IMAGE: "registry.example.com/manar/landing"
   KUBE_CONTEXT: "manar/landing:manar-landing-production"
   KUBE_NAMESPACE: "manar-landing"
   KUBE_DEPLOYMENT: "manar-landing"
@@ -240,7 +240,7 @@ deploy-production:
   timeout: 15 minutes
   environment:
     name: production
-    url: https://manar.vax.sh
+    url: https://manar.fixio.ae
     deployment_tier: production
   before_script:
     - node deploy/ci/install-kubectl.mjs
@@ -288,7 +288,7 @@ deploy-production:
       done
       echo "$running"
       test "$running" = "$IMAGE_REF"
-    # Public smoke test once the edge is live: set PRODUCTION_SMOKE_URL=https://manar.vax.sh (project variable).
+    # Public smoke test once the edge is live: set PRODUCTION_SMOKE_URL=https://manar.fixio.ae (project variable).
     - |
       if [ -n "${PRODUCTION_SMOKE_URL:-}" ]; then
         node -e '

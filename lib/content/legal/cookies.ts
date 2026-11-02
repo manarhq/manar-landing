@@ -1,3 +1,4 @@
+import { CONSOLE_HOST } from "../../hosts.ts"
 import type { Locale } from "../../i18n/config.ts"
 
 import type { LegalDoc } from "../schema.ts"
@@ -40,7 +41,7 @@ export const cookies: Record<Locale, LegalDoc> = {
         id: "analytics",
         heading: "Optional analytics",
         blocks: [
-          "If you accept analytics, we load PostHog, hosted in the European Union (eu.i.posthog.com). It runs in cookieless mode: it sets no cookies, writes nothing to your browser storage and keeps its identifier in memory for that page view only. It records page views and basic usage events to help us improve Manar. It does not build a profile of you across other websites. The console at console-manar.vax.sh is separate: it sets the cookies needed to keep you signed in, and it sends product improvement data from our servers, without cookies or third-party scripts, as the Privacy Policy explains.",
+          `If you accept analytics, we load PostHog, hosted in the European Union (eu.i.posthog.com). It runs in cookieless mode: it sets no cookies, writes nothing to your browser storage and keeps its identifier in memory for that page view only. It records page views and basic usage events to help us improve Manar. It does not build a profile of you across other websites. The console at ${CONSOLE_HOST} is separate: it sets the cookies needed to keep you signed in, and it sends product improvement data from our servers, without cookies or third-party scripts, as the Privacy Policy explains.`,
           "If you reject analytics, the script is never loaded and no campaign tags are stored. If your browser sends a Global Privacy Control signal (navigator.globalPrivacyControl is true) or a Do Not Track signal, we treat it as a rejection of analytics and do not show the banner, even if you accepted before.",
         ],
       },
@@ -104,7 +105,7 @@ export const cookies: Record<Locale, LegalDoc> = {
         id: "analytics",
         heading: "التحليلات الاختيارية",
         blocks: [
-          "إذا وافقت على التحليلات، نحمّل PostHog المستضافة في الاتحاد الأوروبي (eu.i.posthog.com). وهي تعمل بوضع بلا ملفات تعريف ارتباط: لا تضع ملفات ولا تكتب شيئاً في تخزين متصفحك وتبقي معرّفها في الذاكرة طوال مشاهدة الصفحة فقط. وتسجّل مشاهدات الصفحات وأحداث استخدام أساسية لنحسّن منار، ولا تبني ملفاً عنك عبر المواقع الأخرى. أما لوحة التحكم على console-manar.vax.sh فمنفصلة، وتضع ملفات تعريف الارتباط اللازمة لإبقائك مسجّلاً للدخول، وتُرسل بيانات تحسين المنتج من خوادمنا دون ملفات تعريف ارتباط أو برامج من أطراف أخرى، كما توضّح سياسة الخصوصية.",
+          `إذا وافقت على التحليلات، نحمّل PostHog المستضافة في الاتحاد الأوروبي (eu.i.posthog.com). وهي تعمل بوضع بلا ملفات تعريف ارتباط: لا تضع ملفات ولا تكتب شيئاً في تخزين متصفحك وتبقي معرّفها في الذاكرة طوال مشاهدة الصفحة فقط. وتسجّل مشاهدات الصفحات وأحداث استخدام أساسية لنحسّن منار، ولا تبني ملفاً عنك عبر المواقع الأخرى. أما لوحة التحكم على ${CONSOLE_HOST} فمنفصلة، وتضع ملفات تعريف الارتباط اللازمة لإبقائك مسجّلاً للدخول، وتُرسل بيانات تحسين المنتج من خوادمنا دون ملفات تعريف ارتباط أو برامج من أطراف أخرى، كما توضّح سياسة الخصوصية.`,
           "وإذا رفضت التحليلات، فلن يُحمَّل برنامجها أبدًا ولن تُحفظ أي وسوم حملات. وإذا أرسل متصفحك إشارة التحكم العالمي في الخصوصية (أي أن قيمة navigator.globalPrivacyControl هي true) أو إشارة عدم التتبّع، نعدّها رفضًا للتحليلات ولا نعرض الشريط، حتى لو كنت قد وافقت من قبل.",
         ],
       },

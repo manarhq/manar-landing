@@ -1,3 +1,4 @@
+import { SITE_HOST, CONSOLE_HOST } from "../../hosts.ts"
 import type { Locale } from "../../i18n/config.ts"
 
 import type { LegalDoc } from "../schema.ts"
@@ -20,7 +21,7 @@ export const privacy: Record<Locale, LegalDoc> = {
         heading: "Who is responsible",
         blocks: [
           "Manar is a product of Fixio Technologies LLC SPC (Fixio, we, us), 1st Oud Maitha Street, Abu Dhabi, United Arab Emirates. Fixio is the controller of the personal data described here. Privacy questions and requests: privacy@fixio.ae. General support: support@fixio.ae.",
-          "This policy covers the Manar website (manar.vax.sh), the console (console-manar.vax.sh), the device software (manar-edge) and the hosted service. When a company or a government body uses Manar for its staff, it decides what its workspace is used for and Fixio processes the workspace data on its behalf, under our Data Processing Agreement. Fixio stays the controller of the product improvement data described below.",
+          `This policy covers the Manar website (${SITE_HOST}), the console (${CONSOLE_HOST}), the device software (manar-edge) and the hosted service. When a company or a government body uses Manar for its staff, it decides what its workspace is used for and Fixio processes the workspace data on its behalf, under our Data Processing Agreement. Fixio stays the controller of the product improvement data described below.`,
           "We apply the UAE Federal Decree-Law No. 45 of 2021 on the Protection of Personal Data (PDPL). Where they apply to you, we also apply the EU General Data Protection Regulation (EU) 2016/679 (GDPR) and the California Consumer Privacy Act (CCPA) as amended by the California Privacy Rights Act (CPRA).",
           "We have not appointed a representative in the European Union. If you are in the EU or the European Economic Area, write to privacy@fixio.ae. You can also complain to the data protection authority where you live.",
         ],
@@ -42,7 +43,7 @@ export const privacy: Record<Locale, LegalDoc> = {
                 ["Billing", "Plan, status, Stripe customer and subscription identifiers, and invoices. Card details stay with Stripe", "You and Stripe"],
                 ["Technical data", "IP address, browser, pages requested and time, in our server and security logs", "Your browser"],
                 ["Website forms", "Name, work email and organisation, and a message or booking details, if you send a request or book a meeting", "You"],
-                ["Website analytics", "Page views and basic usage events on manar.vax.sh, without cookies, only if you accept analytics", "Your browser"],
+                ["Website analytics", `Page views and basic usage events on ${SITE_HOST}, without cookies, only if you accept analytics`, "Your browser"],
               ],
             },
           },
@@ -277,7 +278,7 @@ export const privacy: Record<Locale, LegalDoc> = {
         heading: "من المسؤول",
         blocks: [
           "منار منتج من ⁨Fixio Technologies LLC SPC⁩ (ويُشار إليها بـ Fixio أو نحن)، وعنوانها ⁨1st Oud Maitha Street, Abu Dhabi, United Arab Emirates⁩ (شارع عود ميثاء الأول، أبوظبي، الإمارات العربية المتحدة). وFixio هي المتحكّمة في البيانات الشخصية الموصوفة هنا. للأسئلة والطلبات المتعلقة بالخصوصية: privacy@fixio.ae. وللدعم العام: support@fixio.ae.",
-          "تغطي هذه السياسة موقع منار (manar.vax.sh) ولوحة التحكم (console-manar.vax.sh) وبرنامج الجهاز (manar-edge) والخدمة المستضافة. وعندما تستخدم شركة أو جهة حكومية منار لموظفيها فهي التي تحدد أغراض استخدام مساحة عملها، وتعالج Fixio بيانات مساحة العمل لصالحها بموجب اتفاقية معالجة البيانات لدينا. وتبقى Fixio المتحكّمة في بيانات تحسين المنتج الموصوفة أدناه.",
+          `تغطي هذه السياسة موقع منار (${SITE_HOST}) ولوحة التحكم (${CONSOLE_HOST}) وبرنامج الجهاز (manar-edge) والخدمة المستضافة. وعندما تستخدم شركة أو جهة حكومية منار لموظفيها فهي التي تحدد أغراض استخدام مساحة عملها، وتعالج Fixio بيانات مساحة العمل لصالحها بموجب اتفاقية معالجة البيانات لدينا. وتبقى Fixio المتحكّمة في بيانات تحسين المنتج الموصوفة أدناه.`,
           "نطبّق المرسوم بقانون اتحادي رقم 45 لسنة 2021 بشأن حماية البيانات الشخصية في دولة الإمارات. ونطبّق أيضاً، متى انطبقت عليك، اللائحة العامة لحماية البيانات في الاتحاد الأوروبي (EU) 2016/679 (GDPR)، وقانون خصوصية المستهلك في كاليفورنيا (CCPA) بصيغته المعدّلة بقانون حقوق الخصوصية في كاليفورنيا (CPRA).",
           "لم نعيّن ممثلاً لنا في الاتحاد الأوروبي. فإذا كنت في الاتحاد الأوروبي أو المنطقة الاقتصادية الأوروبية فراسلنا على privacy@fixio.ae، ويمكنك أيضاً تقديم شكوى إلى سلطة حماية البيانات في بلد إقامتك.",
         ],
@@ -299,7 +300,7 @@ export const privacy: Record<Locale, LegalDoc> = {
                 ["الفوترة", "الخطة والحالة ومعرّفات عميل Stripe واشتراكه والفواتير. وتبقى بيانات البطاقة لدى Stripe", "أنت وStripe"],
                 ["بيانات تقنية", "عنوان IP والمتصفح والصفحات المطلوبة والوقت، في سجلات الخوادم والأمان لدينا", "متصفحك"],
                 ["نماذج الموقع", "الاسم والبريد المهني والمؤسسة ورسالة أو تفاصيل حجز إذا أرسلت طلباً أو حجزت اجتماعاً", "أنت"],
-                ["تحليلات الموقع", "مشاهدات الصفحات وأحداث استخدام أساسية على manar.vax.sh، دون ملفات تعريف ارتباط، فقط إذا قبلت التحليلات", "متصفحك"],
+                ["تحليلات الموقع", `مشاهدات الصفحات وأحداث استخدام أساسية على ${SITE_HOST}، دون ملفات تعريف ارتباط، فقط إذا قبلت التحليلات`, "متصفحك"],
               ],
             },
           },

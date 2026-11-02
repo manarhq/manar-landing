@@ -1,3 +1,4 @@
+import { SITE_HOST, CONSOLE_HOST } from "../../hosts.ts"
 import type { Locale } from "../../i18n/config.ts"
 
 import type { LegalDoc } from "../schema.ts"
@@ -17,7 +18,7 @@ export const terms: Record<Locale, LegalDoc> = {
         id: "about",
         heading: "Who we are and what these terms cover",
         blocks: [
-          "Manar is a product of Fixio Technologies LLC SPC (Fixio, we, us), 1st Oud Maitha Street, Abu Dhabi, United Arab Emirates. These terms are a contract between you and Fixio. They cover the Manar website at manar.vax.sh, the Manar console at console-manar.vax.sh, the Manar device software (manar-edge) and the hosted service together (the Service).",
+          `Manar is a product of Fixio Technologies LLC SPC (Fixio, we, us), 1st Oud Maitha Street, Abu Dhabi, United Arab Emirates. These terms are a contract between you and Fixio. They cover the Manar website at ${SITE_HOST}, the Manar console at ${CONSOLE_HOST}, the Manar device software (manar-edge) and the hosted service together (the Service).`,
           "By creating an account, installing the device software or using the Service you agree to these terms. If you use Manar for a company, you confirm you may bind that company, and it is the customer.",
           "Customers on an Enterprise plan or a customer-hosted install sign a separate written agreement. If it conflicts with these terms, the written agreement wins.",
         ],
@@ -98,7 +99,7 @@ export const terms: Record<Locale, LegalDoc> = {
         id: "dpa",
         heading: "Company and Government workspaces",
         blocks: [
-          "For Company and Government workspaces, the Data Processing Agreement published at manar.vax.sh/en/dpa forms part of these terms. It sets out how Fixio processes workspace data on the customer's behalf.",
+          `For Company and Government workspaces, the Data Processing Agreement published at ${SITE_HOST}/en/dpa forms part of these terms. It sets out how Fixio processes workspace data on the customer's behalf.`,
         ],
       },
       {
@@ -152,7 +153,7 @@ export const terms: Record<Locale, LegalDoc> = {
         id: "about",
         heading: "من نحن وما الذي تغطيه هذه الشروط",
         blocks: [
-          "منار منتج من \u2068Fixio Technologies LLC SPC\u2069 (ويُشار إليها بـ Fixio أو نحن)، وعنوانها \u20681st Oud Maitha Street, Abu Dhabi, United Arab Emirates\u2069 (شارع عود ميثاء الأول، أبوظبي، الإمارات العربية المتحدة). هذه الشروط عقد بينك وبين Fixio. وهي تغطي موقع منار على manar.vax.sh ولوحة تحكم منار على console-manar.vax.sh وبرنامج جهاز منار (manar-edge) والخدمة المستضافة معاً (الخدمة).",
+          `منار منتج من \u2068Fixio Technologies LLC SPC\u2069 (ويُشار إليها بـ Fixio أو نحن)، وعنوانها \u20681st Oud Maitha Street, Abu Dhabi, United Arab Emirates\u2069 (شارع عود ميثاء الأول، أبوظبي، الإمارات العربية المتحدة). هذه الشروط عقد بينك وبين Fixio. وهي تغطي موقع منار على ${SITE_HOST} ولوحة تحكم منار على ${CONSOLE_HOST} وبرنامج جهاز منار (manar-edge) والخدمة المستضافة معاً (الخدمة).`,
           "بإنشاء حساب أو تثبيت برنامج الجهاز أو استخدام الخدمة فإنك توافق على هذه الشروط. وإذا استخدمت منار باسم شركة فإنك تؤكد أن لك صلاحية إلزامها، وتكون هي العميل.",
           "العملاء على خطة المؤسسات أو على تثبيت مستضاف لدى العميل يوقّعون اتفاقية مكتوبة منفصلة. وإذا تعارضت معها هذه الشروط فالاتفاقية المكتوبة هي المعتمدة.",
         ],
@@ -231,7 +232,7 @@ export const terms: Record<Locale, LegalDoc> = {
         id: "dpa",
         heading: "مساحات عمل الشركات والجهات الحكومية",
         blocks: [
-          "في مساحات عمل الشركات والجهات الحكومية، تُعدّ اتفاقية معالجة البيانات المنشورة على manar.vax.sh/ar/dpa جزءاً من هذه الشروط، وهي تبيّن كيف تعالج Fixio بيانات مساحة العمل لصالح العميل.",
+          `في مساحات عمل الشركات والجهات الحكومية، تُعدّ اتفاقية معالجة البيانات المنشورة على ${SITE_HOST}/ar/dpa جزءاً من هذه الشروط، وهي تبيّن كيف تعالج Fixio بيانات مساحة العمل لصالح العميل.`,
         ],
       },
       {

@@ -1,14 +1,14 @@
-# manar.vax.sh deployment
+# manar.fixio.ae deployment
 
 > The addresses in this document (192.0.2.0/24) and the host `edge.example.com` are placeholders from
 > documentation ranges. Substitute your own node and edge addresses.
 
 ```text
 Internet
-  -> Cloudflare (DNS manar.vax.sh proxied, SSL/TLS mode Full (strict))
+  -> Cloudflare (DNS manar.fixio.ae proxied, SSL/TLS mode Full (strict))
   -> edge Nginx :443 on the edge VM (Let's Encrypt wildcard, Cloudflare/LAN-only peers, real IP restore, edge rate limit)
   -> K3s ServiceLB / Traefik on 192.0.2.46 / .32 / .138 :8080 (HTTP)
-  -> Ingress manar.vax.sh (namespace manar-landing)
+  -> Ingress manar.fixio.ae (namespace manar-landing)
   -> Service manar-landing :80
   -> 2–4 Next.js pods :3000 (non-root, read-only root filesystem)
 ```
@@ -28,7 +28,7 @@ Internet
 ## 1. Build and push the image
 
 `SITE_URL` is baked into prerendered HTML (canonical, hreflang, structured data, Open Graph) and the
-public `/robots.txt` and `/sitemap.xml` routes, so it is a build argument. Use `https://manar.vax.sh`.
+public `/robots.txt` and `/sitemap.xml` routes, so it is a build argument. Use `https://manar.fixio.ae`.
 Changing it at runtime requires a rebuild to update these URLs. After release, follow the
 [search indexing checks](../README.md#search-indexing), including clearing any cached 404s for the two new routes.
 All nodes are `amd64`.
@@ -36,12 +36,12 @@ All nodes are `amd64`.
 ```bash
 TAG=$(date -u +%Y%m%d)-<short-sha>
 docker buildx build --platform linux/amd64 --load \
-  --build-arg SITE_URL=https://manar.vax.sh \
+  --build-arg SITE_URL=https://manar.fixio.ae \
   --build-arg BUILD_DATE=$(date -u +%Y-%m-%dT%H:%M:%SZ) \
   --build-arg VCS_REF=<git-sha> \
   --build-arg IMAGE_VERSION=$TAG \
-  -t registry.gitlab.vax.sh/manar/landing:$TAG .
-docker push registry.gitlab.vax.sh/manar/landing:$TAG
+  -t registry.example.com/manar/landing:$TAG .
+docker push registry.example.com/manar/landing:$TAG
 ```
 
 The GitLab project `manar/landing` must exist before the push (otherwise the registry answers `denied`).
@@ -49,7 +49,7 @@ After pushing, pin the digest in `deploy/k8s/app/kustomization.yaml` (first inst
 
 ```yaml
 images:
-  - name: registry.gitlab.vax.sh/manar/landing
+  - name: registry.example.com/manar/landing
     digest: sha256:<digest printed by docker push>
 ```
 
@@ -58,7 +58,7 @@ Local smoke test with the production security posture:
 ```bash
 docker run --rm -p 3300:3000 --read-only --tmpfs /tmp \
   --tmpfs /app/.next/cache:uid=10001,gid=10001 --cap-drop ALL \
-  --security-opt no-new-privileges registry.gitlab.vax.sh/manar/landing:$TAG
+  --security-opt no-new-privileges registry.example.com/manar/landing:$TAG
 curl -s localhost:3300/api/health
 ```
 
@@ -70,7 +70,7 @@ kubectl apply -f deploy/k8s/namespace.yaml
 # Registry pull secret: use a GitLab deploy token with read_registry scope on manar/landing
 # (or the manar group). Other namespaces' gitlab-registry tokens may not grant access to this project.
 kubectl -n manar-landing create secret docker-registry gitlab-registry \
-  --docker-server=registry.gitlab.vax.sh \
+  --docker-server=registry.example.com \
   --docker-username='<deploy-token-username>' \
   --docker-password='<deploy-token>'
 
@@ -108,19 +108,19 @@ re-joins on the control plane's k3s version. `node-c` and `node-b` were removed 
 Verify from inside the LAN before touching the edge:
 
 ```bash
-curl -s -H 'Host: manar.vax.sh' http://192.0.2.46:8080/api/health
+curl -s -H 'Host: manar.fixio.ae' http://192.0.2.46:8080/api/health
 ```
 
 ## 4. Edge Nginx (edge VM, 192.0.2.12)
 
 The edge already has what this site needs:
-- a Let's Encrypt certificate for `manar.vax.sh` and `*.manar.vax.sh` at `/etc/letsencrypt/live/manar.vax.sh/`
+- a Let's Encrypt certificate for `manar.fixio.ae` and `*.manar.fixio.ae` at `/etc/letsencrypt/live/manar.fixio.ae/`
   (certbot, dns-cloudflare, auto-renewed by `certbot.timer`);
 - `conf.d/00-cloudflare-real-ip.conf`, which restores the visitor IP from `CF-Connecting-IP` for Cloudflare peers.
 
-`deploy/nginx/manar.conf` replaces the retired Manar console config (`manar.vax.sh`, `api.`, `auth.` pointing at the
-App VM 192.0.2.109). It proxies `manar.vax.sh` to Traefik, drops non-Cloudflare/non-LAN peers with 444, and closes
-every other `*.manar.vax.sh` name with 444. `apply-edge.sh` also removes the old agent mTLS passthrough
+`deploy/nginx/manar.conf` replaces the retired Manar console config (`manar.fixio.ae`, `api.`, `auth.` pointing at the
+App VM 192.0.2.109). It proxies `manar.fixio.ae` to Traefik, drops non-Cloudflare/non-LAN peers with 444, and closes
+every other `*.manar.fixio.ae` name with 444. `apply-edge.sh` also removes the old agent mTLS passthrough
 (`stream-conf.d/agents-mtls.conf`, port 3443).
 
 Install (backs up, installs, tests, reloads, and restores automatically if `nginx -t` fails):
@@ -144,15 +144,15 @@ up until nginx is reloaded):
 ssh -t deploy@edge.example.com "printf '#!/bin/sh\nsystemctl reload nginx\n' | sudo tee /etc/letsencrypt/renewal-hooks/deploy/reload-nginx >/dev/null && sudo chmod 755 /etc/letsencrypt/renewal-hooks/deploy/reload-nginx"
 ```
 
-Cloudflare: `manar.vax.sh` proxied (orange cloud), SSL/TLS mode **Full (strict)**. Delete the DNS records of retired
-hosts (`api.manar.vax.sh`, `auth.manar.vax.sh`, and the agents mTLS hostname if one exists).
+Cloudflare: `manar.fixio.ae` proxied (orange cloud), SSL/TLS mode **Full (strict)**. Delete the DNS records of retired
+hosts (`api.manar.fixio.ae`, `auth.manar.fixio.ae`, and the agents mTLS hostname if one exists).
 
 Checks after go-live:
 
 ```bash
-curl -sI https://manar.vax.sh/en | grep -iE 'HTTP/|cache-control|x-frame|strict-transport'
-curl -s https://manar.vax.sh/api/health
-curl -s -o /dev/null -w '%{http_code}\n' https://manar.vax.sh/api/demo-request   # 403 (POST only)
+curl -sI https://manar.fixio.ae/en | grep -iE 'HTTP/|cache-control|x-frame|strict-transport'
+curl -s https://manar.fixio.ae/api/health
+curl -s -o /dev/null -w '%{http_code}\n' https://manar.fixio.ae/api/demo-request   # 403 (POST only)
 ```
 
 ## Client IP and rate limiting
@@ -178,7 +178,7 @@ Two layers limit demo requests:
 Every push to any branch runs lint, typecheck, unit tests, `npm audit`, and a Trivy secret/misconfiguration/
 dependency scan. Every push to the protected default branch (`main`) additionally:
 
-1. builds the image with rootless BuildKit and pushes `registry.gitlab.vax.sh/manar/landing:<commit-sha>`;
+1. builds the image with rootless BuildKit and pushes `registry.example.com/manar/landing:<commit-sha>`;
 2. scans that exact digest (fails on fixed HIGH/CRITICAL) and stores a CycloneDX SBOM;
 3. applies `deploy/k8s/app` (ServiceAccount, Deployment, PDB, HPA) with that digest through the GitLab agent, waits for the rollout, and checks the running
    pods use the new digest (plus an optional public smoke test).
@@ -233,7 +233,7 @@ kubectl auth can-i create pods/exec -n manar-landing --as="$agent"              
 ```bash
 read -rsp 'GitLab API token (api scope): ' T; printf '\n'
 curl --fail-with-body -X PUT -H "PRIVATE-TOKEN: $T" --data 'process_mode=newest_ready_first' \
-  "https://gitlab.vax.sh/api/v4/projects/manar%2Flanding/resource_groups/manar-landing-production"
+  "https://gitlab.example.com/api/v4/projects/manar%2Flanding/resource_groups/manar-landing-production"
 unset T
 ```
 
@@ -244,7 +244,7 @@ General pipelines → **Prevent outdated deployment jobs**.
 
 | Variable | Purpose |
 | --- | --- |
-| `PRODUCTION_SMOKE_URL` = `https://manar.vax.sh` | After rollout, require 200 from `/api/health`, `/en`, `/ar`, `/en/demo`, `/ar/demo`. Set once the edge and DNS are live. |
+| `PRODUCTION_SMOKE_URL` = `https://manar.fixio.ae` | After rollout, require 200 from `/api/health`, `/en`, `/ar`, `/en/demo`, `/ar/demo`. Set once the edge and DNS are live. |
 | `REGISTRY_DEPLOY_USER` / `REGISTRY_DEPLOY_PASSWORD` (masked) | A `read_registry` deploy token; the deploy job keeps the `gitlab-registry` pull secret in sync. |
 
 ### Rollback

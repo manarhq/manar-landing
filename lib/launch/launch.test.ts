@@ -113,10 +113,10 @@ describe("docs", () => {
   it("install page carries the four one-liners", () => {
     const en = readFileSync(new URL("en/install.mdx", dir), "utf8")
     for (const c of [
-      "irm https://console-manar.vax.sh/i/<code> | iex",
-      "curl -fsSL https://console-manar.vax.sh/i/<code>.sh | sudo sh",
-      "irm https://console-manar.vax.sh/i/uninstall | iex",
-      "curl -fsSL https://console-manar.vax.sh/i/uninstall.sh | sudo sh",
+      "irm https://console-manar.fixio.ae/i/<code> | iex",
+      "curl -fsSL https://console-manar.fixio.ae/i/<code>.sh | sudo sh",
+      "irm https://console-manar.fixio.ae/i/uninstall | iex",
+      "curl -fsSL https://console-manar.fixio.ae/i/uninstall.sh | sudo sh",
     ]) assert.ok(en.includes(c), c)
   })
 })

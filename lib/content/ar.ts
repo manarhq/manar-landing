@@ -155,7 +155,7 @@ const ar: Omit<SiteContent, "legal"> = {
   links: {
     booking: "/meet",
     requestForm: "/demo",
-    vax: "https://vax.sh",
+    vax: "https://fixio.ae",
     email: "info@fixio.ae",
     support: "support@fixio.ae",
   },

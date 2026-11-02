@@ -2,7 +2,7 @@
 
 # Manar marketing site. Three stages: install, build, and a minimal runtime that
 # contains only the traced `.next/standalone` server (see `output` in next.config.ts).
-# Same pinned base image as the other Next.js sites deployed to the vax K3s cluster.
+# Same pinned base image as the other Next.js sites deployed by Manar.
 
 ARG NODE_IMAGE=docker.io/library/node:24.18.0-bookworm-slim@sha256:6f7b03f7c2c8e2e784dcf9295400527b9b1270fd37b7e9a7285cf83b6951452d
 
@@ -19,10 +19,15 @@ WORKDIR /app
 # prerendered. Changing it at runtime has no effect.
 ARG SITE_URL
 # Optional: inlined into the client bundle at build time (see .env.example).
+# Public hosts, inlined into the client bundle at build time.
+ARG NEXT_PUBLIC_CONSOLE_URL="https://console-manar.fixio.ae"
+ARG NEXT_PUBLIC_STATUS_URL="https://status-manar.fixio.ae"
 ARG NEXT_PUBLIC_POSTHOG_KEY=""
 ARG NEXT_PUBLIC_TURNSTILE_SITE_KEY=""
 ENV NEXT_TELEMETRY_DISABLED=1 \
     SITE_URL=${SITE_URL} \
+    NEXT_PUBLIC_CONSOLE_URL=${NEXT_PUBLIC_CONSOLE_URL} \
+    NEXT_PUBLIC_STATUS_URL=${NEXT_PUBLIC_STATUS_URL} \
     NEXT_PUBLIC_POSTHOG_KEY=${NEXT_PUBLIC_POSTHOG_KEY} \
     NEXT_PUBLIC_TURNSTILE_SITE_KEY=${NEXT_PUBLIC_TURNSTILE_SITE_KEY}
 
@@ -42,7 +47,7 @@ ARG IMAGE_VERSION=dev
 LABEL org.opencontainers.image.title="Manar marketing site" \
       org.opencontainers.image.description="Bilingual Manar marketing homepage and demo request flow" \
       org.opencontainers.image.vendor="VAX" \
-      org.opencontainers.image.source="https://gitlab.vax.sh/manar/landing" \
+      org.opencontainers.image.source="https://github.com/manarhq/manar-landing" \
       org.opencontainers.image.created="${BUILD_DATE}" \
       org.opencontainers.image.revision="${VCS_REF}" \
       org.opencontainers.image.version="${IMAGE_VERSION}"

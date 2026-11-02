@@ -9,19 +9,19 @@ describe("analytics privacy", () => {
     for (const p of ["/en", "/en/docs/meetings", "/en/pricing", "/en/meeting"]) assert.equal(isMeetPath(p), false, p)
   })
   it("keeps only origin and path", () => {
-    assert.equal(pathOnly("https://manar.vax.sh/en/meet/manage?token=SECRET#x"), "https://manar.vax.sh/en/meet/manage")
+    assert.equal(pathOnly("https://manar.fixio.ae/en/meet/manage?token=SECRET#x"), "https://manar.fixio.ae/en/meet/manage")
     assert.equal(pathOnly("/en/meet?token=SECRET"), "/en/meet?token=SECRET") // not absolute: left alone, never sent as $current_url
     assert.equal(pathOnly("hello?x=1"), "hello?x=1")
   })
   it("scrubs URL properties in events, including referrers and $set_once", () => {
     const out = scrubEvent({
       properties: {
-        $current_url: "https://manar.vax.sh/en/meet/confirm?token=SECRET",
-        $referrer: "https://manar.vax.sh/en/meet/manage?token=SECRET#a",
+        $current_url: "https://manar.fixio.ae/en/meet/confirm?token=SECRET",
+        $referrer: "https://manar.fixio.ae/en/meet/manage?token=SECRET#a",
         $pathname: "/en/docs",
         n: 3,
       },
-      $set_once: { $initial_current_url: "https://manar.vax.sh/en?token=SECRET", $initial_referrer: "$direct" },
+      $set_once: { $initial_current_url: "https://manar.fixio.ae/en?token=SECRET", $initial_referrer: "$direct" },
     })!
     assert.doesNotMatch(JSON.stringify(out), /SECRET|token=/)
     assert.equal(out.properties!.n, 3)
