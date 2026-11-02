@@ -227,8 +227,8 @@ const en: Omit<SiteContent, "legal"> = {
     retryAfterConfirm: "That time was taken before you confirmed. Please pick another.",
     summary: { hostLabel: "With", whenLabel: "When" },
     unavailable: {
-      title: "Online booking is not open yet",
-      body: "Send us a short request and we will reply with a time.",
+      title: "Online booking isn't available right now",
+      body: "Use the request form and we'll reply within one working day, or email us at the address on this page.",
       cta: "Send a request",
     },
     confirm: {

@@ -1,4 +1,5 @@
 import { siteApiOrigin } from "@/lib/content/load"
+import { publicStatus } from "@/lib/meet/config"
 import { clientKey, readBoundedText } from "@/lib/http"
 
 export const runtime = "nodejs"
@@ -51,6 +52,7 @@ async function forward(request: Request, path: string[], method: "GET" | "POST")
       redirect: "manual",
       signal: AbortSignal.timeout(TIMEOUT_MS),
     })
+    if (upstream.status >= 500) return Response.json({ error: "booking_unavailable" }, { status: publicStatus(upstream.status) })
     const json: unknown = await upstream.json().catch(() => ({ error: "unknown" }))
     return Response.json(json, { status: upstream.status, headers: { "cache-control": "no-store" } })
   } catch {

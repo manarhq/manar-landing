@@ -5,7 +5,8 @@ import { Suspense } from "react"
 import { MeetFlow, MeetSkeleton } from "@/components/meet/meet-flow"
 import { SiteFooter } from "@/components/site/site-footer"
 import { SiteHeader } from "@/components/site/site-header"
-import { getContent } from "@/lib/content/load"
+import { Unavailable } from "@/components/meet/unavailable"
+import { getContent, siteApiOrigin } from "@/lib/content/load"
 import { isLocale } from "@/lib/i18n/config"
 import { pageMetadata, requestHref } from "@/lib/site"
 
@@ -45,10 +46,15 @@ export default async function MeetPage({ params }: PageProps<"/[lang]/meet">) {
             </p>
           </div>
           <div className="lg:col-span-8">
-            {/* The flow reads the address bar (?retry=1), so it renders in the browser. */}
-            <Suspense fallback={<MeetSkeleton t={t} />}>
-              <MeetFlow t={t} locale={lang} requestHref={requestHref(lang, dict)} />
-            </Suspense>
+            {/* Not configured: say so up front instead of a form that can only fail. */}
+            {!siteApiOrigin() ? (
+              <Unavailable t={t.unavailable} href={requestHref(lang, dict)} />
+            ) : (
+              /* The flow reads the address bar (?retry=1), so it renders in the browser. */
+              <Suspense fallback={<MeetSkeleton t={t} />}>
+                <MeetFlow t={t} locale={lang} requestHref={requestHref(lang, dict)} />
+              </Suspense>
+            )}
           </div>
         </div>
       </main>
