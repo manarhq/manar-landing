@@ -71,7 +71,9 @@ Unsupported locales return 404 (`dynamicParams = false`).
 
 | Variable          | Required for          | Notes |
 | ----------------- | --------------------- | ----- |
-| `SITE_URL`        | Sitemap/robots/metadata | Public origin; defaults to `https://manar.vax.sh`. Read at **build time**. Overrides must be absolute HTTP(S) origins with no credentials, path, query, or fragment. Invalid values fail the build. Docker requires an explicit build argument; CI already supplies it. |
+| `SITE_URL`        | Sitemap/robots/metadata | Public origin; defaults to `https://manar.fixio.ae`. Read at **build time**. Overrides must be absolute HTTP(S) origins with no credentials, path, query, or fragment. Invalid values fail the build. Docker requires an explicit build argument; CI already supplies it. |
+| `NEXT_PUBLIC_CONSOLE_URL` | Console links, legal text | Defaults to `https://console-manar.fixio.ae`. **Build time** (Docker `ARG`). |
+| `NEXT_PUBLIC_STATUS_URL` | Status link | Defaults to `https://status-manar.fixio.ae`. **Build time** (Docker `ARG`). |
 | `ACS_EMAIL_ENDPOINT` | Sending demo requests | The Azure Communication Services resource endpoint, `https://<resource>[.<geo>].communication.azure.com`. Anything else is refused. |
 | `ACS_EMAIL_TENANT_ID` | Sending demo requests | Entra tenant of the sending app. |
 | `ACS_EMAIL_CLIENT_ID`, `ACS_EMAIL_CLIENT_SECRET` | Sending demo requests | Server-only. The landing's own Entra app, holding only a send role on the ACS resource; the resource's access key is never used. |
@@ -83,7 +85,7 @@ Unsupported locales return 404 (`dynamicParams = false`).
 
 ### Turning on analytics (PostHog EU analytics)
 
-1. Cloudflare dashboard: **Analytics and Logs → Web Analytics → Add a site**, hostname `manar.vax.sh`, and
+1. Cloudflare dashboard: **Analytics and Logs → Web Analytics → Add a site**, hostname `manar.fixio.ae`, and
    choose the JavaScript snippet (not automatic setup, which injects the beacon without consent).
    Copy only the `token` value from the snippet.
 2. GitLab `manar/landing`: **Settings → CI/CD → Variables → Add variable**, key `NEXT_PUBLIC_POSTHOG_KEY`,
@@ -108,17 +110,17 @@ pages are `noindex`. No keyword stuffing, invented reviews, or ratings are neede
 
 After deploying:
 
-1. Open `https://manar.vax.sh/robots.txt` and `https://manar.vax.sh/sitemap.xml` without signing in.
+1. Open `https://manar.fixio.ae/robots.txt` and `https://manar.fixio.ae/sitemap.xml` without signing in.
    Both must return HTTP 200 with plain-text/XML content, not a challenge or HTML error page. If
    Cloudflare still serves an earlier cached 404, purge those two URLs and check again. Keep Googlebot
    able to access pages, CSS, JavaScript, and images through any Cloudflare bot/access rules.
-2. Verify the `manar.vax.sh` property in [Google Search Console](https://search.google.com/search-console)
-   (DNS verification works without application changes), and submit `https://manar.vax.sh/sitemap.xml`
+2. Verify the `manar.fixio.ae` property in [Google Search Console](https://search.google.com/search-console)
+   (DNS verification works without application changes), and submit `https://manar.fixio.ae/sitemap.xml`
    in **Sitemaps**.
 3. Use **URL Inspection → Test live URL** on `/en` and `/ar`, then **Request indexing**. Follow the
    Page indexing report for exclusions and the Performance report for actual search queries.
 
-CI's optional public smoke check (`PRODUCTION_SMOKE_URL=https://manar.vax.sh`) validates both discovery
+CI's optional public smoke check (`PRODUCTION_SMOKE_URL=https://manar.fixio.ae`) validates both discovery
 files after release. Google decides whether and when to index and rank a page; a valid sitemap does
 not guarantee either. Reference: [Google sitemap guidance](https://developers.google.com/search/docs/crawling-indexing/sitemaps/build-sitemap),
 [localized pages](https://developers.google.com/search/docs/specialty/international/localized-versions),
@@ -223,4 +225,4 @@ Contributions need a DCO sign-off: [CONTRIBUTING.md](CONTRIBUTING.md). Report vu
 privately: [SECURITY.md](SECURITY.md). The Manar name and logo are trademarks of Fixio:
 [TRADEMARK.md](TRADEMARK.md). Everyone taking part follows the [Code of Conduct](CODE_OF_CONDUCT.md).
 
-Product site: <https://manar.vax.sh>
+Product site: <https://manar.fixio.ae>

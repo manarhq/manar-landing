@@ -7,13 +7,13 @@ Open Add device in the console to get a personal code. The code is valid for 1 h
 **Windows** (PowerShell):
 
 ```powershell
-irm https://console-manar.vax.sh/i/<code> | iex
+irm https://console-manar.fixio.ae/i/<code> | iex
 ```
 
 **Linux** (terminal):
 
 ```sh
-curl -fsSL https://console-manar.vax.sh/i/<code>.sh | sudo sh
+curl -fsSL https://console-manar.fixio.ae/i/<code>.sh | sudo sh
 ```
 
 Replace `<code>` with the code the console shows you.
@@ -41,13 +41,13 @@ One line removes Manar completely. It restores every tool's original settings fr
 **Windows** (PowerShell):
 
 ```powershell
-irm https://console-manar.vax.sh/i/uninstall | iex
+irm https://console-manar.fixio.ae/i/uninstall | iex
 ```
 
 **Linux** (terminal):
 
 ```sh
-curl -fsSL https://console-manar.vax.sh/i/uninstall.sh | sudo sh
+curl -fsSL https://console-manar.fixio.ae/i/uninstall.sh | sudo sh
 ```
 
 The same thing is available as a command, `manar-edge uninstall`.
@@ -57,4 +57,4 @@ To stop protecting one tool without removing Manar, turn off Protect for it on t
 ## Requirements
 
 - Windows 10 or 11, or a Linux computer with systemd and `sudo`.
-- Outbound access to `agents-manar.vax.sh` on TCP 3443 and to `console-manar.vax.sh` on 443.
+- Outbound access to `agents-manar.fixio.ae` on TCP 3443 and to `console-manar.fixio.ae` on 443.

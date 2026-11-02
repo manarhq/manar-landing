@@ -1,6 +1,7 @@
 /** Where the launch site sends people. One place, so a hostname change is a one-line edit. */
-export const CONSOLE_URL = "https://console-manar.vax.sh"
-export const STATUS_URL = "https://status.manar.vax.sh"
+import { CONSOLE_URL, STATUS_URL } from "../hosts.ts"
+
+export { CONSOLE_URL, STATUS_URL }
 export const GITHUB_URL = "https://github.com/manarhq"
 
 export const links = {

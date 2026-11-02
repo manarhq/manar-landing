@@ -47,7 +47,7 @@ describe("bundled content", () => {
       return siteContentSchema.safeParse(copy).success
     }
     assert.equal(link("https://vax.sh"), true)
-    assert.equal(link("https://manar.vax.sh/en"), true)
+    assert.equal(link("https://manar.fixio.ae/en"), true)
     assert.equal(link("http://vax.sh"), false)
     assert.equal(link("https://evil.example"), false)
     assert.equal(link("https://vax.sh.evil.example"), false)

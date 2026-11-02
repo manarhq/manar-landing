@@ -19,10 +19,15 @@ WORKDIR /app
 # prerendered. Changing it at runtime has no effect.
 ARG SITE_URL
 # Optional: inlined into the client bundle at build time (see .env.example).
+# Public hosts, inlined into the client bundle at build time.
+ARG NEXT_PUBLIC_CONSOLE_URL="https://console-manar.fixio.ae"
+ARG NEXT_PUBLIC_STATUS_URL="https://status-manar.fixio.ae"
 ARG NEXT_PUBLIC_POSTHOG_KEY=""
 ARG NEXT_PUBLIC_TURNSTILE_SITE_KEY=""
 ENV NEXT_TELEMETRY_DISABLED=1 \
     SITE_URL=${SITE_URL} \
+    NEXT_PUBLIC_CONSOLE_URL=${NEXT_PUBLIC_CONSOLE_URL} \
+    NEXT_PUBLIC_STATUS_URL=${NEXT_PUBLIC_STATUS_URL} \
     NEXT_PUBLIC_POSTHOG_KEY=${NEXT_PUBLIC_POSTHOG_KEY} \
     NEXT_PUBLIC_TURNSTILE_SITE_KEY=${NEXT_PUBLIC_TURNSTILE_SITE_KEY}
 

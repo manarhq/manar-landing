@@ -1,5 +1,6 @@
 import type { Metadata } from "next"
 
+import { DEFAULT_SITE_URL } from "./hosts"
 import { defaultLocale, localeTag, locales, ogLocale, otherLocale, type Locale } from "./i18n/config"
 
 export const THEME_STORAGE_KEY = "manar-theme"
@@ -26,7 +27,7 @@ export function requestHref(locale: Locale, content: { links: { requestForm: str
  * the deployed public domain; an override must be an HTTP(S) origin, not a path.
  */
 export function siteOrigin(): URL {
-  const raw = process.env.SITE_URL?.trim() || "https://manar.vax.sh"
+  const raw = process.env.SITE_URL?.trim() || DEFAULT_SITE_URL
   try {
     const url = new URL(raw)
     if (
