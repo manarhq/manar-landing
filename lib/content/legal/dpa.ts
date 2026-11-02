@@ -101,6 +101,7 @@ export const dpa: Record<Locale, LegalDoc> = {
               head: ["Subprocessor", "Purpose", "Where"],
               rows: [
                 ["Microsoft Azure", "Hosting, databases and email delivery", "UAE North"],
+                ["Microsoft Azure OpenAI", "AI features (risk explanations and the assistant), processing the content users send to them. Microsoft does not use this data to train its models", "Global (any Azure region); stored in UAE North"],
                 ["Cloudflare", "Network delivery, DNS and security", "Global network, including outside the UAE"],
                 ["Microsoft and GitHub", "Sign-in, when a user chooses them", "Their own infrastructure"],
                 ["Stripe", "Payments and invoices for the workspace", "Stripe's infrastructure, including outside the UAE"],
@@ -258,6 +259,7 @@ export const dpa: Record<Locale, LegalDoc> = {
               head: ["المعالِج الفرعي", "الغرض", "الموقع"],
               rows: [
                 ["Microsoft Azure", "الاستضافة وقواعد البيانات وإرسال البريد", "UAE North"],
+                ["Microsoft Azure OpenAI", "ميزات الذكاء الاصطناعي (شرح المخاطر والمساعد)، بمعالجة المحتوى الذي يرسله المستخدمون إليها. لا تستخدم Microsoft هذه البيانات لتدريب نماذجها", "عالمي (أي منطقة Azure)، ويُخزَّن في UAE North"],
                 ["Cloudflare", "توصيل الشبكة وDNS والأمان", "شبكة عالمية تشمل خارج الإمارات"],
                 ["Microsoft وGitHub", "تسجيل الدخول، عندما يختارهما المستخدم", "بنيتهما التحتية"],
                 ["Stripe", "مدفوعات مساحة العمل وفواتيرها", "بنية Stripe التحتية، وتشمل خارج الإمارات"],
