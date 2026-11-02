@@ -7,6 +7,9 @@ import { validateDemoRequest, type FieldErrors } from "./validation.ts"
 /** Fixed destination. It is never read from the request. */
 export const DEMO_REQUEST_RECIPIENT = "info@fixio.ae"
 
+/** The structured log line for a failed send. Operational reason only: no names, emails or messages. */
+export const demoFailureEvent = (reason: string) => JSON.stringify({ event: "demo_request_email_failed", reason })
+
 export const MAX_BODY_BYTES = 16 * 1024
 
 export type DemoApiBody =
