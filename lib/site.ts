@@ -9,7 +9,7 @@ export const POSTHOG_KEY = process.env.NEXT_PUBLIC_POSTHOG_KEY?.trim() || ""
 /** PostHog EU ingestion host. */
 export const POSTHOG_HOST = "https://eu.i.posthog.com"
 
-export type SitePath = "" | "/meet" | "/demo" | "/privacy" | "/cookies" | "/terms" | "/acceptable-use" | "/docs" | `/docs/${string}`
+export type SitePath = "" | "/meet" | "/demo" | "/privacy" | "/cookies" | "/terms" | "/acceptable-use" | "/dpa" | "/docs" | `/docs/${string}`
 
 /** Where every "Book a meeting" link goes. The path is content (links.booking), editable in the CMS. */
 export function bookingHref(locale: Locale, content: { links: { booking: string } }): string {

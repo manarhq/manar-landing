@@ -15,9 +15,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/cookies": legalDoc("en", "cookies").updated,
     "/terms": legalDoc("en", "terms").updated,
     "/acceptable-use": legalDoc("en", "acceptable-use").updated,
+    "/dpa": legalDoc("en", "dpa").updated,
   }
   // /meet/confirm and /meet/manage are reached only from emailed links and are never indexed.
-  const paths: SitePath[] = ["", "/meet", "/demo", "/privacy", "/cookies", "/terms", "/acceptable-use", "/docs", ...docSlugs.map((s) => `/docs/${s}` as SitePath)]
+  const paths: SitePath[] = ["", "/meet", "/demo", "/privacy", "/cookies", "/terms", "/acceptable-use", "/dpa", "/docs", ...docSlugs.map((s) => `/docs/${s}` as SitePath)]
 
   // Only canonical, indexable pages belong here. The root redirects to /en.
   return paths.flatMap((path) =>
