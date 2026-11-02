@@ -72,8 +72,9 @@ Unsupported locales return 404 (`dynamicParams = false`).
 | Variable          | Required for          | Notes |
 | ----------------- | --------------------- | ----- |
 | `SITE_URL`        | Sitemap/robots/metadata | Public origin; defaults to `https://manar.vax.sh`. Read at **build time**. Overrides must be absolute HTTP(S) origins with no credentials, path, query, or fragment. Invalid values fail the build. Docker requires an explicit build argument; CI already supplies it. |
-| `ACS_SMTP_USERNAME` | Sending demo requests | Server-only. The ACS email app's username, `<acs resource name>.<entra app id>.<tenant id>` (same as for ACS SMTP). |
-| `ACS_SMTP_PASSWORD` | Sending demo requests | Server-only. That Entra app's client secret. The app needs an email-send role on the ACS resource; the resource's access key is never used. |
+| `ACS_EMAIL_ENDPOINT` | Sending demo requests | The Azure Communication Services resource endpoint, `https://<resource>[.<geo>].communication.azure.com`. Anything else is refused. |
+| `ACS_EMAIL_TENANT_ID` | Sending demo requests | Entra tenant of the sending app. |
+| `ACS_EMAIL_CLIENT_ID`, `ACS_EMAIL_CLIENT_SECRET` | Sending demo requests | Server-only. The landing's own Entra app, holding only a send role on the ACS resource; the resource's access key is never used. |
 | `DEMO_FROM_EMAIL` | Sending demo requests | A sender address of the ACS Email domain linked to that resource, e.g. `noreply@your-domain` (the display name is set on the sender in Azure). |
 | `NEXT_PUBLIC_POSTHOG_KEY` | Optional analytics | PostHog EU project key (cookieless, public by design), read at **build time** (Docker build argument, passed by CI from the masked variable of the same name). Enables the consent banner; the beacon loads only after opt-in. Unset: no banner, no beacon. |
 | `NEXT_PUBLIC_TURNSTILE_SITE_KEY` | Booking | Cloudflare Turnstile site key, **build time** (CI build argument from the variable of the same name). |
@@ -140,7 +141,7 @@ and [technical requirements](https://developers.google.com/search/docs/essential
   reason is logged (`demo_request_email_failed`), never submission content.
 - A 200 response means the provider **accepted** the message. It is not proof of inbox delivery.
 - Delivery is Azure Communication Services Email (UAE), over its REST API with an Entra client-credentials
-  token for the email-only app (`lib/demo/acs.ts`, no SDK). To change provider, replace `createAcsTransport` in `lib/demo/server.ts` with another
+  token for the landing's own app (`lib/demo/acs.ts`, no SDK). To change provider, replace `createAcsTransport` in `lib/demo/server.ts` with another
   function matching `EmailTransport`. The handler and UI do not depend on the provider.
 
 ### Rate limiting limitation
@@ -153,8 +154,10 @@ The client key comes from `x-forwarded-for` / `x-real-ip`; only trust these behi
 ### Email setup
 
 1. An Azure Communication Services resource with an Email domain linked (verified domain, sender address).
-2. An Entra app with an email-send role on that resource (for example Communication and Email Service Owner).
-   Set `ACS_SMTP_USERNAME`, `ACS_SMTP_PASSWORD` (secrets) and `DEMO_FROM_EMAIL` in the deployment environment.
+2. An Entra app for the landing with only a send role on that resource (a custom role with
+   `Microsoft.Communication/CommunicationServices/Read` and `/Write`; never one with `ListKeys`).
+   Set `ACS_EMAIL_ENDPOINT`, `ACS_EMAIL_TENANT_ID`, `ACS_EMAIL_CLIENT_ID`, `ACS_EMAIL_CLIENT_SECRET` (secret) and
+   `DEMO_FROM_EMAIL` in the deployment environment.
 3. Submit one real request from the deployed site and confirm it arrives at `info@fixio.ae`.
 
 ## Deployment requirements

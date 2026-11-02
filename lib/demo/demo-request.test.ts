@@ -172,8 +172,10 @@ describe("handleDemoRequest", () => {
 
   it("never reports success when email is not configured", async () => {
     const transport = createAcsTransport({
-      username: undefined,
-      password: undefined,
+      endpoint: undefined,
+      tenantId: undefined,
+      clientId: undefined,
+      clientSecret: undefined,
       fetchImpl: async () => {
         throw new Error("fetch must not be called without configuration")
       },
@@ -197,18 +199,22 @@ describe("handleDemoRequest", () => {
 })
 
 describe("createAcsTransport", () => {
-  const username = "acs-test.11111111-2222-3333-4444-555555555555.tenant-1"
+  const settings = {
+    endpoint: "https://acs-test.uae.communication.azure.com/",
+    tenantId: "tenant-1",
+    clientId: "11111111-2222-3333-4444-555555555555",
+    clientSecret: "app-secret",
+  }
   const email = { from: "a@b.co", to: "info@fixio.ae", replyTo: "c@d.co", subject: "s", text: "t", html: "h" }
   const tokenResponse = () => new Response(JSON.stringify({ access_token: "tok-1", expires_in: 3600 }), { status: 200 })
 
   it("signs in with client credentials, then posts the send request with a mocked fetch", async () => {
     const calls: { url: string; init: RequestInit }[] = []
     const transport = createAcsTransport({
-      username,
-      password: "app-secret",
+      ...settings,
       fetchImpl: async (url, init) => {
         calls.push({ url: String(url), init: init ?? {} })
-        return calls.length === 1 || String(url).includes("login.microsoftonline.com")
+        return String(url).includes("login.microsoftonline.com")
           ? tokenResponse()
           : new Response(JSON.stringify({ id: "op-1", status: "Running" }), { status: 202 })
       },
@@ -220,11 +226,11 @@ describe("createAcsTransport", () => {
     assert.equal(tokenCall?.url, "https://login.microsoftonline.com/tenant-1/oauth2/v2.0/token")
     const form = new URLSearchParams(String(tokenCall?.init.body))
     assert.equal(form.get("grant_type"), "client_credentials")
-    assert.equal(form.get("client_id"), "11111111-2222-3333-4444-555555555555")
+    assert.equal(form.get("client_id"), settings.clientId)
     assert.equal(form.get("client_secret"), "app-secret")
     assert.equal(form.get("scope"), "https://communication.azure.com/.default")
 
-    assert.equal(sendCall?.url, "https://acs-test.communication.azure.com/emails:send?api-version=2023-03-31")
+    assert.equal(sendCall?.url, "https://acs-test.uae.communication.azure.com/emails:send?api-version=2023-03-31")
     assert.equal((sendCall?.init.headers as Record<string, string>).Authorization, "Bearer tok-1")
     const body = JSON.parse(String(sendCall?.init.body))
     assert.equal(body.senderAddress, "noreply@fixio.ae")
@@ -237,24 +243,26 @@ describe("createAcsTransport", () => {
     assert.equal(calls.filter((c) => c.url.includes("login.microsoftonline.com")).length, 1)
   })
 
-  it("is not configured without valid credentials or a sender", async () => {
+  it("is not configured without valid settings or a sender, and never sends the token elsewhere", async () => {
     const fetchImpl = async () => {
       throw new Error("fetch must not be called without configuration")
     }
-    for (const [u, p] of [
-      [undefined, "x"],
-      [username, undefined],
-      ["", "x"],
-      ["acs-test.app-id", "x"],
-      ["acs-test.app/../x.tenant", "x"],
-      [`${username}.extra`, "x"],
-    ] as const) {
-      assert.deepEqual(await createAcsTransport({ username: u, password: p, fetchImpl })(email), {
+    for (const bad of [
+      { endpoint: undefined },
+      { endpoint: "http://acs-test.communication.azure.com" },
+      { endpoint: "https://attacker.example/x.communication.azure.com" },
+      { endpoint: "https://communication.azure.com.attacker.example" },
+      { tenantId: undefined },
+      { tenantId: "t/../x" },
+      { clientId: "" },
+      { clientSecret: undefined },
+    ]) {
+      assert.deepEqual(await createAcsTransport({ ...settings, ...bad, fetchImpl })(email), {
         ok: false,
         reason: "not_configured",
       })
     }
-    assert.deepEqual(await createAcsTransport({ username, password: "x", fetchImpl })({ ...email, from: "" }), {
+    assert.deepEqual(await createAcsTransport({ ...settings, fetchImpl })({ ...email, from: "" }), {
       ok: false,
       reason: "not_configured",
     })
@@ -262,18 +270,15 @@ describe("createAcsTransport", () => {
 
   it("maps a refused sign-in, provider errors and network failures", async () => {
     const badLogin = createAcsTransport({
-      username,
-      password: "wrong",
+      ...settings,
       fetchImpl: async () => new Response(JSON.stringify({ error: "invalid_client" }), { status: 401 }),
     })
     const rejected = createAcsTransport({
-      username,
-      password: "k",
+      ...settings,
       fetchImpl: async (url) => (String(url).includes("login.") ? tokenResponse() : new Response("{}", { status: 403 })),
     })
     const offline = createAcsTransport({
-      username,
-      password: "k",
+      ...settings,
       fetchImpl: async () => {
         throw new TypeError("fetch failed")
       },

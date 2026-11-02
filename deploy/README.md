@@ -75,14 +75,16 @@ kubectl -n manar-landing create secret docker-registry gitlab-registry \
   --docker-password='<deploy-token>'
 
 # Email for the demo form. The site runs without it, but the form then shows a failure message.
-# The ACS email app (username <acs resource>.<entra app id>.<tenant id>, client secret) and a sender
-# of the resource's linked Email domain. Never the resource's access key.
-read -r ACS_SMTP_USERNAME; read -rs ACS_SMTP_PASSWORD
+# The landing's own Entra app (send role only on the ACS resource; never the resource's access key),
+# the ACS endpoint and tenant, and a sender of the resource's linked Email domain.
+read -r ACS_EMAIL_CLIENT_ID; read -rs ACS_EMAIL_CLIENT_SECRET
 kubectl -n manar-landing create secret generic manar-landing-email \
-  --from-literal=acs-smtp-username="$ACS_SMTP_USERNAME" \
-  --from-literal=acs-smtp-password="$ACS_SMTP_PASSWORD" \
+  --from-literal=acs-email-endpoint='https://<resource>.communication.azure.com' \
+  --from-literal=acs-email-tenant-id='<tenant id>' \
+  --from-literal=acs-email-client-id="$ACS_EMAIL_CLIENT_ID" \
+  --from-literal=acs-email-client-secret="$ACS_EMAIL_CLIENT_SECRET" \
   --from-literal=demo-from-email='noreply@your-verified-domain'
-unset ACS_SMTP_USERNAME ACS_SMTP_PASSWORD
+unset ACS_EMAIL_CLIENT_ID ACS_EMAIL_CLIENT_SECRET
 ```
 
 ## 3. First deploy (operator)

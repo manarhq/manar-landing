@@ -5,12 +5,14 @@ import { createAcsTransport } from "./acs.ts"
 
 /**
  * Server-side wiring for demo requests: Azure Communication Services Email (UAE), signed in as the
- * email-only Entra app. Swap the transport here to change email providers; the handler and UI do
- * not depend on it.
+ * landing's own Entra app. Swap the transport here to change email providers; the handler and UI
+ * do not depend on it.
  */
 export const sendDemoRequestEmail = createAcsTransport({
-  username: process.env.ACS_SMTP_USERNAME,
-  password: process.env.ACS_SMTP_PASSWORD,
+  endpoint: process.env.ACS_EMAIL_ENDPOINT,
+  tenantId: process.env.ACS_EMAIL_TENANT_ID,
+  clientId: process.env.ACS_EMAIL_CLIENT_ID,
+  clientSecret: process.env.ACS_EMAIL_CLIENT_SECRET,
 })
 
 export function demoFromAddress(): string | undefined {

@@ -1,8 +1,9 @@
 /**
  * Minimal Azure Communication Services Email transport over its REST API
  * (https://learn.microsoft.com/rest/api/communication/dataplane/email/send). It signs in as the
- * email-only Entra app (client credentials, never the resource's access key) and uses fetch only,
- * so no SDK dependency is needed and tests can inject a mock.
+ * landing's own Entra app (client credentials; the app holds only a send role on the resource,
+ * never its access key) and uses fetch only, so no SDK dependency is needed and tests can inject
+ * a mock.
  */
 
 export type OutboundEmail = {
@@ -21,10 +22,11 @@ export type SendResult =
 export type EmailTransport = (email: OutboundEmail) => Promise<SendResult>
 
 export type AcsConfig = {
-  /** ACS SMTP username form: "<acs resource name>.<entra app id>.<tenant id>". */
-  username: string | undefined
-  /** That Entra app's client secret. */
-  password: string | undefined
+  /** The ACS resource endpoint, https://<resource>[.<geo>].communication.azure.com */
+  endpoint: string | undefined
+  tenantId: string | undefined
+  clientId: string | undefined
+  clientSecret: string | undefined
   fetchImpl?: typeof fetch
   timeoutMs?: number
   now?: () => number
@@ -33,14 +35,21 @@ export type AcsConfig = {
 const API_VERSION = "2023-03-31"
 const NAME = /^[A-Za-z0-9-]{1,128}$/
 
-function parseUsername(username: string | undefined) {
-  const [resource, clientId, tenantId, ...rest] = (username ?? "").trim().split(".")
-  if (rest.length || ![resource, clientId, tenantId].every((p) => p && NAME.test(p))) return null
+function parseConfig({ endpoint, tenantId, clientId, clientSecret }: AcsConfig) {
+  if (!clientSecret || ![tenantId, clientId].every((p) => p && NAME.test(p))) return null
+  let url: URL
+  try {
+    url = new URL(endpoint ?? "")
+  } catch {
+    return null
+  }
+  // The bearer token goes only to an ACS endpoint.
+  if (url.protocol !== "https:" || !url.hostname.endsWith(".communication.azure.com")) return null
   return {
-    // The resource's global endpoint name serves the data-location one too.
-    endpoint: `https://${resource}.communication.azure.com`,
+    endpoint: url.origin,
     tokenUrl: `https://login.microsoftonline.com/${tenantId}/oauth2/v2.0/token`,
     clientId: clientId!,
+    clientSecret,
   }
 }
 
@@ -50,13 +59,12 @@ function bareAddress(from: string): string {
 }
 
 export function createAcsTransport({
-  username,
-  password,
   fetchImpl = fetch,
   timeoutMs = 10_000,
   now = Date.now,
+  ...settings
 }: AcsConfig): EmailTransport {
-  const config = parseUsername(username)
+  const config = parseConfig(settings)
   let token: { value: string; expiresAt: number } | null = null
 
   async function accessToken(): Promise<string | null> {
@@ -66,7 +74,7 @@ export function createAcsTransport({
       body: new URLSearchParams({
         grant_type: "client_credentials",
         client_id: config!.clientId,
-        client_secret: password!,
+        client_secret: config!.clientSecret,
         scope: "https://communication.azure.com/.default",
       }),
       signal: AbortSignal.timeout(timeoutMs),
@@ -81,7 +89,7 @@ export function createAcsTransport({
   }
 
   return async (email) => {
-    if (!config || !password || !email.from) {
+    if (!config || !email.from) {
       return { ok: false, reason: "not_configured" }
     }
 
