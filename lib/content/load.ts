@@ -4,6 +4,7 @@ import { cookies, draftMode } from "next/headers"
 import { cache } from "react"
 
 import type { Locale } from "@/lib/i18n/config"
+import { parseSiteOrigin } from "@/lib/meet/config"
 import { PREVIEW_COOKIE, safePreviewToken } from "@/lib/preview/paths"
 
 import { bundledContent } from "./index"
@@ -16,14 +17,7 @@ const TIMEOUT_MS = 3000
 
 /** manar-site's origin, or null when unset or not an http(s) origin. */
 export function siteApiOrigin(): string | null {
-  const raw = process.env.SITE_API_URL?.trim()
-  if (!raw) return null
-  try {
-    const url = new URL(raw)
-    return url.protocol === "https:" || url.protocol === "http:" ? url.origin : null
-  } catch {
-    return null
-  }
+  return parseSiteOrigin(process.env.SITE_API_URL)
 }
 
 /**
