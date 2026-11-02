@@ -136,7 +136,7 @@ export const terms: Record<Locale, LegalDoc> = {
         id: "law",
         heading: "Governing law and changes",
         blocks: [
-          "These terms are governed by the federal laws of the United Arab Emirates and the laws of the Emirate of Dubai. The courts of Dubai have jurisdiction over any dispute about them. If you are a consumer, this choice does not take away the protection of the mandatory laws of the country where you live, including the consumer laws of the European Union and of US states, and you may also bring a claim in the courts where you live if that law allows it.",
+          "These terms are governed by the federal laws of the United Arab Emirates and the laws of the Emirate of Dubai. The onshore courts of the Emirate of Dubai have jurisdiction over any dispute about them. If you are a consumer, this choice does not take away the protection of the mandatory laws of the country where you live, including the consumer laws of the European Union and of US states, and you may also bring a claim in the courts where you live if that law allows it.",
           "We may change these terms. For a material change we email account owners at least 14 days before it takes effect. Using the Service after that means you accept the change.",
           "Questions: support@fixio.ae. Privacy questions: privacy@fixio.ae.",
         ],
@@ -269,7 +269,7 @@ export const terms: Record<Locale, LegalDoc> = {
         id: "law",
         heading: "القانون الواجب التطبيق والتعديلات",
         blocks: [
-          "تخضع هذه الشروط للقوانين الاتحادية لدولة الإمارات العربية المتحدة ولقوانين إمارة دبي، وتختص محاكم دبي بالنظر في أي نزاع بشأنها. وإذا كنت مستهلكاً فإن هذا الاختيار لا يحرمك من حماية القوانين الآمرة في بلد إقامتك، بما فيها قوانين حماية المستهلك في الاتحاد الأوروبي والولايات الأمريكية، ويمكنك أيضاً رفع دعوى أمام محاكم بلد إقامتك إذا أجاز لك قانونه ذلك.",
+          "تخضع هذه الشروط للقوانين الاتحادية لدولة الإمارات العربية المتحدة ولقوانين إمارة دبي، وتختص محاكم إمارة دبي المحلية (غير محاكم مركز دبي المالي العالمي) بالنظر في أي نزاع بشأنها. وإذا كنت مستهلكاً فإن هذا الاختيار لا يحرمك من حماية القوانين الآمرة في بلد إقامتك، بما فيها قوانين حماية المستهلك في الاتحاد الأوروبي والولايات الأمريكية، ويمكنك أيضاً رفع دعوى أمام محاكم بلد إقامتك إذا أجاز لك قانونه ذلك.",
           "يجوز لنا تعديل هذه الشروط. وعند أي تعديل جوهري نرسل بريداً إلى مالكي الحسابات قبل 14 يوماً على الأقل من سريانه. واستمرارك في استخدام الخدمة بعد ذلك يعني قبولك للتعديل.",
           "للاستفسار: support@fixio.ae. ولأسئلة الخصوصية: privacy@fixio.ae.",
         ],

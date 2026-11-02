@@ -30,7 +30,7 @@ export const dpa: Record<Locale, LegalDoc> = {
           {
             list: [
               "Workspace data: the customer is the controller and Fixio is the processor. Fixio processes it only to provide the Service.",
-              "Product improvement data, as described in the Privacy Policy: Fixio is the controller. Workspace managers can turn product improvement data and its use for AI training off for every member of the workspace in the workspace settings, and Fixio then stops collecting it for that workspace.",
+              "Product improvement data, as described in the Privacy Policy: Fixio is the controller. Workspace managers can turn product improvement data and its use for AI training off for every member of the workspace in the workspace settings. Fixio then stops collecting it for that workspace and deletes the samples already stored for it.",
               "Account and billing data Fixio needs to run the customer relationship, such as invoices and tax records: Fixio is the controller.",
             ],
           },
@@ -133,7 +133,7 @@ export const dpa: Record<Locale, LegalDoc> = {
               "Annex I is the section Details of the processing, Annex II is the section Security measures, and Annex III is the section Subprocessors.",
             ],
           },
-          "If the Standard Contractual Clauses conflict with this DPA, the Clauses win. Transfers under the PDPL rely on the safeguards the PDPL allows, including these terms.",
+          "For transfers from the United Kingdom, the UK International Data Transfer Addendum to the Standard Contractual Clauses applies, and for transfers from Switzerland, the adaptations of the Standard Contractual Clauses recognised by the Swiss Federal Data Protection and Information Commissioner (FDPIC) apply. If the Standard Contractual Clauses conflict with this DPA, the Clauses win. Transfers under the PDPL rely on the safeguards the PDPL allows, including these terms.",
         ],
       },
       {
@@ -187,7 +187,7 @@ export const dpa: Record<Locale, LegalDoc> = {
           {
             list: [
               "بيانات مساحة العمل: العميل هو المتحكّم وFixio هي المعالِج، ولا تعالجها Fixio إلا لتقديم الخدمة.",
-              "بيانات تحسين المنتج كما تصفها سياسة الخصوصية: Fixio هي المتحكّمة. ويستطيع مديرو مساحة العمل إيقاف بيانات تحسين المنتج واستخدامها في تدريب الذكاء الاصطناعي لجميع أعضاء مساحة العمل من إعداداتها، فتتوقف Fixio عن جمعها لتلك المساحة.",
+              "بيانات تحسين المنتج كما تصفها سياسة الخصوصية: Fixio هي المتحكّمة. ويستطيع مديرو مساحة العمل إيقاف بيانات تحسين المنتج واستخدامها في تدريب الذكاء الاصطناعي لجميع أعضاء مساحة العمل من إعداداتها، فتتوقف Fixio عن جمعها لتلك المساحة وتحذف العيّنات المحفوظة لها.",
               "بيانات الحساب والفوترة التي تحتاجها Fixio لإدارة علاقتها بالعميل، مثل الفواتير والسجلات الضريبية: Fixio هي المتحكّمة.",
             ],
           },
@@ -290,7 +290,7 @@ export const dpa: Record<Locale, LegalDoc> = {
               "الملحق الأول هو قسم تفاصيل المعالجة، والملحق الثاني هو قسم التدابير الأمنية، والملحق الثالث هو قسم المعالِجون الفرعيون.",
             ],
           },
-          "إذا تعارضت البنود التعاقدية القياسية مع هذه الاتفاقية فالبنود هي المعتمدة. ويعتمد النقل بموجب قانون حماية البيانات الشخصية الإماراتي على الضمانات التي يجيزها ذلك القانون، بما فيها هذه الشروط.",
+          "وفي النقل من المملكة المتحدة ينطبق ملحق النقل الدولي للبيانات الصادر في المملكة المتحدة (UK International Data Transfer Addendum) المرفق بالبنود التعاقدية القياسية، وفي النقل من سويسرا تنطبق تعديلات البنود التعاقدية القياسية التي يعترف بها المفوض الفيدرالي السويسري لحماية البيانات والمعلومات (FDPIC). وإذا تعارضت البنود التعاقدية القياسية مع هذه الاتفاقية فالبنود هي المعتمدة. ويعتمد النقل بموجب قانون حماية البيانات الشخصية الإماراتي على الضمانات التي يجيزها ذلك القانون، بما فيها هذه الشروط.",
         ],
       },
       {

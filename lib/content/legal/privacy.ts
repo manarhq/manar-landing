@@ -46,7 +46,7 @@ export const privacy: Record<Locale, LegalDoc> = {
               ],
             },
           },
-          "By default Manar records what an AI tool did, not the text of your prompts or the contents of your files. If you turn on TLS inspection (Personal Pro and above), traffic to AI providers is inspected on your device for data loss checks. The inspected text stays on your device. What reaches us is the outcome of a check, such as the tool, the destination, the rule that matched and the decision.",
+          "By default Manar records what an AI tool did, not the text of your prompts or the contents of your files. Where Manar checks traffic or files on your device, for example with TLS inspection (Personal Pro and above), that content stays on your device. Only the result of the check and the activity record described above reach us. For AI traffic the result is the tool, the AI provider, the model, token counts and the local user name, and, if a secret was found, its type, what Manar did and the first few characters of the secret followed by a mask, never the whole value.",
           "Please do not put sensitive personal data in free text fields.",
         ],
       },
@@ -67,7 +67,7 @@ export const privacy: Record<Locale, LegalDoc> = {
             },
           },
           "Redaction runs on your device first and again on our servers. It replaces your home folder with ~, and your user name, computer name, email addresses and IP addresses with placeholders. It removes query strings and fragments from web addresses. It replaces anything that looks like a secret, such as API keys, tokens, JSON web tokens, private keys, settings like KEY=value whose name looks secret, and long random looking strings of 32 characters or more. Each sample is cut to 512 characters.",
-          "Console usage and device events are sent from our servers to PostHog in the European Union. No PostHog script runs in your browser and no cookies are used. They are linked to a pseudonymous identifier made from your user identifier with a keyed hash, never to your email address. Redacted samples are kept in our own database in Azure UAE North and are not sent to PostHog.",
+          "Console usage and device events (recorded as events named after their type, such as device_crash) are sent from our servers to PostHog in the European Union. No PostHog script runs in your browser and no cookies are used. They are linked to a pseudonymous identifier made from your user identifier with a keyed hash, never to your email address. Redacted samples are kept in our own database in Azure UAE North and are not sent to PostHog.",
         ],
       },
       {
@@ -95,7 +95,7 @@ export const privacy: Record<Locale, LegalDoc> = {
         blocks: [
           "We may use de-identified product improvement data, including redacted samples, to train and test Manar's own AI models, for example to suggest rules or to recognise risky actions. We do not train any model on this data yet. This section sets out the limits and the controls that will apply when we do.",
           "De-identified means redacted as described above and linked only to a pseudonymous identifier, never to your name or email address. We will not try to re-identify anyone from it. Some laws still treat de-identified data as personal data, so the rights in this policy still apply to it.",
-          "This use has its own switch, Use my data to train Manar's AI models, which is on by default. It has no effect while Help improve Manar is off. Each sample records the choice in force when it was stored, and samples stored while training was off are never used for training. To remove samples already stored, turn off Help improve Manar, which deletes them, or write to privacy@fixio.ae.",
+          "This use has its own switch, Use my data to train Manar's AI models, which is on by default. It has no effect while Help improve Manar is off. When you turn it off, the samples already stored for you are marked as not usable for training, and new samples are stored that way. To delete your samples altogether, turn off Help improve Manar or write to privacy@fixio.ae.",
           "We never train on your AI activity record, your prompts or AI replies, or the contents of your files, and we do not give this data to others to train their models.",
         ],
       },
@@ -106,10 +106,10 @@ export const privacy: Record<Locale, LegalDoc> = {
           {
             list: [
               "In the console, under Settings, Privacy and data, you have two switches: Help improve Manar and Use my data to train Manar's AI models. Both are on by default.",
-              "In Company and Government workspaces, workspace managers have the same two switches for the whole workspace. When a manager turns one off, it is off for every member, whatever their own setting. Personal Free and Pro workspaces have only your own switches.",
+              "In Company and Government workspaces, workspace managers have the same two switches for the whole workspace. When a manager turns one off, it is off for every member, whatever their own setting. When a manager turns off Help improve Manar, the samples stored for the workspace are deleted. Personal Free and Pro workspaces have only your own switches.",
               "Collection happens only when both your switch and your workspace's switch are on.",
               "When you turn off Help improve Manar, console events stop at once and your devices stop sending within 24 hours, at their next settings check. Your stored samples are deleted at once, and we ask PostHog to delete the events linked to you.",
-              "Deleting your account also deletes your samples.",
+              "Deleting your account also deletes your samples, and we ask PostHog to delete the events linked to you.",
               "After your first sign in we show a one time notice about this data, with links to this policy and to your settings. It does not block anything.",
             ],
           },
@@ -151,7 +151,7 @@ export const privacy: Record<Locale, LegalDoc> = {
               "Safeguards: redaction on the device and again on our servers, a daily cap on samples, pseudonymous identifiers, analytics hosted in the EU, limited retention, and an off switch that also deletes your samples.",
             ],
           },
-          "We concluded that these uses do not override your rights and freedoms. You can object at any time with the switches, or by writing to privacy@fixio.ae. You can ask us for a copy of this assessment.",
+          "We concluded that these uses do not override your rights and freedoms. You can object at any time with the switches, or by writing to privacy@fixio.ae.",
         ],
       },
       {
@@ -304,7 +304,7 @@ export const privacy: Record<Locale, LegalDoc> = {
               ],
             },
           },
-          "يسجّل منار افتراضياً ما فعلته أداة الذكاء الاصطناعي، لا نص رسائلك ولا محتوى ملفاتك. وإذا فعّلت فحص TLS (في Personal Pro وما فوقها) تُفحص الحركة المتجهة إلى مزوّدي الذكاء الاصطناعي على جهازك للتحقق من تسرّب البيانات. ويبقى النص المفحوص على جهازك، ولا يصلنا إلا نتيجة الفحص، مثل الأداة والوجهة والقاعدة التي انطبقت والقرار.",
+          "يسجّل منار افتراضياً ما فعلته أداة الذكاء الاصطناعي، لا نص رسائلك ولا محتوى ملفاتك. وحيثما يفحص منار الحركة أو الملفات على جهازك، مثلاً بفحص TLS (في Personal Pro وما فوقها)، يبقى ذلك المحتوى على جهازك، ولا يصلنا إلا نتيجة الفحص وسجل النشاط الموصوف أعلاه. ونتيجة فحص حركة الذكاء الاصطناعي هي الأداة ومزوّد الذكاء الاصطناعي والنموذج وعدد الرموز واسم المستخدم المحلي، وإذا عُثر على سر فنوعه وما فعله منار والأحرف الأولى القليلة من السر متبوعة بإخفاء، لا قيمته كاملة أبداً.",
           "نرجو ألا تضع بيانات شخصية حساسة في حقول النص الحر.",
         ],
       },
@@ -325,7 +325,7 @@ export const privacy: Record<Locale, LegalDoc> = {
             },
           },
           "يجري التنقيح على جهازك أولاً ثم مرة أخرى على خوادمنا. فهو يستبدل بمجلدك الرئيسي الرمز ~، ويستبدل باسم المستخدم واسم الحاسوب وعناوين البريد الإلكتروني وعناوين IP رموزاً بديلة. ويحذف سلاسل الاستعلام والأجزاء اللاحقة من عناوين الويب. ويستبدل كل ما يبدو سراً، مثل مفاتيح API والرموز المميزة ورموز JSON Web Token والمفاتيح الخاصة والإعدادات من نوع KEY=value التي يبدو اسمها سرياً والسلاسل الطويلة العشوائية المظهر التي يبلغ طولها 32 حرفاً أو أكثر. وتُقصّ كل عيّنة إلى 512 حرفاً.",
-          "تُرسل أحداث استخدام لوحة التحكم والأجهزة من خوادمنا إلى PostHog في الاتحاد الأوروبي. ولا يعمل أي برنامج من PostHog في متصفحك ولا تُستخدم ملفات تعريف الارتباط. وتُربط هذه الأحداث بمعرّف مستعار مشتق من معرّف المستخدم بدالة تجزئة بمفتاح، ولا تُربط ببريدك الإلكتروني أبداً. أما العيّنات المنقّحة فتُحفظ في قاعدة بياناتنا على Azure في UAE North ولا تُرسل إلى PostHog.",
+          "تُرسل أحداث استخدام لوحة التحكم والأجهزة (وتُسجَّل أحداث الأجهزة بأسماء تدل على نوعها، مثل device_crash) من خوادمنا إلى PostHog في الاتحاد الأوروبي. ولا يعمل أي برنامج من PostHog في متصفحك ولا تُستخدم ملفات تعريف الارتباط. وتُربط هذه الأحداث بمعرّف مستعار مشتق من معرّف المستخدم بدالة تجزئة بمفتاح، ولا تُربط ببريدك الإلكتروني أبداً. أما العيّنات المنقّحة فتُحفظ في قاعدة بياناتنا على Azure في UAE North ولا تُرسل إلى PostHog.",
         ],
       },
       {
@@ -353,7 +353,7 @@ export const privacy: Record<Locale, LegalDoc> = {
         blocks: [
           "قد نستخدم بيانات تحسين المنتج بعد إزالة ما يحدد الهوية، بما فيها العيّنات المنقّحة، لتدريب نماذج الذكاء الاصطناعي الخاصة بمنار واختبارها، مثلاً لاقتراح القواعد أو للتعرّف على الإجراءات الخطرة. ولا ندرّب أي نموذج على هذه البيانات حتى الآن، ويبيّن هذا القسم الحدود وأدوات التحكم التي ستنطبق حين نفعل.",
           "ونعني بإزالة ما يحدد الهوية أن البيانات منقّحة كما سبق ومرتبطة بمعرّف مستعار فقط، لا باسمك ولا ببريدك الإلكتروني أبداً. ولن نحاول إعادة التعرّف على أي شخص منها. وتعدّ بعض القوانين هذه البيانات بيانات شخصية رغم ذلك، لذا تظل حقوقك الواردة في هذه السياسة سارية عليها.",
-          "ولهذا الاستخدام مفتاح مستقل هو استخدام بياناتي لتدريب نماذج الذكاء الاصطناعي الخاصة بمنار، وهو مفعّل افتراضياً. ولا أثر له ما دام مفتاح المساعدة في تحسين منار متوقفاً. وتحمل كل عيّنة الخيار الساري وقت حفظها، والعيّنات المحفوظة أثناء إيقاف التدريب لا تُستخدم في التدريب أبداً. ولحذف العيّنات المحفوظة سابقاً أوقف مفتاح المساعدة في تحسين منار فتُحذف، أو راسلنا على privacy@fixio.ae.",
+          "ولهذا الاستخدام مفتاح مستقل هو استخدام بياناتي لتدريب نماذج الذكاء الاصطناعي الخاصة بمنار، وهو مفعّل افتراضياً. ولا أثر له ما دام مفتاح المساعدة في تحسين منار متوقفاً. وعندما توقفه تُعلَّم العيّنات المحفوظة لك بأنها غير صالحة للتدريب، وتُحفظ العيّنات الجديدة على هذا النحو. ولحذف عيّناتك كلياً أوقف مفتاح المساعدة في تحسين منار أو راسلنا على privacy@fixio.ae.",
           "لا ندرّب أي نموذج على سجل نشاط الذكاء الاصطناعي لديك ولا على رسائلك أو ردود الذكاء الاصطناعي ولا على محتوى ملفاتك، ولا نعطي هذه البيانات لغيرنا لتدريب نماذجهم.",
         ],
       },
@@ -364,10 +364,10 @@ export const privacy: Record<Locale, LegalDoc> = {
           {
             list: [
               "في لوحة التحكم، ضمن الإعدادات ثم الخصوصية والبيانات، تجد مفتاحين: المساعدة في تحسين منار، واستخدام بياناتي لتدريب نماذج الذكاء الاصطناعي الخاصة بمنار. وكلاهما مفعّل افتراضياً.",
-              "في مساحات عمل الشركات والجهات الحكومية، يملك مديرو مساحة العمل المفتاحين نفسيهما لمساحة العمل كلها. وإذا أوقف المدير أحدهما توقف لجميع الأعضاء أياً كان إعدادهم الشخصي. أما مساحات العمل الشخصية المجانية وPro فليس فيها إلا مفاتيحك أنت.",
+              "في مساحات عمل الشركات والجهات الحكومية، يملك مديرو مساحة العمل المفتاحين نفسيهما لمساحة العمل كلها. وإذا أوقف المدير أحدهما توقف لجميع الأعضاء أياً كان إعدادهم الشخصي. وإذا أوقف المدير المساعدة في تحسين منار تُحذف العيّنات المحفوظة لمساحة العمل. أما مساحات العمل الشخصية المجانية وPro فليس فيها إلا مفاتيحك أنت.",
               "لا يجري الجمع إلا إذا كان مفتاحك ومفتاح مساحة عملك مفعّلين معاً.",
               "عندما توقف المساعدة في تحسين منار تتوقف أحداث لوحة التحكم فوراً، وتتوقف أجهزتك عن الإرسال خلال 24 ساعة عند مزامنة إعداداتها التالية. وتُحذف عيّناتك المحفوظة فوراً، ونطلب من PostHog حذف الأحداث المرتبطة بك.",
-              "حذف حسابك يحذف عيّناتك أيضاً.",
+              "حذف حسابك يحذف عيّناتك أيضاً، ونطلب من PostHog حذف الأحداث المرتبطة بك.",
               "بعد أول تسجيل دخول نعرض إشعاراً لمرة واحدة عن هذه البيانات، مع روابط إلى هذه السياسة وإلى إعداداتك، ولا يمنعك من متابعة أي شيء.",
             ],
           },
@@ -409,7 +409,7 @@ export const privacy: Record<Locale, LegalDoc> = {
               "الضمانات: التنقيح على الجهاز ثم على خوادمنا، وحد يومي للعيّنات، ومعرّفات مستعارة، وتحليلات مستضافة في الاتحاد الأوروبي، ومدة حفظ محدودة، ومفتاح إيقاف يحذف عيّناتك أيضاً.",
             ],
           },
-          "وخلصنا إلى أن هذه الاستخدامات لا تطغى على حقوقك وحرياتك. ويمكنك الاعتراض في أي وقت بالمفاتيح أو بمراسلتنا على privacy@fixio.ae، ويمكنك طلب نسخة من هذا التقييم.",
+          "وخلصنا إلى أن هذه الاستخدامات لا تطغى على حقوقك وحرياتك. ويمكنك الاعتراض في أي وقت بالمفاتيح أو بمراسلتنا على privacy@fixio.ae.",
         ],
       },
       {
