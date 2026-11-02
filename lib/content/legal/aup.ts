@@ -2,18 +2,18 @@ import type { Locale } from "../../i18n/config.ts"
 
 import type { LegalDoc } from "../schema.ts"
 
-/** Launch draft (31 Oct 2026), approved by the founder to launch with, with no lawyer review (decision #19). Provider: Fixio. */
+/** Launch draft (31 Oct 2026, updated 2 Nov 2026), approved by the founder to launch with, with no lawyer review (decision #19). Provider: Fixio Technologies LLC SPC. */
 export const aup: Record<Locale, LegalDoc> = {
   en: {
     title: "Acceptable Use",
     description: "What you may and may not do with Manar, a product of Fixio. Part of the Terms of Service.",
-    updated: "2026-10-31",
+    updated: "2026-11-02",
     sections: [
       {
         id: "purpose",
         heading: "Purpose",
         blocks: [
-          "Manar is a safety tool for the AI tools on computers you are entitled to manage. This policy is part of the Terms of Service and applies to everyone who uses the Service, including free accounts and company trials.",
+          "Manar, a product of Fixio Technologies LLC SPC, is a safety tool for the AI tools on computers you are entitled to manage. This policy is part of the Terms of Service and applies to everyone who uses the Service, including free accounts and company trials.",
         ],
       },
       {
@@ -42,6 +42,7 @@ export const aup: Record<Locale, LegalDoc> = {
               "Probe, scan or test the Service for weaknesses without our written permission. To report a vulnerability, follow SECURITY.md in the manarhq repositories.",
               "Overload the Service, or send automated sign-ups, requests or enrolment codes in bulk.",
               "Upload or send unlawful content, or data you have no right to share, such as another person's secrets.",
+              "Try to re-identify people or organisations from de-identified or aggregated data about the Service.",
               "Resell the hosted Service, or present it as your own.",
               "Use the Manar name or mark in a way that suggests we endorse you, except as the trademark note allows.",
             ],
@@ -60,7 +61,7 @@ export const aup: Record<Locale, LegalDoc> = {
         heading: "If you break this policy",
         blocks: [
           "We may limit, suspend or close an account, and remove devices or data, if this policy is broken or the Service or other people are at risk. Where we can, we warn you first and offer an export. We may report unlawful activity to the authorities.",
-          "To report a breach or a concern: support@fixio.ae.",
+          "To report a breach or a concern: support@fixio.ae. Privacy concerns: privacy@fixio.ae.",
         ],
       },
     ],
@@ -68,13 +69,13 @@ export const aup: Record<Locale, LegalDoc> = {
   ar: {
     title: "الاستخدام المقبول",
     description: "ما يجوز لك وما لا يجوز لك فعله مع منار، وهو منتج من Fixio. جزء من شروط الخدمة.",
-    updated: "2026-10-31",
+    updated: "2026-11-02",
     sections: [
       {
         id: "purpose",
         heading: "الغرض",
         blocks: [
-          "منار أداة أمان لأدوات الذكاء الاصطناعي على الحواسيب التي يحق لك إدارتها. وهذه السياسة جزء من شروط الخدمة وتنطبق على كل من يستخدم الخدمة، بما في ذلك الحسابات المجانية وتجارب الشركات.",
+          "منار، وهو منتج من \u2068Fixio Technologies LLC SPC\u2069، أداة أمان لأدوات الذكاء الاصطناعي على الحواسيب التي يحق لك إدارتها. وهذه السياسة جزء من شروط الخدمة وتنطبق على كل من يستخدم الخدمة، بما في ذلك الحسابات المجانية وتجارب الشركات.",
         ],
       },
       {
@@ -103,6 +104,7 @@ export const aup: Record<Locale, LegalDoc> = {
               "فحص الخدمة أو مسحها أو اختبارها بحثاً عن ثغرات دون إذن كتابي منا. وللإبلاغ عن ثغرة اتبع ملف SECURITY.md في مستودعات manarhq.",
               "إثقال الخدمة، أو إرسال تسجيلات أو طلبات أو رموز تسجيل أجهزة آلية بكميات كبيرة.",
               "رفع أو إرسال محتوى غير قانوني أو بيانات لا حق لك في مشاركتها، مثل أسرار شخص آخر.",
+              "محاولة التعرّف على أشخاص أو مؤسسات من بيانات مجمّعة أو بيانات أزيل منها ما يحدد الهوية تتعلق بالخدمة.",
               "إعادة بيع الخدمة المستضافة أو تقديمها على أنها خدمتك.",
               "استخدام اسم منار أو شعاره بطريقة توحي بأننا نزكّيك، إلا بما تسمح به ملاحظة العلامة التجارية.",
             ],
@@ -121,7 +123,7 @@ export const aup: Record<Locale, LegalDoc> = {
         heading: "إذا خالفت هذه السياسة",
         blocks: [
           "يجوز لنا تقييد حساب أو تعليقه أو إغلاقه، وإزالة أجهزة أو بيانات، إذا خُرقت هذه السياسة أو تعرضت الخدمة أو الآخرون للخطر. وحيثما أمكن ننبّهك أولاً ونعرض عليك التصدير. وقد نبلغ الجهات المختصة عن أي نشاط غير قانوني.",
-          "للإبلاغ عن مخالفة أو مخاوف: support@fixio.ae.",
+          "للإبلاغ عن مخالفة أو مخاوف: support@fixio.ae. ولمخاوف الخصوصية: privacy@fixio.ae.",
         ],
       },
     ],
