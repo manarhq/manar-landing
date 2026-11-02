@@ -3,21 +3,21 @@ import type { Locale } from "../../i18n/config.ts"
 import type { LegalDoc } from "../schema.ts"
 
 /*
- * Launch draft (31 Oct 2026), written by Claude and approved by the founder to launch with, with no
- * lawyer review (decision #19). Provider and contracting party: Fixio. Bracketed values are
- * placeholders the founder fills in before Sunday (listed in the PR).
+ * Launch draft (31 Oct 2026), updated 2 Nov 2026 for the founder's data collection design, written by
+ * Claude, not yet reviewed by a lawyer (decision #19). Provider and contracting party: Fixio
+ * Technologies LLC SPC. Never add a TRN or a trade licence number here.
  */
 export const terms: Record<Locale, LegalDoc> = {
   en: {
     title: "Terms of Service",
     description: "The terms for using Manar, a product of Fixio: accounts, plans and billing, the device software, acceptable use and liability.",
-    updated: "2026-10-31",
+    updated: "2026-11-02",
     sections: [
       {
         id: "about",
         heading: "Who we are and what these terms cover",
         blocks: [
-          "Manar is a product of Fixio (Fixio, we, us). These terms are a contract between you and Fixio, [Fixio registered address], tax registration number [TRN]. They cover the Manar website at manar.vax.sh, the Manar console at console-manar.vax.sh, the Manar device software (manar-edge) and the hosted service together (the Service).",
+          "Manar is a product of Fixio Technologies LLC SPC (Fixio, we, us), 1st Oud Maitha Street, Abu Dhabi, United Arab Emirates. These terms are a contract between you and Fixio. They cover the Manar website at manar.vax.sh, the Manar console at console-manar.vax.sh, the Manar device software (manar-edge) and the hosted service together (the Service).",
           "By creating an account, installing the device software or using the Service you agree to these terms. If you use Manar for a company, you confirm you may bind that company, and it is the customer.",
           "Customers on an Enterprise plan or a customer-hosted install sign a separate written agreement. If it conflicts with these terms, the written agreement wins.",
         ],
@@ -27,7 +27,7 @@ export const terms: Record<Locale, LegalDoc> = {
         heading: "Your account",
         blocks: [
           "You sign in with Microsoft, GitHub or an email link. You must give accurate information, keep your sign-in methods secure and tell us at once if you think someone else has access.",
-          "You must be at least 18, or the age of majority where you live. You are responsible for what happens under your account.",
+          "You must be at least 18 years old to use Manar. If the age of majority where you live is higher, you must have reached it. You are responsible for what happens under your account.",
           "One person may hold one free personal workspace. We may close extra free workspaces opened to get around plan limits.",
         ],
       },
@@ -87,6 +87,21 @@ export const terms: Record<Locale, LegalDoc> = {
         ],
       },
       {
+        id: "product-data",
+        heading: "Product improvement data and AI training",
+        blocks: [
+          "Manar collects product improvement data, such as console usage, device health, statistics about AI activity and a small number of redacted samples of commands and domains, to find bugs and improve the Service. It may also use that data, de-identified, to train and test Manar's own AI models. Both are on by default and each has its own off switch in Settings, and workspace managers on Company and Government plans can turn them off for the whole workspace. Using the Service does not depend on either. The Privacy Policy explains what is collected, what is never collected, how long it is kept and your rights.",
+          "You give Fixio a worldwide, royalty-free, non-exclusive, perpetual licence to use, copy and analyse de-identified and aggregated data derived from your use of the Service, in a form that does not identify you or your organisation, to operate, secure and improve the Service and to develop Manar's own AI models. This licence does not cover your AI activity record, the contents of your files, your prompts or AI replies, or your secrets, and it does not let us sell that data or use it for advertising.",
+        ],
+      },
+      {
+        id: "dpa",
+        heading: "Company and Government workspaces",
+        blocks: [
+          "For Company and Government workspaces, the Data Processing Agreement published at manar.vax.sh/en/dpa forms part of these terms. It sets out how Fixio processes workspace data on the customer's behalf.",
+        ],
+      },
+      {
         id: "limits",
         heading: "What Manar cannot promise",
         blocks: [
@@ -121,9 +136,9 @@ export const terms: Record<Locale, LegalDoc> = {
         id: "law",
         heading: "Governing law and changes",
         blocks: [
-          "These terms are governed by the laws of the United Arab Emirates as applied in [emirate of Fixio registration]. The courts of [emirate of Fixio registration] have jurisdiction, unless the law gives you the right to go elsewhere.",
+          "These terms are governed by the federal laws of the United Arab Emirates and the laws of the Emirate of Dubai. The onshore courts of the Emirate of Dubai have jurisdiction over any dispute about them. If you are a consumer, this choice does not take away the protection of the mandatory laws of the country where you live, including the consumer laws of the European Union and of US states, and you may also bring a claim in the courts where you live if that law allows it.",
           "We may change these terms. For a material change we email account owners at least 14 days before it takes effect. Using the Service after that means you accept the change.",
-          "Questions: support@fixio.ae.",
+          "Questions: support@fixio.ae. Privacy questions: privacy@fixio.ae.",
         ],
       },
     ],
@@ -131,13 +146,13 @@ export const terms: Record<Locale, LegalDoc> = {
   ar: {
     title: "شروط الخدمة",
     description: "شروط استخدام منار، وهو منتج من Fixio: الحسابات والخطط والفوترة وبرنامج الجهاز والاستخدام المقبول والمسؤولية.",
-    updated: "2026-10-31",
+    updated: "2026-11-02",
     sections: [
       {
         id: "about",
         heading: "من نحن وما الذي تغطيه هذه الشروط",
         blocks: [
-          "منار منتج من Fixio (ويُشار إليها بنحن). هذه الشروط عقد بينك وبين Fixio، [عنوان Fixio المسجّل]، رقم التسجيل الضريبي [TRN]. وهي تغطي موقع منار على manar.vax.sh ولوحة تحكم منار على console-manar.vax.sh وبرنامج جهاز منار (manar-edge) والخدمة المستضافة معاً (الخدمة).",
+          "منار منتج من \u2068Fixio Technologies LLC SPC\u2069 (ويُشار إليها بـ Fixio أو نحن)، وعنوانها \u20681st Oud Maitha Street, Abu Dhabi, United Arab Emirates\u2069 (شارع عود ميثاء الأول، أبوظبي، الإمارات العربية المتحدة). هذه الشروط عقد بينك وبين Fixio. وهي تغطي موقع منار على manar.vax.sh ولوحة تحكم منار على console-manar.vax.sh وبرنامج جهاز منار (manar-edge) والخدمة المستضافة معاً (الخدمة).",
           "بإنشاء حساب أو تثبيت برنامج الجهاز أو استخدام الخدمة فإنك توافق على هذه الشروط. وإذا استخدمت منار باسم شركة فإنك تؤكد أن لك صلاحية إلزامها، وتكون هي العميل.",
           "العملاء على خطة المؤسسات أو على تثبيت مستضاف لدى العميل يوقّعون اتفاقية مكتوبة منفصلة. وإذا تعارضت معها هذه الشروط فالاتفاقية المكتوبة هي المعتمدة.",
         ],
@@ -147,7 +162,7 @@ export const terms: Record<Locale, LegalDoc> = {
         heading: "حسابك",
         blocks: [
           "تسجّل الدخول عبر Microsoft أو GitHub أو رابط بريد إلكتروني. عليك تقديم معلومات صحيحة وحماية طرق تسجيل الدخول وإبلاغنا فوراً إذا ظننت أن أحداً آخر وصل إلى حسابك.",
-          "يجب ألا يقل عمرك عن 18 عاماً أو سن الرشد في بلد إقامتك. وأنت مسؤول عما يحدث عبر حسابك.",
+          "يجب ألا يقل عمرك عن 18 عاماً لاستخدام منار، وإذا كان سن الرشد في بلد إقامتك أعلى من ذلك فيجب أن تكون قد بلغته. وأنت مسؤول عما يحدث عبر حسابك.",
           "يجوز للشخص الواحد امتلاك مساحة عمل شخصية مجانية واحدة. ويجوز لنا إغلاق مساحات العمل المجانية الإضافية التي فُتحت للالتفاف على حدود الخطة.",
         ],
       },
@@ -205,6 +220,21 @@ export const terms: Record<Locale, LegalDoc> = {
         ],
       },
       {
+        id: "product-data",
+        heading: "بيانات تحسين المنتج وتدريب الذكاء الاصطناعي",
+        blocks: [
+          "يجمع منار بيانات تحسين المنتج، مثل استخدام لوحة التحكم وسلامة الأجهزة وإحصاءات نشاط الذكاء الاصطناعي وعدد قليل من العيّنات المنقّحة للأوامر والنطاقات، لاكتشاف الأعطال وتحسين الخدمة. وقد يستخدم هذه البيانات أيضاً، بعد إزالة ما يحدد الهوية، لتدريب نماذج الذكاء الاصطناعي الخاصة بمنار واختبارها. والأمران مفعّلان افتراضياً ولكل منهما مفتاح إيقاف مستقل في الإعدادات، ويستطيع مديرو مساحات العمل في خطتي الشركات والجهات الحكومية إيقافهما لمساحة العمل كلها. ولا يتوقف استخدام الخدمة على أي منهما. وتشرح سياسة الخصوصية ما نجمعه وما لا نجمعه أبداً ومدة الاحتفاظ به وحقوقك.",
+          "تمنح Fixio ترخيصاً عالمياً غير حصري ودائماً ودون مقابل لاستخدام البيانات المجمّعة والبيانات التي أزيل منها ما يحدد الهوية، المستمدة من استخدامك للخدمة، ونسخها وتحليلها، بصورة لا تحدد هويتك ولا هوية مؤسستك، وذلك لتشغيل الخدمة وحمايتها وتحسينها ولتطوير نماذج الذكاء الاصطناعي الخاصة بمنار. ولا يشمل هذا الترخيص سجل نشاط الذكاء الاصطناعي لديك ولا محتوى ملفاتك ولا رسائلك أو ردود الذكاء الاصطناعي ولا أسرارك، ولا يجيز لنا بيع تلك البيانات أو استخدامها للإعلان.",
+        ],
+      },
+      {
+        id: "dpa",
+        heading: "مساحات عمل الشركات والجهات الحكومية",
+        blocks: [
+          "في مساحات عمل الشركات والجهات الحكومية، تُعدّ اتفاقية معالجة البيانات المنشورة على manar.vax.sh/ar/dpa جزءاً من هذه الشروط، وهي تبيّن كيف تعالج Fixio بيانات مساحة العمل لصالح العميل.",
+        ],
+      },
+      {
         id: "limits",
         heading: "ما لا يستطيع منار الوعد به",
         blocks: [
@@ -239,9 +269,9 @@ export const terms: Record<Locale, LegalDoc> = {
         id: "law",
         heading: "القانون الواجب التطبيق والتعديلات",
         blocks: [
-          "تخضع هذه الشروط لقوانين دولة الإمارات العربية المتحدة كما تُطبَّق في [إمارة تسجيل Fixio]، وتختص محاكم [إمارة تسجيل Fixio] بالنظر فيها، ما لم يمنحك القانون الحق في اللجوء إلى جهة أخرى.",
+          "تخضع هذه الشروط للقوانين الاتحادية لدولة الإمارات العربية المتحدة ولقوانين إمارة دبي، وتختص محاكم إمارة دبي المحلية (غير محاكم مركز دبي المالي العالمي) بالنظر في أي نزاع بشأنها. وإذا كنت مستهلكاً فإن هذا الاختيار لا يحرمك من حماية القوانين الآمرة في بلد إقامتك، بما فيها قوانين حماية المستهلك في الاتحاد الأوروبي والولايات الأمريكية، ويمكنك أيضاً رفع دعوى أمام محاكم بلد إقامتك إذا أجاز لك قانونه ذلك.",
           "يجوز لنا تعديل هذه الشروط. وعند أي تعديل جوهري نرسل بريداً إلى مالكي الحسابات قبل 14 يوماً على الأقل من سريانه. واستمرارك في استخدام الخدمة بعد ذلك يعني قبولك للتعديل.",
-          "للاستفسار: support@fixio.ae.",
+          "للاستفسار: support@fixio.ae. ولأسئلة الخصوصية: privacy@fixio.ae.",
         ],
       },
     ],

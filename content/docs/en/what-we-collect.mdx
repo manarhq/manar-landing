@@ -12,6 +12,14 @@ Manar records what your AI tools did, so you can see it, approve it and prove it
 
 By default Manar records what a tool did, not the text of your prompts or the contents of your files. Secret alerts never include the contents of the secret.
 
+## Product improvement data
+
+To find bugs and improve Manar we also collect product improvement data, on by default on every plan: console usage, device health (version, operating system, crash stack traces, check timings), statistics worked out from records we already hold, and at most 20 redacted samples per device per day of commands and domains Manar asked about or blocked. Redaction runs on your device and again on our servers. It masks your home folder, user name, computer name, emails and IP addresses, drops query strings and replaces anything that looks like a secret.
+
+De-identified, this data may also be used to train Manar's own AI models. That use has its own switch.
+
+Manar never collects secret values, file contents, prompt or AI reply text, keystrokes, screenshots, clipboard contents, environment variables or full URLs with query strings.
+
 ## Where it is kept
 
 The hosted service runs on Microsoft Azure in UAE North. Each personal workspace has its own database. Manar's checks run on your computer, and your AI traffic does not pass through our servers.
@@ -30,6 +38,7 @@ Older records are hidden for 30 days and then dropped. You can export your recor
 - **Export** your record from the console at any time.
 - **Delete your account** whenever you like. We offer an export first, and the workspace is dropped after a 30-day grace period that you can cancel.
 - **Idle free workspaces** with no activity for 60 days are archived and then dropped. We email you a warning before each step.
+- **Help improve Manar** and **Use my data to train Manar's AI models** are two switches in Settings, under Privacy and data. Turning off the first deletes your stored samples. In Company and Government workspaces, managers can turn either off for everyone.
 - **Analytics** on this website are off until you accept them, and run without cookies.
 
 ## Who else sees it

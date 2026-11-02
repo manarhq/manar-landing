@@ -52,6 +52,7 @@ export function SiteFooter({ locale, dict }: { locale: Locale; dict: Dictionary 
             <li><Link href={`${home}/privacy`} className={linkClass}>{f.privacy}</Link></li>
             <li><Link href={`${home}/acceptable-use`} className={linkClass}>{f.aup}</Link></li>
             <li><Link href={`${home}/cookies`} className={linkClass}>{f.cookies}</Link></li>
+            <li><Link href={`${home}/dpa`} className={linkClass}>{f.dpa}</Link></li>
             <li>
               <CookieSettingsButton label={f.cookieSettings} className={`${linkClass} cursor-pointer text-start`} />
             </li>

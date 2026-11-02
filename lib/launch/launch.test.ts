@@ -137,6 +137,24 @@ describe("legal drafts", () => {
       assert.match(JSON.stringify(legalDoc(l, "privacy")), /UAE North/)
     }
   })
+
+  it("carry no placeholders, TRN or licence number, and name the provider and privacy contact", async () => {
+    const { legalDoc, legalPaths } = await import("./legal.ts")
+    assert.ok((legalPaths as readonly string[]).includes("dpa"))
+    for (const l of ["en", "ar"] as const) {
+      for (const p of legalPaths) {
+        const strings = (v: unknown): string[] => (typeof v === "string" ? [v] : v && typeof v === "object" ? Object.values(v).flatMap(strings) : [])
+        for (const s of strings(legalDoc(l, p))) assert.doesNotMatch(s, /[[\]]|\bTRN\b|licen[cs]e (number|no)/i, `${l}/${p}: ${s}`)
+        assert.equal(legalDoc(l, p).updated, "2026-11-02", `${l}/${p}`)
+      }
+      for (const p of ["privacy", "terms", "dpa"] as const) {
+        assert.match(JSON.stringify(legalDoc(l, p)), /Fixio Technologies LLC SPC/, `${l}/${p}`)
+        assert.match(JSON.stringify(legalDoc(l, p)), /privacy@fixio\.ae/, `${l}/${p}`)
+      }
+      const privacy = JSON.stringify(legalDoc(l, "privacy"))
+      for (const law of ["2016/679", "45", "CCPA", "CPRA"]) assert.ok(privacy.includes(law), `${l} privacy names ${law}`)
+    }
+  })
 })
 
 describe("launch offer counter", async () => {

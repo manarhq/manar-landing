@@ -7,13 +7,13 @@ export const cookies: Record<Locale, LegalDoc> = {
     title: "Cookie and storage policy",
     description:
       "Every cookie and browser storage item used on the Manar website, why it is used, how long it lasts, and how to change your choice.",
-    updated: "2026-10-31",
+    updated: "2026-11-02",
     sections: [
       {
         id: "summary",
         heading: "In short",
         blocks: [
-          "The Manar website sets no cookies for visitors, and the optional analytics run without cookies. It stores a few small items in your browser to remember your choices. Analytics are optional, off by default, and only load after you accept them.",
+          "The Manar website is run by Fixio Technologies LLC SPC. It sets no cookies for visitors, and the optional analytics run without cookies. It stores a few small items in your browser to remember your choices. Analytics are optional, off by default, and only load after you accept them. Accept and Reject are offered side by side, with the same weight.",
         ],
       },
       {
@@ -40,8 +40,8 @@ export const cookies: Record<Locale, LegalDoc> = {
         id: "analytics",
         heading: "Optional analytics",
         blocks: [
-          "If you accept analytics, we load PostHog, hosted in the European Union (eu.i.posthog.com). It runs in cookieless mode: it sets no cookies, writes nothing to your browser storage and keeps its identifier in memory for that page view only. It records page views and basic usage events to help us improve Manar. It does not build a profile of you across other websites. The console at console-manar.vax.sh is separate: it sets the cookies needed to keep you signed in.",
-          "If you reject analytics, the script is never loaded and no campaign tags are stored. If your browser sends a Global Privacy Control or Do Not Track signal, we treat it as a rejection and do not show the banner.",
+          "If you accept analytics, we load PostHog, hosted in the European Union (eu.i.posthog.com). It runs in cookieless mode: it sets no cookies, writes nothing to your browser storage and keeps its identifier in memory for that page view only. It records page views and basic usage events to help us improve Manar. It does not build a profile of you across other websites. The console at console-manar.vax.sh is separate: it sets the cookies needed to keep you signed in, and it sends product improvement data from our servers, without cookies or third-party scripts, as the Privacy Policy explains.",
+          "If you reject analytics, the script is never loaded and no campaign tags are stored. If your browser sends a Global Privacy Control signal (navigator.globalPrivacyControl is true) or a Do Not Track signal, we treat it as a rejection of analytics and do not show the banner, even if you accepted before.",
         ],
       },
       {
@@ -62,7 +62,7 @@ export const cookies: Record<Locale, LegalDoc> = {
               "You can also clear this website's data in your browser settings. We will then ask for your choice again.",
             ],
           },
-          "Questions about this policy can be sent to support@fixio.ae.",
+          "Questions about this policy can be sent to privacy@fixio.ae.",
         ],
       },
     ],
@@ -71,13 +71,13 @@ export const cookies: Record<Locale, LegalDoc> = {
     title: "سياسة ملفات تعريف الارتباط والتخزين",
     description:
       "كل ملف تعريف ارتباط وكل عنصر تخزين يستخدمه موقع منار، والغرض منه، ومدة بقائه، وكيف تغيّر خيارك.",
-    updated: "2026-10-31",
+    updated: "2026-11-02",
     sections: [
       {
         id: "summary",
         heading: "باختصار",
         blocks: [
-          "لا يضع موقع منار أي ملفات تعريف ارتباط للزوار، بل يحفظ في متصفحك عناصر صغيرة قليلة ليتذكر خياراتك. أما التحليلات فهي اختيارية ومعطلة افتراضيًا، ولا تُحمَّل إلا بعد موافقتك.",
+          "تشغّل موقع منار شركة \u2068Fixio Technologies LLC SPC\u2069. ولا يضع الموقع أي ملفات تعريف ارتباط للزوار، وتعمل التحليلات الاختيارية دون ملفات تعريف ارتباط، بل يحفظ في متصفحك عناصر صغيرة قليلة ليتذكر خياراتك. أما التحليلات فهي اختيارية ومعطلة افتراضيًا، ولا تُحمَّل إلا بعد موافقتك. ويُعرض زرا القبول والرفض جنبًا إلى جنب وبالوزن نفسه.",
         ],
       },
       {
@@ -104,8 +104,8 @@ export const cookies: Record<Locale, LegalDoc> = {
         id: "analytics",
         heading: "التحليلات الاختيارية",
         blocks: [
-          "إذا وافقت على التحليلات، نحمّل PostHog المستضافة في الاتحاد الأوروبي (eu.i.posthog.com). وهي تعمل بوضع بلا ملفات تعريف ارتباط: لا تضع ملفات ولا تكتب شيئاً في تخزين متصفحك وتبقي معرّفها في الذاكرة طوال مشاهدة الصفحة فقط. وتسجّل مشاهدات الصفحات وأحداث استخدام أساسية لنحسّن منار، ولا تبني ملفاً عنك عبر المواقع الأخرى. أما لوحة التحكم على console-manar.vax.sh فمنفصلة، وتضع ملفات تعريف الارتباط اللازمة لإبقائك مسجّلاً للدخول.",
-          "وإذا رفضت التحليلات، فلن يُحمَّل برنامجها أبدًا ولن تُحفظ أي وسوم حملات. وإذا أرسل متصفحك إشارة التحكم العالمي في الخصوصية أو عدم التتبّع، نعدّها رفضًا ولا نعرض الشريط.",
+          "إذا وافقت على التحليلات، نحمّل PostHog المستضافة في الاتحاد الأوروبي (eu.i.posthog.com). وهي تعمل بوضع بلا ملفات تعريف ارتباط: لا تضع ملفات ولا تكتب شيئاً في تخزين متصفحك وتبقي معرّفها في الذاكرة طوال مشاهدة الصفحة فقط. وتسجّل مشاهدات الصفحات وأحداث استخدام أساسية لنحسّن منار، ولا تبني ملفاً عنك عبر المواقع الأخرى. أما لوحة التحكم على console-manar.vax.sh فمنفصلة، وتضع ملفات تعريف الارتباط اللازمة لإبقائك مسجّلاً للدخول، وتُرسل بيانات تحسين المنتج من خوادمنا دون ملفات تعريف ارتباط أو برامج من أطراف أخرى، كما توضّح سياسة الخصوصية.",
+          "وإذا رفضت التحليلات، فلن يُحمَّل برنامجها أبدًا ولن تُحفظ أي وسوم حملات. وإذا أرسل متصفحك إشارة التحكم العالمي في الخصوصية (أي أن قيمة navigator.globalPrivacyControl هي true) أو إشارة عدم التتبّع، نعدّها رفضًا للتحليلات ولا نعرض الشريط، حتى لو كنت قد وافقت من قبل.",
         ],
       },
       {
@@ -126,7 +126,7 @@ export const cookies: Record<Locale, LegalDoc> = {
               "ويمكنك أيضًا مسح بيانات هذا الموقع من إعدادات متصفحك، وعندها سنسألك عن خيارك من جديد.",
             ],
           },
-          "للاستفسار عن هذه السياسة، راسلنا على support@fixio.ae.",
+          "للاستفسار عن هذه السياسة، راسلنا على privacy@fixio.ae.",
         ],
       },
     ],

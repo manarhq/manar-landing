@@ -28,6 +28,7 @@ export type LaunchCopy = {
     privacy: string
     aup: string
     cookies: string
+    dpa: string
     cookieSettings: string
     contact: string
     discord: string
@@ -85,6 +86,7 @@ export const launchCopy: Record<Locale, LaunchCopy> = {
       privacy: "Privacy Policy",
       aup: "Acceptable Use",
       cookies: "Cookie policy",
+      dpa: "Data Processing Agreement",
       cookieSettings: "Cookie settings",
       contact: "Contact",
       discord: "Community on Discord",
@@ -159,6 +161,7 @@ export const launchCopy: Record<Locale, LaunchCopy> = {
       privacy: "سياسة الخصوصية",
       aup: "الاستخدام المقبول",
       cookies: "سياسة ملفات تعريف الارتباط",
+      dpa: "اتفاقية معالجة البيانات",
       cookieSettings: "إعدادات ملفات تعريف الارتباط",
       contact: "التواصل",
       discord: "المجتمع على Discord",
