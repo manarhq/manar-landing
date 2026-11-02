@@ -4,7 +4,7 @@ import { describe, it } from "node:test"
 import { buildDemoRequestEmail, escapeHtml } from "./email-content.ts"
 import { DEMO_REQUEST_RECIPIENT, handleDemoRequest, type DemoRequestDeps } from "./handle-request.ts"
 import { createRateLimiter } from "./rate-limit.ts"
-import { createResendTransport, type OutboundEmail, type SendResult } from "./resend.ts"
+import { createAcsTransport, type OutboundEmail, type SendResult } from "./acs.ts"
 import { validateDemoRequest } from "./validation.ts"
 
 const valid = {
@@ -171,8 +171,11 @@ describe("handleDemoRequest", () => {
   })
 
   it("never reports success when email is not configured", async () => {
-    const transport = createResendTransport({
-      apiKey: undefined,
+    const transport = createAcsTransport({
+      endpoint: undefined,
+      tenantId: undefined,
+      clientId: undefined,
+      clientSecret: undefined,
       fetchImpl: async () => {
         throw new Error("fetch must not be called without configuration")
       },
@@ -195,43 +198,92 @@ describe("handleDemoRequest", () => {
   })
 })
 
-describe("createResendTransport", () => {
-  it("posts the expected payload with a mocked fetch", async () => {
-    let captured: { url: string; init: RequestInit } | undefined
-    const transport = createResendTransport({
-      apiKey: "re_test_key",
+describe("createAcsTransport", () => {
+  const settings = {
+    endpoint: "https://acs-test.uae.communication.azure.com/",
+    tenantId: "tenant-1",
+    clientId: "11111111-2222-3333-4444-555555555555",
+    clientSecret: "app-secret",
+  }
+  const email = { from: "a@b.co", to: "info@fixio.ae", replyTo: "c@d.co", subject: "s", text: "t", html: "h" }
+  const tokenResponse = () => new Response(JSON.stringify({ access_token: "tok-1", expires_in: 3600 }), { status: 200 })
+
+  it("signs in with client credentials, then posts the send request with a mocked fetch", async () => {
+    const calls: { url: string; init: RequestInit }[] = []
+    const transport = createAcsTransport({
+      ...settings,
       fetchImpl: async (url, init) => {
-        captured = { url: String(url), init: init ?? {} }
-        return new Response(JSON.stringify({ id: "abc" }), { status: 200 })
+        calls.push({ url: String(url), init: init ?? {} })
+        return String(url).includes("login.microsoftonline.com")
+          ? tokenResponse()
+          : new Response(JSON.stringify({ id: "op-1", status: "Running" }), { status: 202 })
       },
     })
-    const result = await transport({
-      from: "Manar <demo@mail.example.com>",
-      to: "info@fixio.ae",
-      replyTo: "aisha@example.org",
-      subject: "s",
-      text: "t",
-      html: "h",
-    })
-    assert.deepEqual(result, { ok: true, id: "abc" })
-    assert.equal(captured?.url, "https://api.resend.com/emails")
-    const body = JSON.parse(String(captured?.init.body))
-    assert.deepEqual(body.to, ["info@fixio.ae"])
-    assert.equal(body.reply_to, "aisha@example.org")
+    const result = await transport({ ...email, from: "Manar <noreply@fixio.ae>", replyTo: "aisha@example.org" })
+    assert.deepEqual(result, { ok: true, id: "op-1" })
+
+    const [tokenCall, sendCall] = calls
+    assert.equal(tokenCall?.url, "https://login.microsoftonline.com/tenant-1/oauth2/v2.0/token")
+    const form = new URLSearchParams(String(tokenCall?.init.body))
+    assert.equal(form.get("grant_type"), "client_credentials")
+    assert.equal(form.get("client_id"), settings.clientId)
+    assert.equal(form.get("client_secret"), "app-secret")
+    assert.equal(form.get("scope"), "https://communication.azure.com/.default")
+
+    assert.equal(sendCall?.url, "https://acs-test.uae.communication.azure.com/emails:send?api-version=2023-03-31")
+    assert.equal((sendCall?.init.headers as Record<string, string>).Authorization, "Bearer tok-1")
+    const body = JSON.parse(String(sendCall?.init.body))
+    assert.equal(body.senderAddress, "noreply@fixio.ae")
+    assert.deepEqual(body.recipients, { to: [{ address: "info@fixio.ae" }] })
+    assert.deepEqual(body.replyTo, [{ address: "aisha@example.org" }])
+    assert.deepEqual(body.content, { subject: "s", plainText: "t", html: "h" })
+
+    // The token is reused until it nears expiry.
+    await transport(email)
+    assert.equal(calls.filter((c) => c.url.includes("login.microsoftonline.com")).length, 1)
   })
 
-  it("maps provider errors and network failures", async () => {
-    const rejected = createResendTransport({
-      apiKey: "k",
-      fetchImpl: async () => new Response("{}", { status: 422 }),
+  it("is not configured without valid settings or a sender, and never sends the token elsewhere", async () => {
+    const fetchImpl = async () => {
+      throw new Error("fetch must not be called without configuration")
+    }
+    for (const bad of [
+      { endpoint: undefined },
+      { endpoint: "http://acs-test.communication.azure.com" },
+      { endpoint: "https://attacker.example/x.communication.azure.com" },
+      { endpoint: "https://communication.azure.com.attacker.example" },
+      { tenantId: undefined },
+      { tenantId: "t/../x" },
+      { clientId: "" },
+      { clientSecret: undefined },
+    ]) {
+      assert.deepEqual(await createAcsTransport({ ...settings, ...bad, fetchImpl })(email), {
+        ok: false,
+        reason: "not_configured",
+      })
+    }
+    assert.deepEqual(await createAcsTransport({ ...settings, fetchImpl })({ ...email, from: "" }), {
+      ok: false,
+      reason: "not_configured",
     })
-    const offline = createResendTransport({
-      apiKey: "k",
+  })
+
+  it("maps a refused sign-in, provider errors and network failures", async () => {
+    const badLogin = createAcsTransport({
+      ...settings,
+      fetchImpl: async () => new Response(JSON.stringify({ error: "invalid_client" }), { status: 401 }),
+    })
+    const rejected = createAcsTransport({
+      ...settings,
+      fetchImpl: async (url) => (String(url).includes("login.") ? tokenResponse() : new Response("{}", { status: 403 })),
+    })
+    const offline = createAcsTransport({
+      ...settings,
       fetchImpl: async () => {
         throw new TypeError("fetch failed")
       },
     })
-    const email = { from: "a@b.co", to: "info@fixio.ae", replyTo: "c@d.co", subject: "s", text: "t", html: "h" }
+    assert.deepEqual(await badLogin(email), { ok: false, reason: "rejected" })
     assert.deepEqual(await rejected(email), { ok: false, reason: "rejected" })
     assert.deepEqual(await offline(email), { ok: false, reason: "network" })
   })

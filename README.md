@@ -72,8 +72,10 @@ Unsupported locales return 404 (`dynamicParams = false`).
 | Variable          | Required for          | Notes |
 | ----------------- | --------------------- | ----- |
 | `SITE_URL`        | Sitemap/robots/metadata | Public origin; defaults to `https://manar.vax.sh`. Read at **build time**. Overrides must be absolute HTTP(S) origins with no credentials, path, query, or fragment. Invalid values fail the build. Docker requires an explicit build argument; CI already supplies it. |
-| `RESEND_API_KEY`  | Sending demo requests | Server-only. |
-| `DEMO_FROM_EMAIL` | Sending demo requests | Sender on a domain verified in Resend, e.g. `Manar <demo@mail.your-domain>`. |
+| `ACS_EMAIL_ENDPOINT` | Sending demo requests | The Azure Communication Services resource endpoint, `https://<resource>[.<geo>].communication.azure.com`. Anything else is refused. |
+| `ACS_EMAIL_TENANT_ID` | Sending demo requests | Entra tenant of the sending app. |
+| `ACS_EMAIL_CLIENT_ID`, `ACS_EMAIL_CLIENT_SECRET` | Sending demo requests | Server-only. The landing's own Entra app, holding only a send role on the ACS resource; the resource's access key is never used. |
+| `DEMO_FROM_EMAIL` | Sending demo requests | A sender address of the ACS Email domain linked to that resource, e.g. `noreply@your-domain` (the display name is set on the sender in Azure). |
 | `NEXT_PUBLIC_POSTHOG_KEY` | Optional analytics | PostHog EU project key (cookieless, public by design), read at **build time** (Docker build argument, passed by CI from the masked variable of the same name). Enables the consent banner; the beacon loads only after opt-in. Unset: no banner, no beacon. |
 | `NEXT_PUBLIC_TURNSTILE_SITE_KEY` | Booking | Cloudflare Turnstile site key, **build time** (CI build argument from the variable of the same name). |
 | `SITE_API_URL` | Content and booking | manar-site origin, **runtime**, server only. Unset or unreachable: bundled content, and `/meet` offers the request form. |
@@ -138,8 +140,9 @@ and [technical requirements](https://developers.google.com/search/docs/essential
   localized failure with `info@fixio.ae` as an alternative. The visitor's input is preserved. Only the failure
   reason is logged (`demo_request_email_failed`), never submission content.
 - A 200 response means the provider **accepted** the message. It is not proof of inbox delivery.
-- To change provider, replace `createResendTransport` in `lib/demo/server.ts` with another function matching
-  `EmailTransport` (`lib/demo/resend.ts`). The handler and UI do not depend on Resend.
+- Delivery is Azure Communication Services Email (UAE), over its REST API with an Entra client-credentials
+  token for the landing's own app (`lib/demo/acs.ts`, no SDK). To change provider, replace `createAcsTransport` in `lib/demo/server.ts` with another
+  function matching `EmailTransport`. The handler and UI do not depend on the provider.
 
 ### Rate limiting limitation
 
@@ -148,12 +151,14 @@ replicas or serverless instances, each keeps separate counters that reset on res
 add a shared store (for example Redis) or edge/WAF rate limiting in front of `/api/demo-request`.
 The client key comes from `x-forwarded-for` / `x-real-ip`; only trust these behind a proxy that sets them.
 
-### Resend setup (not yet done)
+### Email setup
 
-1. Verify a sending domain in Resend (DNS records).
-2. Create an API key with sending access.
-3. Set `RESEND_API_KEY` and `DEMO_FROM_EMAIL` in the deployment environment.
-4. Submit one real request from the deployed site and confirm it arrives at `info@fixio.ae`.
+1. An Azure Communication Services resource with an Email domain linked (verified domain, sender address).
+2. An Entra app for the landing with only a send role on that resource (a custom role with
+   `Microsoft.Communication/CommunicationServices/Read` and `/Write`; never one with `ListKeys`).
+   Set `ACS_EMAIL_ENDPOINT`, `ACS_EMAIL_TENANT_ID`, `ACS_EMAIL_CLIENT_ID`, `ACS_EMAIL_CLIENT_SECRET` (secret) and
+   `DEMO_FROM_EMAIL` in the deployment environment.
+3. Submit one real request from the deployed site and confirm it arrives at `info@fixio.ae`.
 
 ## Deployment requirements
 
