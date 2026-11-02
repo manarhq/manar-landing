@@ -1,10 +1,11 @@
 import assert from "node:assert/strict"
+import { createHash, createHmac } from "node:crypto"
 import { describe, it } from "node:test"
 
 import { buildDemoRequestEmail, escapeHtml } from "./email-content.ts"
 import { DEMO_REQUEST_RECIPIENT, handleDemoRequest, type DemoRequestDeps } from "./handle-request.ts"
 import { createRateLimiter } from "./rate-limit.ts"
-import { createResendTransport, type OutboundEmail, type SendResult } from "./resend.ts"
+import { createAcsTransport, type OutboundEmail, type SendResult } from "./acs.ts"
 import { validateDemoRequest } from "./validation.ts"
 
 const valid = {
@@ -171,8 +172,8 @@ describe("handleDemoRequest", () => {
   })
 
   it("never reports success when email is not configured", async () => {
-    const transport = createResendTransport({
-      apiKey: undefined,
+    const transport = createAcsTransport({
+      connectionString: undefined,
       fetchImpl: async () => {
         throw new Error("fetch must not be called without configuration")
       },
@@ -195,43 +196,72 @@ describe("handleDemoRequest", () => {
   })
 })
 
-describe("createResendTransport", () => {
-  it("posts the expected payload with a mocked fetch", async () => {
+describe("createAcsTransport", () => {
+  const key = Buffer.from("test-access-key").toString("base64")
+  const connectionString = `endpoint=https://acs-test.uae.communication.azure.com/;accesskey=${key}`
+  const email = { from: "a@b.co", to: "info@fixio.ae", replyTo: "c@d.co", subject: "s", text: "t", html: "h" }
+
+  it("posts a signed send request with a mocked fetch", async () => {
     let captured: { url: string; init: RequestInit } | undefined
-    const transport = createResendTransport({
-      apiKey: "re_test_key",
+    const now = new Date("2026-11-02T10:00:00Z")
+    const transport = createAcsTransport({
+      connectionString,
+      now: () => now,
       fetchImpl: async (url, init) => {
         captured = { url: String(url), init: init ?? {} }
-        return new Response(JSON.stringify({ id: "abc" }), { status: 200 })
+        return new Response(JSON.stringify({ id: "op-1", status: "Running" }), { status: 202 })
       },
     })
-    const result = await transport({
-      from: "Manar <demo@mail.example.com>",
-      to: "info@fixio.ae",
-      replyTo: "aisha@example.org",
-      subject: "s",
-      text: "t",
-      html: "h",
+    const result = await transport({ ...email, from: "Manar <noreply@fixio.ae>", replyTo: "aisha@example.org" })
+    assert.deepEqual(result, { ok: true, id: "op-1" })
+    assert.equal(captured?.url, "https://acs-test.uae.communication.azure.com/emails:send?api-version=2023-03-31")
+
+    const body = String(captured?.init.body)
+    const parsed = JSON.parse(body)
+    assert.equal(parsed.senderAddress, "noreply@fixio.ae")
+    assert.deepEqual(parsed.recipients, { to: [{ address: "info@fixio.ae" }] })
+    assert.deepEqual(parsed.replyTo, [{ address: "aisha@example.org" }])
+    assert.deepEqual(parsed.content, { subject: "s", plainText: "t", html: "h" })
+
+    const headers = captured?.init.headers as Record<string, string>
+    const hash = createHash("sha256").update(body).digest("base64")
+    assert.equal(headers["x-ms-date"], "Mon, 02 Nov 2026 10:00:00 GMT")
+    assert.equal(headers["x-ms-content-sha256"], hash)
+    const signed = `POST\n/emails:send?api-version=2023-03-31\nMon, 02 Nov 2026 10:00:00 GMT;acs-test.uae.communication.azure.com;${hash}`
+    const signature = createHmac("sha256", Buffer.from("test-access-key")).update(signed).digest("base64")
+    assert.equal(
+      headers.Authorization,
+      `HMAC-SHA256 SignedHeaders=x-ms-date;host;x-ms-content-sha256&Signature=${signature}`
+    )
+  })
+
+  it("is not configured without a usable connection string or sender", async () => {
+    const fetchImpl = async () => {
+      throw new Error("fetch must not be called without configuration")
+    }
+    for (const cs of [undefined, "", "endpoint=https://x.example/", `accesskey=${key}`, `endpoint=http://x.example/;accesskey=${key}`]) {
+      assert.deepEqual(await createAcsTransport({ connectionString: cs, fetchImpl })(email), {
+        ok: false,
+        reason: "not_configured",
+      })
+    }
+    assert.deepEqual(await createAcsTransport({ connectionString, fetchImpl })({ ...email, from: "" }), {
+      ok: false,
+      reason: "not_configured",
     })
-    assert.deepEqual(result, { ok: true, id: "abc" })
-    assert.equal(captured?.url, "https://api.resend.com/emails")
-    const body = JSON.parse(String(captured?.init.body))
-    assert.deepEqual(body.to, ["info@fixio.ae"])
-    assert.equal(body.reply_to, "aisha@example.org")
   })
 
   it("maps provider errors and network failures", async () => {
-    const rejected = createResendTransport({
-      apiKey: "k",
-      fetchImpl: async () => new Response("{}", { status: 422 }),
+    const rejected = createAcsTransport({
+      connectionString,
+      fetchImpl: async () => new Response("{}", { status: 401 }),
     })
-    const offline = createResendTransport({
-      apiKey: "k",
+    const offline = createAcsTransport({
+      connectionString,
       fetchImpl: async () => {
         throw new TypeError("fetch failed")
       },
     })
-    const email = { from: "a@b.co", to: "info@fixio.ae", replyTo: "c@d.co", subject: "s", text: "t", html: "h" }
     assert.deepEqual(await rejected(email), { ok: false, reason: "rejected" })
     assert.deepEqual(await offline(email), { ok: false, reason: "network" })
   })

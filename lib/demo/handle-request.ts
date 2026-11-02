@@ -1,7 +1,7 @@
 import { pickUtm } from "../consent.ts"
 import { buildDemoRequestEmail } from "./email-content.ts"
 import type { RateLimiter } from "./rate-limit.ts"
-import type { EmailTransport, SendResult } from "./resend.ts"
+import type { EmailTransport, SendResult } from "./acs.ts"
 import { validateDemoRequest, type FieldErrors } from "./validation.ts"
 
 /** Fixed destination. It is never read from the request. */

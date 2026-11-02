@@ -1,14 +1,14 @@
 import "server-only"
 
 import { createRateLimiter } from "./rate-limit.ts"
-import { createResendTransport } from "./resend.ts"
+import { createAcsTransport } from "./acs.ts"
 
 /**
- * Server-side wiring for demo requests. Swap the transport here to change
- * email providers; the handler and UI do not depend on Resend.
+ * Server-side wiring for demo requests: Azure Communication Services Email (UAE). Swap the
+ * transport here to change email providers; the handler and UI do not depend on it.
  */
-export const sendDemoRequestEmail = createResendTransport({
-  apiKey: process.env.RESEND_API_KEY,
+export const sendDemoRequestEmail = createAcsTransport({
+  connectionString: process.env.ACS_CONNECTION_STRING,
 })
 
 export function demoFromAddress(): string | undefined {

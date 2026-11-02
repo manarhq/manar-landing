@@ -75,11 +75,12 @@ kubectl -n manar-landing create secret docker-registry gitlab-registry \
   --docker-password='<deploy-token>'
 
 # Email for the demo form. The site runs without it, but the form then shows a failure message.
-read -rs RESEND_API_KEY
+# Azure Communication Services connection string and a sender of its linked Email domain.
+read -rs ACS_CONNECTION_STRING
 kubectl -n manar-landing create secret generic manar-landing-email \
-  --from-literal=resend-api-key="$RESEND_API_KEY" \
-  --from-literal=demo-from-email='Manar <demo@mail.your-verified-domain>'
-unset RESEND_API_KEY
+  --from-literal=acs-connection-string="$ACS_CONNECTION_STRING" \
+  --from-literal=demo-from-email='noreply@your-verified-domain'
+unset ACS_CONNECTION_STRING
 ```
 
 ## 3. First deploy (operator)

@@ -95,11 +95,11 @@ spec:
               value: x-edge-client-ip
             # Optional so the site still serves if the secret is absent; the demo form then
             # reports a visible failure instead of pretending to succeed.
-            - name: RESEND_API_KEY
+            - name: ACS_CONNECTION_STRING
               valueFrom:
                 secretKeyRef:
                   name: manar-landing-email
-                  key: resend-api-key
+                  key: acs-connection-string
                   optional: true
             - name: DEMO_FROM_EMAIL
               valueFrom:
@@ -153,6 +153,9 @@ spec:
               mountPath: /tmp
             - name: next-cache
               mountPath: /app/.next/cache
+            # Next writes revalidated pages here; the root filesystem is read-only.
+            - name: route-cache
+              mountPath: /app/.next/server/route-cache
           terminationMessagePolicy: FallbackToLogsOnError
       volumes:
         - name: tmp
@@ -163,3 +166,6 @@ spec:
           emptyDir:
             medium: Memory
             sizeLimit: 64Mi
+        - name: route-cache
+          emptyDir:
+            sizeLimit: 128Mi
