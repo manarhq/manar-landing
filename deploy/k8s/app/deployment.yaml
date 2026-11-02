@@ -95,11 +95,17 @@ spec:
               value: x-edge-client-ip
             # Optional so the site still serves if the secret is absent; the demo form then
             # reports a visible failure instead of pretending to succeed.
-            - name: ACS_CONNECTION_STRING
+            - name: ACS_SMTP_USERNAME
               valueFrom:
                 secretKeyRef:
                   name: manar-landing-email
-                  key: acs-connection-string
+                  key: acs-smtp-username
+                  optional: true
+            - name: ACS_SMTP_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: manar-landing-email
+                  key: acs-smtp-password
                   optional: true
             - name: DEMO_FROM_EMAIL
               valueFrom:

@@ -1,10 +1,9 @@
 /**
  * Minimal Azure Communication Services Email transport over its REST API
- * (https://learn.microsoft.com/rest/api/communication/dataplane/email/send), signed with the
- * HMAC-SHA256 scheme from the resource's connection string. Uses fetch and node:crypto, so no SDK
- * dependency is needed and tests can inject a mock.
+ * (https://learn.microsoft.com/rest/api/communication/dataplane/email/send). It signs in as the
+ * email-only Entra app (client credentials, never the resource's access key) and uses fetch only,
+ * so no SDK dependency is needed and tests can inject a mock.
  */
-import { createHash, createHmac } from "node:crypto"
 
 export type OutboundEmail = {
   from: string
@@ -22,30 +21,26 @@ export type SendResult =
 export type EmailTransport = (email: OutboundEmail) => Promise<SendResult>
 
 export type AcsConfig = {
-  /** "endpoint=https://<resource>.communication.azure.com/;accesskey=<base64>" */
-  connectionString: string | undefined
+  /** ACS SMTP username form: "<acs resource name>.<entra app id>.<tenant id>". */
+  username: string | undefined
+  /** That Entra app's client secret. */
+  password: string | undefined
   fetchImpl?: typeof fetch
   timeoutMs?: number
-  now?: () => Date
+  now?: () => number
 }
 
 const API_VERSION = "2023-03-31"
+const NAME = /^[A-Za-z0-9-]{1,128}$/
 
-function parseConnectionString(value: string | undefined): { endpoint: URL; key: Buffer } | null {
-  if (!value) return null
-  const parts = new Map<string, string>()
-  for (const part of value.split(";")) {
-    const i = part.indexOf("=")
-    if (i > 0) parts.set(part.slice(0, i).trim().toLowerCase(), part.slice(i + 1).trim())
-  }
-  const endpoint = parts.get("endpoint")
-  const key = parts.get("accesskey")
-  if (!endpoint || !key) return null
-  try {
-    const url = new URL(endpoint)
-    return url.protocol === "https:" ? { endpoint: url, key: Buffer.from(key, "base64") } : null
-  } catch {
-    return null
+function parseUsername(username: string | undefined) {
+  const [resource, clientId, tenantId, ...rest] = (username ?? "").trim().split(".")
+  if (rest.length || ![resource, clientId, tenantId].every((p) => p && NAME.test(p))) return null
+  return {
+    // The resource's global endpoint name serves the data-location one too.
+    endpoint: `https://${resource}.communication.azure.com`,
+    tokenUrl: `https://login.microsoftonline.com/${tenantId}/oauth2/v2.0/token`,
+    clientId: clientId!,
   }
 }
 
@@ -55,48 +50,63 @@ function bareAddress(from: string): string {
 }
 
 export function createAcsTransport({
-  connectionString,
+  username,
+  password,
   fetchImpl = fetch,
   timeoutMs = 10_000,
-  now = () => new Date(),
+  now = Date.now,
 }: AcsConfig): EmailTransport {
-  const config = parseConnectionString(connectionString)
+  const config = parseUsername(username)
+  let token: { value: string; expiresAt: number } | null = null
+
+  async function accessToken(): Promise<string | null> {
+    if (token && now() < token.expiresAt) return token.value
+    const response = await fetchImpl(config!.tokenUrl, {
+      method: "POST",
+      body: new URLSearchParams({
+        grant_type: "client_credentials",
+        client_id: config!.clientId,
+        client_secret: password!,
+        scope: "https://communication.azure.com/.default",
+      }),
+      signal: AbortSignal.timeout(timeoutMs),
+    })
+    if (!response.ok) return null
+    const body = (await response.json().catch(() => ({}))) as { access_token?: unknown; expires_in?: unknown }
+    if (typeof body.access_token !== "string") return null
+    // Renew a minute early so a token never expires in flight.
+    const lifetime = typeof body.expires_in === "number" ? body.expires_in : 300
+    token = { value: body.access_token, expiresAt: now() + Math.max(lifetime - 60, 0) * 1000 }
+    return token.value
+  }
+
   return async (email) => {
-    if (!config || !email.from) {
+    if (!config || !password || !email.from) {
       return { ok: false, reason: "not_configured" }
     }
 
-    const url = new URL(`/emails:send?api-version=${API_VERSION}`, config.endpoint)
-    const body = JSON.stringify({
-      senderAddress: bareAddress(email.from),
-      recipients: { to: [{ address: email.to }] },
-      replyTo: [{ address: email.replyTo }],
-      content: { subject: email.subject, plainText: email.text, html: email.html },
-    })
-    const date = now().toUTCString()
-    const contentHash = createHash("sha256").update(body).digest("base64")
-    const stringToSign = `POST\n${url.pathname}${url.search}\n${date};${url.host};${contentHash}`
-    const signature = createHmac("sha256", config.key).update(stringToSign).digest("base64")
-
     let response: Response
     try {
-      response = await fetchImpl(url, {
+      const bearer = await accessToken()
+      if (!bearer) return { ok: false, reason: "rejected" }
+      response = await fetchImpl(`${config.endpoint}/emails:send?api-version=${API_VERSION}`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-ms-date": date,
-          "x-ms-content-sha256": contentHash,
-          Authorization: `HMAC-SHA256 SignedHeaders=x-ms-date;host;x-ms-content-sha256&Signature=${signature}`,
-        },
-        body,
+        headers: { Authorization: `Bearer ${bearer}`, "Content-Type": "application/json" },
+        body: JSON.stringify({
+          senderAddress: bareAddress(email.from),
+          recipients: { to: [{ address: email.to }] },
+          replyTo: [{ address: email.replyTo }],
+          content: { subject: email.subject, plainText: email.text, html: email.html },
+        }),
         signal: AbortSignal.timeout(timeoutMs),
       })
     } catch {
       return { ok: false, reason: "network" }
     }
 
-    // 202 Accepted: queued for delivery.
+    // 202 Accepted: queued for delivery. A refused token is dropped so the next send signs in again.
     if (!response.ok) {
+      if (response.status === 401) token = null
       return { ok: false, reason: "rejected" }
     }
 

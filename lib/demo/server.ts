@@ -4,11 +4,13 @@ import { createRateLimiter } from "./rate-limit.ts"
 import { createAcsTransport } from "./acs.ts"
 
 /**
- * Server-side wiring for demo requests: Azure Communication Services Email (UAE). Swap the
- * transport here to change email providers; the handler and UI do not depend on it.
+ * Server-side wiring for demo requests: Azure Communication Services Email (UAE), signed in as the
+ * email-only Entra app. Swap the transport here to change email providers; the handler and UI do
+ * not depend on it.
  */
 export const sendDemoRequestEmail = createAcsTransport({
-  connectionString: process.env.ACS_CONNECTION_STRING,
+  username: process.env.ACS_SMTP_USERNAME,
+  password: process.env.ACS_SMTP_PASSWORD,
 })
 
 export function demoFromAddress(): string | undefined {

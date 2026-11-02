@@ -1,5 +1,4 @@
 import assert from "node:assert/strict"
-import { createHash, createHmac } from "node:crypto"
 import { describe, it } from "node:test"
 
 import { buildDemoRequestEmail, escapeHtml } from "./email-content.ts"
@@ -173,7 +172,8 @@ describe("handleDemoRequest", () => {
 
   it("never reports success when email is not configured", async () => {
     const transport = createAcsTransport({
-      connectionString: undefined,
+      username: undefined,
+      password: undefined,
       fetchImpl: async () => {
         throw new Error("fetch must not be called without configuration")
       },
@@ -197,71 +197,88 @@ describe("handleDemoRequest", () => {
 })
 
 describe("createAcsTransport", () => {
-  const key = Buffer.from("test-access-key").toString("base64")
-  const connectionString = `endpoint=https://acs-test.uae.communication.azure.com/;accesskey=${key}`
+  const username = "acs-test.11111111-2222-3333-4444-555555555555.tenant-1"
   const email = { from: "a@b.co", to: "info@fixio.ae", replyTo: "c@d.co", subject: "s", text: "t", html: "h" }
+  const tokenResponse = () => new Response(JSON.stringify({ access_token: "tok-1", expires_in: 3600 }), { status: 200 })
 
-  it("posts a signed send request with a mocked fetch", async () => {
-    let captured: { url: string; init: RequestInit } | undefined
-    const now = new Date("2026-11-02T10:00:00Z")
+  it("signs in with client credentials, then posts the send request with a mocked fetch", async () => {
+    const calls: { url: string; init: RequestInit }[] = []
     const transport = createAcsTransport({
-      connectionString,
-      now: () => now,
+      username,
+      password: "app-secret",
       fetchImpl: async (url, init) => {
-        captured = { url: String(url), init: init ?? {} }
-        return new Response(JSON.stringify({ id: "op-1", status: "Running" }), { status: 202 })
+        calls.push({ url: String(url), init: init ?? {} })
+        return calls.length === 1 || String(url).includes("login.microsoftonline.com")
+          ? tokenResponse()
+          : new Response(JSON.stringify({ id: "op-1", status: "Running" }), { status: 202 })
       },
     })
     const result = await transport({ ...email, from: "Manar <noreply@fixio.ae>", replyTo: "aisha@example.org" })
     assert.deepEqual(result, { ok: true, id: "op-1" })
-    assert.equal(captured?.url, "https://acs-test.uae.communication.azure.com/emails:send?api-version=2023-03-31")
 
-    const body = String(captured?.init.body)
-    const parsed = JSON.parse(body)
-    assert.equal(parsed.senderAddress, "noreply@fixio.ae")
-    assert.deepEqual(parsed.recipients, { to: [{ address: "info@fixio.ae" }] })
-    assert.deepEqual(parsed.replyTo, [{ address: "aisha@example.org" }])
-    assert.deepEqual(parsed.content, { subject: "s", plainText: "t", html: "h" })
+    const [tokenCall, sendCall] = calls
+    assert.equal(tokenCall?.url, "https://login.microsoftonline.com/tenant-1/oauth2/v2.0/token")
+    const form = new URLSearchParams(String(tokenCall?.init.body))
+    assert.equal(form.get("grant_type"), "client_credentials")
+    assert.equal(form.get("client_id"), "11111111-2222-3333-4444-555555555555")
+    assert.equal(form.get("client_secret"), "app-secret")
+    assert.equal(form.get("scope"), "https://communication.azure.com/.default")
 
-    const headers = captured?.init.headers as Record<string, string>
-    const hash = createHash("sha256").update(body).digest("base64")
-    assert.equal(headers["x-ms-date"], "Mon, 02 Nov 2026 10:00:00 GMT")
-    assert.equal(headers["x-ms-content-sha256"], hash)
-    const signed = `POST\n/emails:send?api-version=2023-03-31\nMon, 02 Nov 2026 10:00:00 GMT;acs-test.uae.communication.azure.com;${hash}`
-    const signature = createHmac("sha256", Buffer.from("test-access-key")).update(signed).digest("base64")
-    assert.equal(
-      headers.Authorization,
-      `HMAC-SHA256 SignedHeaders=x-ms-date;host;x-ms-content-sha256&Signature=${signature}`
-    )
+    assert.equal(sendCall?.url, "https://acs-test.communication.azure.com/emails:send?api-version=2023-03-31")
+    assert.equal((sendCall?.init.headers as Record<string, string>).Authorization, "Bearer tok-1")
+    const body = JSON.parse(String(sendCall?.init.body))
+    assert.equal(body.senderAddress, "noreply@fixio.ae")
+    assert.deepEqual(body.recipients, { to: [{ address: "info@fixio.ae" }] })
+    assert.deepEqual(body.replyTo, [{ address: "aisha@example.org" }])
+    assert.deepEqual(body.content, { subject: "s", plainText: "t", html: "h" })
+
+    // The token is reused until it nears expiry.
+    await transport(email)
+    assert.equal(calls.filter((c) => c.url.includes("login.microsoftonline.com")).length, 1)
   })
 
-  it("is not configured without a usable connection string or sender", async () => {
+  it("is not configured without valid credentials or a sender", async () => {
     const fetchImpl = async () => {
       throw new Error("fetch must not be called without configuration")
     }
-    for (const cs of [undefined, "", "endpoint=https://x.example/", `accesskey=${key}`, `endpoint=http://x.example/;accesskey=${key}`]) {
-      assert.deepEqual(await createAcsTransport({ connectionString: cs, fetchImpl })(email), {
+    for (const [u, p] of [
+      [undefined, "x"],
+      [username, undefined],
+      ["", "x"],
+      ["acs-test.app-id", "x"],
+      ["acs-test.app/../x.tenant", "x"],
+      [`${username}.extra`, "x"],
+    ] as const) {
+      assert.deepEqual(await createAcsTransport({ username: u, password: p, fetchImpl })(email), {
         ok: false,
         reason: "not_configured",
       })
     }
-    assert.deepEqual(await createAcsTransport({ connectionString, fetchImpl })({ ...email, from: "" }), {
+    assert.deepEqual(await createAcsTransport({ username, password: "x", fetchImpl })({ ...email, from: "" }), {
       ok: false,
       reason: "not_configured",
     })
   })
 
-  it("maps provider errors and network failures", async () => {
+  it("maps a refused sign-in, provider errors and network failures", async () => {
+    const badLogin = createAcsTransport({
+      username,
+      password: "wrong",
+      fetchImpl: async () => new Response(JSON.stringify({ error: "invalid_client" }), { status: 401 }),
+    })
     const rejected = createAcsTransport({
-      connectionString,
-      fetchImpl: async () => new Response("{}", { status: 401 }),
+      username,
+      password: "k",
+      fetchImpl: async (url) => (String(url).includes("login.") ? tokenResponse() : new Response("{}", { status: 403 })),
     })
     const offline = createAcsTransport({
-      connectionString,
+      username,
+      password: "k",
       fetchImpl: async () => {
         throw new TypeError("fetch failed")
       },
     })
+    assert.deepEqual(await badLogin(email), { ok: false, reason: "rejected" })
     assert.deepEqual(await rejected(email), { ok: false, reason: "rejected" })
     assert.deepEqual(await offline(email), { ok: false, reason: "network" })
   })
