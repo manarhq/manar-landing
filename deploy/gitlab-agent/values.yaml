@@ -8,7 +8,7 @@ rbac:
   create: false
 
 config:
-  kasAddress: wss://gitlab.vax.sh/-/kubernetes-agent/
+  kasAddress: wss://gitlab.example.com/-/kubernetes-agent/
   secretName: gitlab-agent-token
   operational_container_scanning:
     enabled: false

@@ -71,7 +71,7 @@ spec:
               app.kubernetes.io/component: web
       containers:
         - name: web
-          image: registry.gitlab.vax.sh/manar/landing
+          image: registry.example.com/manar/landing
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
@@ -88,7 +88,7 @@ spec:
               value: "3000"
             # Informational: canonical/OG URLs are baked in at build time and must match.
             - name: SITE_URL
-              value: https://manar.vax.sh
+              value: https://manar.fixio.ae
             # Traefik rewrites X-Forwarded-For, so the edge Nginx sends the Cloudflare-verified
             # client IP in this header. The NetworkPolicy only admits traffic from Traefik.
             - name: TRUSTED_CLIENT_IP_HEADER

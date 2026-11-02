@@ -17,5 +17,5 @@ resources:
 # Bootstrap digest (image of commit 6d9920c, Trivy-clean) for the first manual install only. CI replaces the image with the digest it just
 # built. Applying this directory by hand after CI has released would roll production back.
 images:
-  - name: registry.gitlab.vax.sh/manar/landing
+  - name: registry.example.com/manar/landing
     digest: sha256:e9d850ef5ed8835760cecb0ae6e9f6b1ab2f8763dc413d4fdbccd693a5a71318

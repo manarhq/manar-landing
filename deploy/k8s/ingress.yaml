@@ -12,7 +12,7 @@ metadata:
 spec:
   ingressClassName: traefik
   rules:
-    - host: manar.vax.sh
+    - host: manar.fixio.ae
       http:
         paths:
           - path: /
