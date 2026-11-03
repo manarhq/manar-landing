@@ -7,7 +7,7 @@
  * hashed in a static header. A nonce CSP would make every page dynamic. What limits the exposure
  * instead: no visitor input is ever rendered as HTML, CMS content is plain text validated by the
  * shared schema, and script origins are an allow-list of two (consent-gated PostHog (bundled; it only
- * connects to the EU host) and Turnstile on the booking pages).
+ * connects to the EU host) and Turnstile on the form pages).
  */
 export function contentSecurityPolicy({ dev = false, frameAncestor }: { dev?: boolean; frameAncestor?: string } = {}) {
   return [

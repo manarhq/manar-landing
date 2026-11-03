@@ -34,7 +34,7 @@ export function Pending({
   const [remaining, setRemaining] = useState(RESEND_COOLDOWN)
   const [sending, setSending] = useState(false)
   const [result, setResult] = useState<{ tone: Tone; title?: string; body: string } | null>(null)
-  const turnstile = useTurnstile(locale)
+  const turnstile = useTurnstile(locale, "resend")
   const heading = useRef<HTMLHeadingElement>(null)
 
   useEffect(() => heading.current?.focus(), [])

@@ -9,6 +9,7 @@ import { Field, FieldError, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
+import { useTurnstile } from "@/components/meet/turnstile"
 import { readStoredUtm } from "@/lib/consent"
 import type { DemoApiBody } from "@/lib/demo/handle-request"
 import {
@@ -38,6 +39,8 @@ export function DemoForm({ locale, t, email }: { locale: Locale; t: FormText; em
   const [status, setStatus] = useState<Status>("idle")
   const [honeypot, setHoneypot] = useState("")
   const [submitted, setSubmitted] = useState<{ name: string; email: string } | null>(null)
+  const [waitMinutes, setWaitMinutes] = useState(60)
+  const turnstile = useTurnstile(locale, "demo")
   const inFlight = useRef(false)
   const successHeading = useRef<HTMLHeadingElement>(null)
   const feedbackRef = useRef<HTMLDivElement>(null)
@@ -93,9 +96,17 @@ export function DemoForm({ locale, t, email }: { locale: Locale; t: FormText; em
       const response = await fetch("/api/demo-request", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...result.value, locale, website: honeypot, utm: readStoredUtm() }),
+        body: JSON.stringify({
+          ...result.value,
+          locale,
+          website: honeypot,
+          utm: readStoredUtm(),
+          turnstileToken: turnstile.token ?? "",
+        }),
       })
       const body = (await response.json().catch(() => null)) as DemoApiBody | null
+      // Each token is single use; the next try needs a fresh check.
+      turnstile.reset()
 
       if (response.ok && body?.ok) {
         setSubmitted({ name: result.value.name, email: result.value.email })
@@ -106,6 +117,8 @@ export function DemoForm({ locale, t, email }: { locale: Locale; t: FormText; em
         const first = fieldOrder.find((f) => body.fields[f])
         if (first) focusField(first)
       } else if (response.status === 429) {
+        const seconds = Number(response.headers.get("Retry-After")) || 3600
+        setWaitMinutes(Math.max(1, Math.ceil(seconds / 60)))
         setStatus("rate_limited")
       } else {
         setStatus("failure")
@@ -162,7 +175,7 @@ export function DemoForm({ locale, t, email }: { locale: Locale; t: FormText; em
                 {status === "failure" ? t.failure.title : t.rateLimited.title}
               </p>
               <p className="mt-1 text-foreground">
-                {status === "failure" ? t.failure.body : t.rateLimited.body}{" "}
+                {status === "failure" ? t.failure.body : format(t.rateLimited.body, { minutes: waitMinutes })}{" "}
                 <a href={`mailto:${email}`} className="ltr-fragment font-medium text-foreground underline underline-offset-4">
                   {email}
                 </a>
@@ -284,6 +297,8 @@ export function DemoForm({ locale, t, email }: { locale: Locale; t: FormText; em
           />
         </div>
       </div>
+
+      {turnstile.element ? <div className="mt-6">{turnstile.element}</div> : null}
 
       <div className="mt-8 flex flex-col gap-4 border-t border-line pt-6 sm:flex-row sm:items-center sm:justify-between">
         <p className="max-w-sm text-sm text-muted-foreground">

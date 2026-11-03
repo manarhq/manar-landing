@@ -57,7 +57,7 @@ export function DetailsForm({
   const [notice, setNotice] = useState<{ tone: Tone; title?: string; body: string } | null>(null)
   const [busy, setBusy] = useState(false)
   const [website, setWebsite] = useState("")
-  const turnstile = useTurnstile(locale)
+  const turnstile = useTurnstile(locale, "booking")
   const inFlight = useRef(false)
 
   const message = (name: Name, code?: string) =>
