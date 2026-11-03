@@ -9,7 +9,24 @@ import { validateDemoRequest, type FieldErrors } from "./validation.ts"
 export const DEMO_REQUEST_RECIPIENT = "info@fixio.ae"
 
 /** The structured log line for a failed send. Operational reason only: no names, emails or messages. */
-export const demoFailureEvent = (reason: string) => JSON.stringify({ event: "demo_request_email_failed", reason })
+export const demoFailureEvent = (reason: string) =>
+  reason === "suspected_abuse"
+    ? JSON.stringify({ event: "demo_request_suspected_abuse" })
+    : JSON.stringify({ event: "demo_request_email_failed", reason })
+
+/**
+ * The address as a mailbox, for limits only (the email itself keeps what was typed): lower-cased,
+ * "+tag" dropped, and for Gmail the dots too, so one inbox cannot get many buckets.
+ */
+export function mailboxKey(email: string): string {
+  const lower = email.trim().toLowerCase()
+  const at = lower.lastIndexOf("@")
+  if (at < 1) return lower
+  const domain = lower.slice(at + 1) === "googlemail.com" ? "gmail.com" : lower.slice(at + 1)
+  let local = lower.slice(0, at).split("+")[0]
+  if (domain === "gmail.com") local = local.replaceAll(".", "")
+  return `${local}@${domain}`
+}
 
 export const MAX_BODY_BYTES = 16 * 1024
 
@@ -31,13 +48,18 @@ export type DemoRequestDeps = {
   transport: EmailTransport
   fromAddress: string | undefined
   limiter: RateLimiter
-  /** Per submitted email address (lower-cased). */
+  /** Per mailbox and client: over it, that requester gets a 429 with the wait. */
   emailLimiter: RateLimiter
+  /**
+   * Per mailbox from any client: over it the request is answered as accepted but not sent (logged as
+   * suspected abuse), so requests from elsewhere can never get a 429 in the owner's name.
+   */
+  emailCap: RateLimiter
   /** Turnstile check of `turnstileToken`; "off" when a key is missing. */
   turnstile: (token: unknown, remoteIp: string) => Promise<TurnstileOutcome>
   now?: () => Date
   /** Receives operational reasons only; never submission content. */
-  logFailure?: (reason: Exclude<SendResult, { ok: true }>["reason"] | "turnstile_unavailable") => void
+  logFailure?: (reason: Exclude<SendResult, { ok: true }>["reason"] | "turnstile_unavailable" | "suspected_abuse") => void
 }
 
 export async function handleDemoRequest(
@@ -80,8 +102,13 @@ export async function handleDemoRequest(
   if (check === "failed") return { status: 403, body: { ok: false, error: "turnstile" } }
   if (check === "unavailable") deps.logFailure?.("turnstile_unavailable")
 
-  const byEmail = deps.emailLimiter.check(result.value.email.toLowerCase())
+  const mailbox = mailboxKey(result.value.email)
+  const byEmail = deps.emailLimiter.check(`${mailbox}|${request.clientKey}`)
   if (!byEmail.allowed) return rateLimited(byEmail.retryAfterSeconds)
+  if (!deps.emailCap.check(mailbox).allowed) {
+    deps.logFailure?.("suspected_abuse")
+    return { status: 200, body: { ok: true } }
+  }
 
   const locale = data.locale === "ar" ? "ar" : "en"
   // Campaign fields (W14): only allowlisted keys with bounded, plain values survive.
