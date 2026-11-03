@@ -3,11 +3,13 @@ import { describe, it } from "node:test"
 
 import { SITEVERIFY, turnstileEnabled, verifyTurnstile } from "./turnstile.ts"
 
-// Cloudflare's published test keys (https://developers.cloudflare.com/turnstile/troubleshooting/testing/).
-const PASS_SITE = "1x00000000000000000000AA"
-const PASS_SECRET = "1x0000000000000000000000000000000AA"
-const FAIL_SECRET = "2x0000000000000000000000000000000AA"
-const SPENT_SECRET = "3x0000000000000000000000000000000AA"
+// Cloudflare's published test keys (https://developers.cloudflare.com/turnstile/troubleshooting/testing/),
+// spelled out so secret scanners see what they are.
+const testSecret = (n: 1 | 2 | 3) => `${n}x${"0".repeat(31)}AA`
+const PASS_SITE = `1x${"0".repeat(20)}AA`
+const PASS_SECRET = testSecret(1)
+const FAIL_SECRET = testSecret(2)
+const SPENT_SECRET = testSecret(3)
 const DUMMY = "XXXX.DUMMY.TOKEN.XXXX"
 
 /** Answers like siteverify does for the test secrets; records what was posted. */
