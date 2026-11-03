@@ -173,6 +173,7 @@ export const privacy: Record<Locale, LegalDoc> = {
               head: ["Provider", "Purpose", "Data", "Where"],
               rows: [
                 ["Microsoft Azure", "Hosting, databases, and email delivery, including website request emails (Azure Communication Services, UAE)", "All Service data, form details, email addresses", "UAE North"],
+                ["Microsoft Azure OpenAI", "AI features (risk explanations and the assistant). Microsoft does not use this data to train its models", "The content you send to AI features", "Global (any Azure region); stored in UAE North"],
                 ["Cloudflare", "Network delivery, DNS, security and the bot check (Turnstile)", "IP address and request details", "Global network, including outside the UAE"],
                 ["Stripe", "Card payments, invoices, tax", "Name, email, billing details, card details", "Stripe's infrastructure, including outside the UAE"],
                 ["PostHog (EU)", "Product improvement data, sent from our servers without cookies, and website analytics only with your consent", "Console and device events with a pseudonymous identifier, website page views and usage events", "European Union"],
@@ -430,6 +431,7 @@ export const privacy: Record<Locale, LegalDoc> = {
               head: ["المزوّد", "الغرض", "البيانات", "الموقع"],
               rows: [
                 ["Microsoft Azure", "الاستضافة وقواعد البيانات وإرسال البريد، ومنه بريد طلبات الموقع (Azure Communication Services، الإمارات)", "كل بيانات الخدمة وتفاصيل النماذج وعناوين البريد", "UAE North"],
+                ["Microsoft Azure OpenAI", "ميزات الذكاء الاصطناعي (شرح المخاطر والمساعد). لا تستخدم Microsoft هذه البيانات لتدريب نماذجها", "المحتوى الذي ترسله إلى ميزات الذكاء الاصطناعي", "عالمي (أي منطقة Azure)، ويُخزَّن في UAE North"],
                 ["Cloudflare", "توصيل الشبكة وDNS والأمان وفحص الروبوتات (Turnstile)", "عنوان IP وتفاصيل الطلب", "شبكة عالمية تشمل خارج الإمارات"],
                 ["Stripe", "مدفوعات البطاقات والفواتير والضريبة", "الاسم والبريد وتفاصيل الفوترة وبيانات البطاقة", "بنية Stripe التحتية، وتشمل خارج الإمارات"],
                 ["PostHog (الاتحاد الأوروبي)", "بيانات تحسين المنتج، تُرسل من خوادمنا دون ملفات تعريف ارتباط، وتحليلات الموقع بموافقتك فقط", "أحداث لوحة التحكم والأجهزة مع معرّف مستعار، ومشاهدات صفحات الموقع وأحداث الاستخدام", "الاتحاد الأوروبي"],
