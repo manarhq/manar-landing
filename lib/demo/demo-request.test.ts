@@ -2,7 +2,13 @@ import assert from "node:assert/strict"
 import { describe, it } from "node:test"
 
 import { buildDemoRequestEmail, escapeHtml } from "./email-content.ts"
-import { DEMO_REQUEST_RECIPIENT, demoFailureEvent, handleDemoRequest, type DemoRequestDeps } from "./handle-request.ts"
+import {
+  DEMO_REQUEST_RECIPIENT,
+  demoFailureEvent,
+  handleDemoRequest,
+  mailboxKey,
+  type DemoRequestDeps,
+} from "./handle-request.ts"
 import { createRateLimiter } from "./rate-limit.ts"
 import { createAcsTransport, type OutboundEmail, type SendResult } from "./acs.ts"
 import { validateDemoRequest } from "./validation.ts"
@@ -33,6 +39,7 @@ function deps(overrides: Partial<DemoRequestDeps> = {}): DemoRequestDeps {
     fromAddress: "Manar <demo@mail.example.com>",
     limiter: createRateLimiter({ limit: 100, windowMs: 60_000 }),
     emailLimiter: createRateLimiter({ limit: 100, windowMs: 60_000 }),
+    emailCap: createRateLimiter({ limit: 100, windowMs: 60_000 }),
     turnstile: async () => "off",
     now: () => new Date("2026-09-17T08:00:00Z"),
     ...overrides,
@@ -208,18 +215,56 @@ describe("handleDemoRequest", () => {
     assert.equal(sent.length, 2)
   })
 
-  it("limits requests per email address across client addresses, saying how long to wait", async () => {
+  it("limits one client's requests for a mailbox with a 429 that says how long to wait", async () => {
     const { sent, transport } = recordingTransport()
     const shared = deps({ transport, emailLimiter: createRateLimiter({ limit: 3, windowMs: 3_600_000 }) })
-    for (const ip of ["203.0.113.1", "203.0.113.2", "203.0.113.3"]) {
-      assert.equal((await handleDemoRequest({ ...request(valid), clientKey: ip }, shared)).status, 200)
-    }
-    const fourth = await handleDemoRequest({ ...request({ ...valid, email: "AISHA@example.org" }), clientKey: "198.51.100.9" }, shared)
+    for (let i = 0; i < 3; i++) assert.equal((await handleDemoRequest(request(valid), shared)).status, 200)
+    const fourth = await handleDemoRequest(request({ ...valid, email: "AISHA+demo@example.org" }), shared)
     assert.equal(fourth.status, 429)
     assert.ok(!fourth.body.ok && fourth.body.error === "rate_limited" && fourth.body.retryAfterSeconds > 3500)
     assert.equal(fourth.headers?.["Retry-After"], String(!fourth.body.ok && "retryAfterSeconds" in fourth.body ? fourth.body.retryAfterSeconds : ""))
     assert.equal(sent.length, 3)
     assert.equal((await handleDemoRequest(request({ ...valid, email: "other@example.org" }), shared)).status, 200)
+  })
+
+  it("never gives the mailbox owner a 429 for requests made elsewhere: IP A burns its quota, IP B still succeeds", async () => {
+    const { sent, transport } = recordingTransport()
+    const shared = deps({ transport, emailLimiter: createRateLimiter({ limit: 3, windowMs: 3_600_000 }) })
+    const from = (ip: string, email = valid.email) => handleDemoRequest({ ...request({ ...valid, email }), clientKey: ip }, shared)
+    for (let i = 0; i < 3; i++) assert.equal((await from("203.0.113.1")).status, 200)
+    assert.equal((await from("203.0.113.1")).status, 429)
+    const owner = await from("198.51.100.9")
+    assert.equal(owner.status, 200)
+    assert.deepEqual(owner.body, { ok: true })
+    assert.equal(sent.length, 4)
+  })
+
+  it("past the cap for a mailbox from anywhere: answers as accepted, sends nothing, logs suspected abuse", async () => {
+    const { sent, transport } = recordingTransport()
+    const logged: string[] = []
+    const shared = deps({
+      transport,
+      emailCap: createRateLimiter({ limit: 2, windowMs: 3_600_000 }),
+      logFailure: (r) => logged.push(r),
+    })
+    // Gmail dots and +tags reach the same inbox, so they share the cap.
+    const variants = ["aisha.k@gmail.com", "AishaK+1@googlemail.com", "a.i.s.h.a.k+demo@gmail.com"]
+    const answers = []
+    for (const [i, email] of variants.entries()) {
+      answers.push(await handleDemoRequest({ ...request({ ...valid, email }), clientKey: `203.0.113.${i}` }, shared))
+    }
+    assert.deepEqual(answers.map((a) => a.status), [200, 200, 200])
+    assert.deepEqual(answers[2].body, { ok: true })
+    assert.equal(sent.length, 2)
+    assert.deepEqual(logged, ["suspected_abuse"])
+    assert.equal(demoFailureEvent("suspected_abuse"), '{"event":"demo_request_suspected_abuse"}')
+  })
+
+  it("normalises mailboxes for limits only", () => {
+    assert.equal(mailboxKey(" A.B+x@Gmail.com "), "ab@gmail.com")
+    assert.equal(mailboxKey("a.b@googlemail.com"), "ab@gmail.com")
+    assert.equal(mailboxKey("first.last+tag@example.org"), "first.last@example.org")
+    assert.equal(mailboxKey("no-at-sign"), "no-at-sign")
   })
 
   it("refuses a failed Turnstile check without sending", async () => {

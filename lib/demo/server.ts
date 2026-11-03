@@ -21,11 +21,13 @@ export function demoFromAddress(): string | undefined {
   return process.env.DEMO_FROM_EMAIL || undefined
 }
 
-// Five attempts per client per ten minutes, and three requests per email address per hour.
+// Per client: 5 per 10 minutes. Per mailbox + client: 3 an hour (429). Per mailbox from anywhere: 10 an
+// hour, then accepted but not sent (suspected abuse).
 // ponytail: process-local, so with N replicas the caps are N times higher (Traefik caps form posts per
 // address in front, apps/landing.yaml); a shared store when one exists for the landing.
 export const demoRequestLimiter = createRateLimiter({ limit: 5, windowMs: 10 * 60 * 1000 })
 export const demoEmailLimiter = createRateLimiter({ limit: 3, windowMs: 60 * 60 * 1000 })
+export const demoEmailCap = createRateLimiter({ limit: 10, windowMs: 60 * 60 * 1000 })
 
 export function checkDemoTurnstile(token: unknown, remoteIp: string) {
   return verifyTurnstile(

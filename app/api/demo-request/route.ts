@@ -2,6 +2,7 @@ import { demoFailureEvent, handleDemoRequest, MAX_BODY_BYTES } from "@/lib/demo/
 import { clientKey, readBoundedText } from "@/lib/http"
 import {
   checkDemoTurnstile,
+  demoEmailCap,
   demoEmailLimiter,
   demoFromAddress,
   demoRequestLimiter,
@@ -23,6 +24,7 @@ export async function POST(request: Request) {
       fromAddress: demoFromAddress(),
       limiter: demoRequestLimiter,
       emailLimiter: demoEmailLimiter,
+      emailCap: demoEmailCap,
       turnstile: checkDemoTurnstile,
       logFailure: (reason) => console.error(demoFailureEvent(reason)),
     }
