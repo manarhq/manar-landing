@@ -41,3 +41,22 @@ export function clientKey(request: Request): string {
   const forwarded = request.headers.get("x-forwarded-for")?.split(",").at(-1)?.trim()
   return forwarded || request.headers.get("x-real-ip") || "unknown"
 }
+
+/**
+ * The page's own origin when a browser POST comes from this site, else null. The browser sets Origin
+ * and Sec-Fetch-Site itself (a page cannot), and a cross-site page cannot choose the Host it reaches.
+ * Used where a POST is forwarded with JSON on our behalf, so a cross-site "simple" form post is refused.
+ */
+export function sameSiteOrigin(request: Request): string | null {
+  const site = request.headers.get("sec-fetch-site")
+  if (site && site !== "same-origin") return null
+  const origin = request.headers.get("origin")
+  const host = request.headers.get("host")
+  if (!origin || !host) return null
+  try {
+    const url = new URL(origin)
+    return (url.protocol === "https:" || url.protocol === "http:") && url.host === host ? url.origin : null
+  } catch {
+    return null
+  }
+}
