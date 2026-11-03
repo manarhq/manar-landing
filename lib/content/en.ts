@@ -353,8 +353,8 @@ const en: Omit<SiteContent, "legal"> = {
         retry: "Try again",
       },
       rateLimited: {
-        title: "Too many attempts",
-        body: "Please wait a few minutes before trying again, or email us directly at",
+        title: "Too many requests",
+        body: "You've sent several requests in a short time. Try again in {minutes} minutes, or email us directly at",
       },
     },
   },

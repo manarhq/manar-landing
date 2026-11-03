@@ -1,5 +1,7 @@
 import "server-only"
 
+import { SITE_HOST } from "../hosts.ts"
+import { verifyTurnstile } from "../turnstile.ts"
 import { createRateLimiter } from "./rate-limit.ts"
 import { createAcsTransport } from "./acs.ts"
 
@@ -19,5 +21,21 @@ export function demoFromAddress(): string | undefined {
   return process.env.DEMO_FROM_EMAIL || undefined
 }
 
-// Five attempts per client per ten minutes. Process-local; see rate-limit.ts.
+// Five attempts per client per ten minutes, and three requests per email address per hour.
+// ponytail: process-local, so with N replicas the caps are N times higher (Traefik caps form posts per
+// address in front, apps/landing.yaml); a shared store when one exists for the landing.
 export const demoRequestLimiter = createRateLimiter({ limit: 5, windowMs: 10 * 60 * 1000 })
+export const demoEmailLimiter = createRateLimiter({ limit: 3, windowMs: 60 * 60 * 1000 })
+
+export function checkDemoTurnstile(token: unknown, remoteIp: string) {
+  return verifyTurnstile(
+    {
+      siteKey: process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY,
+      secret: process.env.TURNSTILE_SECRET_KEY,
+      hostnames: [SITE_HOST],
+    },
+    token,
+    remoteIp,
+    "demo"
+  )
+}

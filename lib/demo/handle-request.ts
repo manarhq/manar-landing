@@ -1,5 +1,6 @@
 import { pickUtm } from "../consent.ts"
 import { buildDemoRequestEmail } from "./email-content.ts"
+import type { TurnstileOutcome } from "../turnstile.ts"
 import type { RateLimiter } from "./rate-limit.ts"
 import type { EmailTransport, SendResult } from "./acs.ts"
 import { validateDemoRequest, type FieldErrors } from "./validation.ts"
@@ -15,7 +16,8 @@ export const MAX_BODY_BYTES = 16 * 1024
 export type DemoApiBody =
   | { ok: true }
   | { ok: false; error: "validation"; fields: FieldErrors }
-  | { ok: false; error: "rate_limited" }
+  | { ok: false; error: "rate_limited"; retryAfterSeconds: number }
+  | { ok: false; error: "turnstile" }
   | { ok: false; error: "unavailable" }
   | { ok: false; error: "bad_request" }
 
@@ -29,9 +31,13 @@ export type DemoRequestDeps = {
   transport: EmailTransport
   fromAddress: string | undefined
   limiter: RateLimiter
+  /** Per submitted email address (lower-cased). */
+  emailLimiter: RateLimiter
+  /** Turnstile check of `turnstileToken`; "off" when a key is missing. */
+  turnstile: (token: unknown, remoteIp: string) => Promise<TurnstileOutcome>
   now?: () => Date
   /** Receives operational reasons only; never submission content. */
-  logFailure?: (reason: Exclude<SendResult, { ok: true }>["reason"]) => void
+  logFailure?: (reason: Exclude<SendResult, { ok: true }>["reason"] | "turnstile_unavailable") => void
 }
 
 export async function handleDemoRequest(
@@ -57,13 +63,7 @@ export async function handleDemoRequest(
   const data = payload as Record<string, unknown>
 
   const rate = deps.limiter.check(request.clientKey)
-  if (!rate.allowed) {
-    return {
-      status: 429,
-      body: { ok: false, error: "rate_limited" },
-      headers: { "Retry-After": String(rate.retryAfterSeconds) },
-    }
-  }
+  if (!rate.allowed) return rateLimited(rate.retryAfterSeconds)
 
   // Honeypot: real visitors never see or fill this field. Respond as accepted, send nothing.
   if (typeof data.website === "string" && data.website.trim() !== "") {
@@ -74,6 +74,14 @@ export async function handleDemoRequest(
   if (!result.ok) {
     return { status: 422, body: { ok: false, error: "validation", fields: result.errors } }
   }
+
+  // After validation, so a field error does not spend the single-use token on the server's side.
+  const check = await deps.turnstile(data.turnstileToken, request.clientKey)
+  if (check === "failed") return { status: 403, body: { ok: false, error: "turnstile" } }
+  if (check === "unavailable") deps.logFailure?.("turnstile_unavailable")
+
+  const byEmail = deps.emailLimiter.check(result.value.email.toLowerCase())
+  if (!byEmail.allowed) return rateLimited(byEmail.retryAfterSeconds)
 
   const locale = data.locale === "ar" ? "ar" : "en"
   // Campaign fields (W14): only allowlisted keys with bounded, plain values survive.
@@ -103,4 +111,12 @@ export async function handleDemoRequest(
   }
 
   return { status: 200, body: { ok: true } }
+}
+
+function rateLimited(retryAfterSeconds: number): DemoApiResponse {
+  return {
+    status: 429,
+    body: { ok: false, error: "rate_limited", retryAfterSeconds },
+    headers: { "Retry-After": String(retryAfterSeconds) },
+  }
 }

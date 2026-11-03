@@ -55,7 +55,7 @@ export function buildDemoRequestEmail(
     "What would you like to govern?",
     message,
     "",
-    "Reply to this email to respond to the requester.",
+    "Reply to this email to respond to the requester. The address was typed in the form and is not verified: check it looks right before you send anything sensitive.",
   ].join("\n")
 
   const htmlRows = rows
@@ -73,7 +73,7 @@ export function buildDemoRequestEmail(
 <table role="presentation" cellspacing="0" cellpadding="0" style="border-collapse:collapse">${htmlRows}</table>
 <h2 style="margin:20px 0 8px;font-size:15px;color:#18231e">What would you like to govern?</h2>
 <p style="margin:0;color:#18231e;white-space:pre-wrap">${escapeHtml(message)}</p>
-<p style="margin:20px 0 0;color:#52635a;font-size:13px">Reply to this email to respond to the requester.</p>
+<p style="margin:20px 0 0;color:#52635a;font-size:13px">Reply to this email to respond to the requester. The address was typed in the form and is not verified: check it looks right before you send anything sensitive.</p>
 </div>
 </body>
 </html>`

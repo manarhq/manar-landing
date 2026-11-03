@@ -1,6 +1,12 @@
 import { demoFailureEvent, handleDemoRequest, MAX_BODY_BYTES } from "@/lib/demo/handle-request"
 import { clientKey, readBoundedText } from "@/lib/http"
-import { demoFromAddress, demoRequestLimiter, sendDemoRequestEmail } from "@/lib/demo/server"
+import {
+  checkDemoTurnstile,
+  demoEmailLimiter,
+  demoFromAddress,
+  demoRequestLimiter,
+  sendDemoRequestEmail,
+} from "@/lib/demo/server"
 
 export const runtime = "nodejs"
 
@@ -16,6 +22,8 @@ export async function POST(request: Request) {
       transport: sendDemoRequestEmail,
       fromAddress: demoFromAddress(),
       limiter: demoRequestLimiter,
+      emailLimiter: demoEmailLimiter,
+      turnstile: checkDemoTurnstile,
       logFailure: (reason) => console.error(demoFailureEvent(reason)),
     }
   )

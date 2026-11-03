@@ -32,6 +32,8 @@ function deps(overrides: Partial<DemoRequestDeps> = {}): DemoRequestDeps {
     transport: recordingTransport().transport,
     fromAddress: "Manar <demo@mail.example.com>",
     limiter: createRateLimiter({ limit: 100, windowMs: 60_000 }),
+    emailLimiter: createRateLimiter({ limit: 100, windowMs: 60_000 }),
+    turnstile: async () => "off",
     now: () => new Date("2026-09-17T08:00:00Z"),
     ...overrides,
   }
@@ -204,6 +206,54 @@ describe("handleDemoRequest", () => {
     assert.equal(third.status, 429)
     assert.ok(Number(third.headers?.["Retry-After"]) > 0)
     assert.equal(sent.length, 2)
+  })
+
+  it("limits requests per email address across client addresses, saying how long to wait", async () => {
+    const { sent, transport } = recordingTransport()
+    const shared = deps({ transport, emailLimiter: createRateLimiter({ limit: 3, windowMs: 3_600_000 }) })
+    for (const ip of ["203.0.113.1", "203.0.113.2", "203.0.113.3"]) {
+      assert.equal((await handleDemoRequest({ ...request(valid), clientKey: ip }, shared)).status, 200)
+    }
+    const fourth = await handleDemoRequest({ ...request({ ...valid, email: "AISHA@example.org" }), clientKey: "198.51.100.9" }, shared)
+    assert.equal(fourth.status, 429)
+    assert.ok(!fourth.body.ok && fourth.body.error === "rate_limited" && fourth.body.retryAfterSeconds > 3500)
+    assert.equal(fourth.headers?.["Retry-After"], String(!fourth.body.ok && "retryAfterSeconds" in fourth.body ? fourth.body.retryAfterSeconds : ""))
+    assert.equal(sent.length, 3)
+    assert.equal((await handleDemoRequest(request({ ...valid, email: "other@example.org" }), shared)).status, 200)
+  })
+
+  it("refuses a failed Turnstile check without sending", async () => {
+    const { sent, transport } = recordingTransport()
+    const seen: unknown[] = []
+    const result = await handleDemoRequest(
+      request({ ...valid, turnstileToken: "XXXX.DUMMY.TOKEN.XXXX" }),
+      deps({ transport, turnstile: async (token, ip) => (seen.push(token, ip), "failed") })
+    )
+    assert.equal(result.status, 403)
+    assert.deepEqual(result.body, { ok: false, error: "turnstile" })
+    assert.deepEqual(seen, ["XXXX.DUMMY.TOKEN.XXXX", "203.0.113.7"])
+    assert.equal(sent.length, 0)
+  })
+
+  it("sends when Turnstile passes, is off, or Cloudflare is unavailable (logged)", async () => {
+    for (const outcome of ["passed", "off", "unavailable"] as const) {
+      const { sent, transport } = recordingTransport()
+      const logged: string[] = []
+      const result = await handleDemoRequest(
+        request(valid),
+        deps({ transport, turnstile: async () => outcome, logFailure: (r) => logged.push(r) })
+      )
+      assert.equal(result.status, 200, outcome)
+      assert.equal(sent.length, 1, outcome)
+      assert.deepEqual(logged, outcome === "unavailable" ? ["turnstile_unavailable"] : [], outcome)
+    }
+  })
+
+  it("does not spend the Turnstile check on an invalid form", async () => {
+    let calls = 0
+    const result = await handleDemoRequest(request({ ...valid, email: "nope" }), deps({ turnstile: async () => (calls++, "passed") }))
+    assert.equal(result.status, 422)
+    assert.equal(calls, 0)
   })
 })
 

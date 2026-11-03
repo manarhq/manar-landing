@@ -6,8 +6,8 @@ const SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY?.trim() || ""
 const SCRIPT = "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"
 
 /**
- * Sent when no site key is configured (local development). manar-site's development adapter
- * accepts it; the production verifier rejects it, so a build without a key fails closed.
+ * Sent when no site key is built in. The servers skip the check while either Turnstile key is missing
+ * (warning at start), so a build without a key still works; with both keys this token fails.
  */
 const UNCONFIGURED_TOKEN = "turnstile-not-configured"
 
@@ -19,7 +19,7 @@ type TurnstileApi = {
 
 let loader: Promise<TurnstileApi> | null = null
 
-/** Loaded on demand, only on the pages that submit a booking. */
+/** Loaded on demand, only on the pages with a form (booking, demo request). */
 function loadTurnstile(): Promise<TurnstileApi> {
   loader ??= new Promise((resolve, reject) => {
     const script = document.createElement("script")
@@ -39,8 +39,12 @@ function loadTurnstile(): Promise<TurnstileApi> {
   return loader
 }
 
-/** Explicitly rendered widget. `token` is null until the check passes; each token is single use. */
-export function useTurnstile(locale: "en" | "ar") {
+/**
+ * Explicitly rendered widget. `token` is null until the check passes; each token is single use.
+ * `action` names the form; the server that checks the token compares it. The widget shows itself only
+ * when Cloudflare needs the visitor to interact (managed mode, "interaction-only").
+ */
+export function useTurnstile(locale: "en" | "ar", action: "booking" | "resend" | "demo") {
   const container = useRef<HTMLDivElement>(null)
   const widget = useRef<string | null>(null)
   const api = useRef<TurnstileApi | null>(null)
@@ -57,6 +61,8 @@ export function useTurnstile(locale: "en" | "ar") {
           sitekey: SITE_KEY,
           language: locale,
           theme: "auto",
+          action,
+          appearance: "interaction-only",
           callback: (value: string) => setToken(value),
           "expired-callback": () => setToken(null),
           "error-callback": () => setToken(null),
@@ -70,7 +76,7 @@ export function useTurnstile(locale: "en" | "ar") {
       if (widget.current) api.current?.remove(widget.current)
       widget.current = null
     }
-  }, [locale])
+  }, [locale, action])
 
   const reset = useCallback(() => {
     if (!SITE_KEY) return
@@ -78,6 +84,6 @@ export function useTurnstile(locale: "en" | "ar") {
     if (widget.current) api.current?.reset(widget.current)
   }, [])
 
-  const element = SITE_KEY ? <div ref={container} className="min-h-[65px]" /> : null
+  const element = SITE_KEY ? <div ref={container} /> : null
   return { token, reset, element }
 }
