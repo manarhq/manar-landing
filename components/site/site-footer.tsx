@@ -5,7 +5,7 @@ import type { Locale } from "@/lib/i18n/config"
 import type { Dictionary } from "@/lib/i18n/dictionaries"
 import { launchCopy } from "@/lib/launch/copy"
 import { links } from "@/lib/launch/links"
-import { discordUrl } from "@/lib/launch/offer"
+import { discordUrl } from "@/lib/launch/discord"
 import { bookingHref } from "@/lib/site"
 
 import { BrandMark } from "./brand"

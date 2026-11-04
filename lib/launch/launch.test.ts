@@ -71,25 +71,42 @@ describe("coverage matrix (spec section 6)", () => {
   })
 })
 
-describe("pricing (spec 2 item 8)", () => {
-  const en = pricingText.en.plans
+describe("pricing (pay-as-you-go, 4 Nov 2026)", async () => {
+  const { PRICE, aed, proMonthly, companyMonthly, creditPacksFor } = await import("./pricing.ts")
+  const en = pricingText.en
   it("lists the four plans with the decided prices", () => {
     assert.deepEqual(planOrder, ["free", "pro", "company", "enterprise"])
-    assert.equal(en.free.price, "$0")
-    assert.equal(en.pro.price, "$9")
-    assert.equal(en.pro.alt, "or $90 per year")
-    assert.equal(en.company.price, "$15")
-    assert.equal(en.enterprise.price, null)
+    assert.equal(en.plans.free.price, "$0")
+    assert.equal(en.plans.pro.price, "$5")
+    assert.match(en.plans.pro.alt ?? "", /\$50 a year/)
+    assert.equal(en.plans.company.price, "$15")
+    assert.match(en.plans.company.alt ?? "", /Minimum 3 seats/)
+    assert.equal(en.plans.enterprise.price, null)
   })
-  it("states the free and Pro limits", () => {
-    assert.deepEqual(en.free.features, ["3 devices", "10 agents", "30-day audit", "1 cloud agent"])
-    for (const f of ["10 devices", "Unlimited agents", "1-year audit", "5 cloud agents", "TLS inspection", "Priority email support"]) {
-      assert.ok(en.pro.features.includes(f), f)
-    }
+  it("computes the examples from the same numbers", () => {
+    assert.equal(proMonthly(2), 5)
+    assert.equal(proMonthly(4), 9)
+    assert.equal(companyMonthly(5), 75)
+    assert.equal(companyMonthly(2), 45)
+    assert.equal(creditPacksFor(1200, PRICE.aiIncluded), 1)
+    const shown = en.examples.map((e) => `${e.label}: ${e.price}`)
+    assert.ok(shown.includes("2 laptops, normal use: $5 a month"), shown.join(" | "))
+    assert.ok(shown.includes("A team of 5: $75 a month"), shown.join(" | "))
+    assert.equal(aed(5), "18.36")
   })
-  it("states VAT and the billable user rule", () => {
-    assert.match(pricingText.en.vat, /UAE VAT of 5%/)
-    assert.match(en.company.note ?? "", /enrolled device or a console sign-in/)
+  it("the FAQ answers what counts as active, zero credits and caps, in both languages", () => {
+    for (const l of ["en", "ar"] as const) assert.equal(pricingText[l].faq.length, en.faq.length)
+    const qs = en.faq.map((f) => f.q)
+    for (const q of ["What counts as active?", "What happens at zero credits?", "How do caps and alerts work?"]) assert.ok(qs.includes(q), q)
+    const zero = en.faq.find((f) => f.q === "What happens at zero credits?")!
+    assert.match(zero.a, /Safety keeps working/)
+  })
+  it("never names the retired launch offer or the old prices", () => {
+    const all = JSON.stringify(pricingText)
+    assert.doesNotMatch(all, /\$9 per month|\$90|3 months|launch offer|first 100/i)
+  })
+  it("states VAT", () => {
+    assert.match(en.vat, /UAE VAT of 5%/)
   })
 })
 
@@ -133,6 +150,10 @@ describe("legal drafts", () => {
         assert.doesNotMatch(JSON.stringify(doc), /VAX Labs/, `${l}/${p}`)
       }
       assert.match(JSON.stringify(legalDoc(l, "terms")), /Fixio/)
+      // Pay-as-you-go terms: credits validity, no refund on a ban, VAT; no old prices.
+      const terms = JSON.stringify(legalDoc(l, "terms"))
+      for (const must of ["12", "5%", "$5", "$15"]) assert.ok(terms.includes(must), `${l} terms names ${must}`)
+      assert.doesNotMatch(terms, /\$9 |\$90|30-day trial|تجربة 30 يوماً/, `${l} terms old prices`)
       assert.match(JSON.stringify(legalDoc(l, "privacy")), /Azure/)
       assert.match(JSON.stringify(legalDoc(l, "privacy")), /UAE North/)
     }
@@ -145,7 +166,7 @@ describe("legal drafts", () => {
       for (const p of legalPaths) {
         const strings = (v: unknown): string[] => (typeof v === "string" ? [v] : v && typeof v === "object" ? Object.values(v).flatMap(strings) : [])
         for (const s of strings(legalDoc(l, p))) assert.doesNotMatch(s, /[[\]]|\bTRN\b|licen[cs]e (number|no)/i, `${l}/${p}: ${s}`)
-        assert.equal(legalDoc(l, p).updated, "2026-11-02", `${l}/${p}`)
+        assert.equal(legalDoc(l, p).updated, p === "terms" ? "2026-11-04" : "2026-11-02", `${l}/${p}`)
       }
       for (const p of ["privacy", "terms", "dpa"] as const) {
         assert.match(JSON.stringify(legalDoc(l, p)), /Fixio Technologies LLC SPC/, `${l}/${p}`)
@@ -157,13 +178,8 @@ describe("legal drafts", () => {
   })
 })
 
-describe("launch offer counter", async () => {
-  const { parseOffer, discordUrl } = await import("./offer.ts")
-  it("accepts only a well-formed counter", () => {
-    assert.deepEqual(parseOffer({ enabled: true, total: 100, claimed: 63, remaining: 37 }), { enabled: true, total: 100, claimed: 63, remaining: 37 })
-    for (const bad of [null, "x", {}, { enabled: true, total: 100, claimed: -1, remaining: 3 }, { enabled: "yes", total: 1, claimed: 0, remaining: 1 }, { enabled: true, total: 1.5, claimed: 0, remaining: 1 }])
-      assert.equal(parseOffer(bad), null)
-  })
+describe("discord link", async () => {
+  const { discordUrl } = await import("./discord.ts")
   it("shows the Discord link only for an https URL", () => {
     const prev = process.env.MANAR_DISCORD_URL
     try {
@@ -176,11 +192,6 @@ describe("launch offer counter", async () => {
     } finally {
       if (prev === undefined) delete process.env.MANAR_DISCORD_URL
       else process.env.MANAR_DISCORD_URL = prev
-    }
-  })
-  it("has the placeholders in both languages", () => {
-    for (const l of ["en", "ar"] as const) {
-      assert.ok(launchCopy[l].offer.left.includes("{remaining}") && launchCopy[l].offer.left.includes("{total}"))
     }
   })
 })

@@ -5,14 +5,14 @@ import type { LegalDoc } from "../schema.ts"
 
 /*
  * Launch draft (31 Oct 2026), updated 2 Nov 2026 for the founder's data collection design, written by
- * Claude, not yet reviewed by a lawyer (decision #19). Provider and contracting party: Fixio
+ * Claude, not yet reviewed by a lawyer (decision #19). Updated 4 Nov 2026 for pay-as-you-go pricing. Provider and contracting party: Fixio
  * Technologies LLC SPC. Never add a TRN or a trade licence number here.
  */
 export const terms: Record<Locale, LegalDoc> = {
   en: {
     title: "Terms of Service",
     description: "The terms for using Manar, a product of Fixio: accounts, plans and billing, the device software, acceptable use and liability.",
-    updated: "2026-11-02",
+    updated: "2026-11-04",
     sections: [
       {
         id: "about",
@@ -41,13 +41,15 @@ export const terms: Record<Locale, LegalDoc> = {
             table: {
               head: ["Plan", "Price (USD)", "Limits"],
               rows: [
-                ["Free", "$0", "3 devices, 10 agents, 30-day audit, 1 cloud agent"],
-                ["Personal Pro", "$9 per month or $90 per year", "10 devices, unlimited agents, 1-year audit, 5 cloud agents, TLS inspection, priority email support"],
-                ["Company", "$15 per user per month, plus $5 per extra device", "3 devices per user included. A billable user is anyone with an enrolled device or a console sign-in that month. 30-day trial with 25 devices and all features"],
-                ["Enterprise", "By quotation", "Signed licence. Hub and federation, air-gapped installs, government deployments, TPM attestation and compliance packs"],
+                ["Free", "$0", "1 device, 20 AI actions a month, 30 days of history, no cloud agents. A one-time 14-day trial allows up to 3 devices"],
+                ["Pro", "$5 per month or $50 per year, plus $2 per month for each active device beyond 2", "300 AI actions and 300 cloud-agent minutes a month, 1 year of history, TLS inspection, priority email support"],
+                ["Company", "$15 per active seat per month, at least 3 seats, or $150 per seat per year for a committed number of seats; seats above the commitment are $15 per month", "Unlimited devices. 300 AI actions and 300 cloud-agent minutes per seat a month, shared. 14-day trial with a card"],
+                ["Enterprise and Government", "By annual contract", "Signed licence and a credit pool, invoiced. Hub and federation, air-gapped installs, government deployments, TPM attestation and compliance packs"],
               ],
             },
           },
+          "Active means online on 3 or more different days in a calendar month (UTC). Only active devices and seats are billed; devices that are not active stay protected. A device with no assigned person is not a seat.",
+          "An AI action is one answer from a Manar AI feature, such as the console assistant, an incident summary or a policy suggestion. A cloud-agent minute is a minute in which a cloud agent made at least one request. Safety is never metered: blocks, approvals, the secret vault and the audit record work whatever your plan, usage or credits.",
           "We may improve, change or retire features. If we remove a paid feature, we will tell you in advance and refund the unused part of what you paid for it.",
         ],
       },
@@ -55,9 +57,13 @@ export const terms: Record<Locale, LegalDoc> = {
         id: "billing",
         heading: "Payment, tax and trials",
         blocks: [
-          "Prices are in US dollars. For buyers in the UAE we add 5% VAT. Stripe, our payment processor, takes your card details; we never see or store them. Fixio is the merchant of record and appears on your receipt.",
-          "Paid plans renew each month or year until you cancel in the billing portal. Cancelling stops the next renewal. You keep the paid features until the period you paid for ends. Fees already paid are not refunded, except where the law requires it or we say otherwise in writing.",
-          "Company usage is counted daily and billed for the month. A company trial lasts 30 days. If it ends without payment, the workspace becomes read-only with export.",
+          "Prices are in US dollars; amounts in AED are shown for reference only. For buyers in the UAE we add 5% VAT at checkout, and the tax invoice comes with your receipt. Stripe, our payment processor, takes your card details; we never see or store them. Fixio is the merchant of record and appears on your receipt.",
+          "Paid plans renew each month or year until you cancel in the billing portal. Cancelling stops the next renewal. You keep the paid features until the period you paid for ends. Fees already paid are not refunded, except where the law requires it or we say otherwise in writing. Extra active devices and seats are counted during the month and billed after it.",
+          "Credits are prepaid: $5 buys 1,000 credits. One credit pays for one AI action or one cloud-agent minute above what your plan includes. Credits are valid for 12 months from purchase, then expire. They are not cash, cannot be transferred, and are not refunded once bought, except where the law requires it. If a credit purchase is refunded or reversed by your bank, the unspent part of those credits is removed.",
+          "You can set a monthly spend cap. Pro starts with a cap of $20 a month and a Company admin sets their own. When the cap is reached or credits run out, only AI answers and cloud agents above your allowance pause. Auto top-up buys $10 of credits when your balance falls below $2, at most 3 times a month, and only if you turn it on.",
+          "The personal trial lasts 14 days, needs no card and is given once per person, email, device and payment method. The Company trial lasts 14 days, needs a card and becomes a paid Company plan (at least 3 seats) when it ends unless you cancel before then; we remind you on days 7, 12 and 14. One trial per company and payment method, with a work email.",
+          "If a payment fails, we retry it for 14 days while everything keeps working. After that the workspace moves to Free limits with safety still on. We do not delete data for non-payment within 90 days. If a payment is disputed with your bank, paid features are paused while we review it.",
+          "If we ban an account for breaking these terms, its subscription is cancelled at once and nothing is refunded, including unused credits. If an appeal overturns the ban, we credit the unused part of the period pro rata.",
           "If you move to a lower plan or a payment fails, devices already enrolled stay protected. New devices are refused until you are under the limit. Audit older than the new plan allows is hidden, not deleted, for 30 days and then dropped. Cloud agents over the limit are paused, not deleted.",
         ],
       },
@@ -147,7 +153,7 @@ export const terms: Record<Locale, LegalDoc> = {
   ar: {
     title: "شروط الخدمة",
     description: "شروط استخدام منار، وهو منتج من Fixio: الحسابات والخطط والفوترة وبرنامج الجهاز والاستخدام المقبول والمسؤولية.",
-    updated: "2026-11-02",
+    updated: "2026-11-04",
     sections: [
       {
         id: "about",
@@ -176,13 +182,15 @@ export const terms: Record<Locale, LegalDoc> = {
             table: {
               head: ["الخطة", "السعر (بالدولار الأمريكي)", "الحدود"],
               rows: [
-                ["مجاني", "$0", "3 أجهزة و10 وكلاء وسجل تدقيق 30 يوماً ووكيل سحابي واحد"],
-                ["Personal Pro", "$9 شهرياً أو $90 سنوياً", "10 أجهزة ووكلاء غير محدودين وسجل تدقيق سنة و5 وكلاء سحابيين وفحص TLS ودعم أولوية عبر البريد"],
-                ["الشركات", "$15 لكل مستخدم شهرياً، و$5 لكل جهاز إضافي", "3 أجهزة لكل مستخدم ضمن السعر. المستخدم المحتسب هو كل من لديه جهاز مسجّل أو دخل إلى لوحة التحكم في ذلك الشهر. تجربة 30 يوماً بحد 25 جهازاً وجميع الميزات"],
-                ["المؤسسات", "بعرض سعر", "ترخيص موقّع. المركز والاتحاد بين البيئات وتثبيت معزول عن الشبكة ونشر للجهات الحكومية وإثبات TPM وحزم الامتثال"],
+                ["مجاني", "$0", "جهاز واحد و20 إجراء ذكاء اصطناعي شهرياً وسجل 30 يوماً ودون وكلاء سحابيين. تجربة لمرة واحدة مدتها 14 يوماً تسمح بحتى 3 أجهزة"],
+                ["Pro", "$5 شهرياً أو $50 سنوياً، و$2 شهرياً لكل جهاز نشط بعد الجهازين الأولين", "300 إجراء ذكاء اصطناعي و300 دقيقة للوكلاء السحابيين شهرياً وسجل سنة وفحص TLS ودعم أولوية عبر البريد"],
+                ["الشركات", "$15 لكل مقعد نشط شهرياً بحد أدنى 3 مقاعد، أو $150 لكل مقعد سنوياً لعدد ملتزم به من المقاعد؛ المقاعد فوق الالتزام بسعر $15 شهرياً", "أجهزة غير محدودة. 300 إجراء ذكاء اصطناعي و300 دقيقة للوكلاء السحابيين لكل مقعد شهرياً، مشتركة. تجربة 14 يوماً ببطاقة"],
+                ["المؤسسات والحكومة", "بعقد سنوي", "ترخيص موقّع ورصيد أرصدة مشترك بفاتورة. المركز والاتحاد بين البيئات وتثبيت معزول عن الشبكة ونشر للجهات الحكومية وإثبات TPM وحزم الامتثال"],
               ],
             },
           },
+          "النشط يعني متصلاً في 3 أيام مختلفة أو أكثر خلال الشهر الميلادي (بتوقيت UTC). تُحتسب الأجهزة والمقاعد النشطة فقط، وتبقى الأجهزة غير النشطة محمية. الجهاز غير المسند إلى شخص لا يُعد مقعداً.",
+          "إجراء الذكاء الاصطناعي هو إجابة واحدة من ميزة ذكاء اصطناعي في منار، مثل مساعد لوحة التحكم أو ملخص حادثة أو اقتراح سياسة. ودقيقة الوكيل السحابي هي دقيقة أرسل فيها وكيل سحابي طلباً واحداً على الأقل. الحماية لا تُحتسب أبداً: الحظر والموافقات وخزنة الأسرار وسجل التدقيق تعمل مهما كانت خطتك أو استخدامك أو أرصدتك.",
           "يجوز لنا تحسين الميزات أو تغييرها أو إيقافها. وإذا أزلنا ميزة مدفوعة فسنبلغك مسبقاً ونردّ لك الجزء غير المستخدم مما دفعته مقابلها.",
         ],
       },
@@ -190,9 +198,13 @@ export const terms: Record<Locale, LegalDoc> = {
         id: "billing",
         heading: "الدفع والضريبة والتجارب",
         blocks: [
-          "الأسعار بالدولار الأمريكي. وللمشترين داخل الإمارات نضيف ضريبة قيمة مضافة بنسبة 5%. تتولى Stripe، معالج الدفع لدينا، بيانات بطاقتك، ولا نراها ولا نخزّنها. وFixio هي البائع المسجّل وتظهر في إيصالك.",
-          "تتجدد الخطط المدفوعة شهرياً أو سنوياً حتى تلغيها من بوابة الفوترة. الإلغاء يوقف التجديد التالي، وتحتفظ بالميزات المدفوعة حتى نهاية المدة التي دفعت عنها. الرسوم المدفوعة لا تُسترد إلا إذا أوجب القانون ذلك أو ذكرنا خلاف ذلك كتابةً.",
-          "يُحتسب استخدام الشركات يومياً ويُفوتر عن الشهر. تجربة الشركات مدتها 30 يوماً، وإذا انتهت دون دفع تصبح مساحة العمل للقراءة فقط مع إمكانية التصدير.",
+          "الأسعار بالدولار الأمريكي، والمبالغ بالدرهم للاسترشاد فقط. وللمشترين داخل الإمارات نضيف ضريبة قيمة مضافة بنسبة 5% عند الدفع، وتصلك الفاتورة الضريبية مع إيصالك. تتولى Stripe، معالج الدفع لدينا، بيانات بطاقتك، ولا نراها ولا نخزّنها. وFixio هي البائع المسجّل وتظهر في إيصالك.",
+          "تتجدد الخطط المدفوعة شهرياً أو سنوياً حتى تلغيها من بوابة الفوترة. الإلغاء يوقف التجديد التالي، وتحتفظ بالميزات المدفوعة حتى نهاية المدة التي دفعت عنها. الرسوم المدفوعة لا تُسترد إلا إذا أوجب القانون ذلك أو ذكرنا خلاف ذلك كتابةً. تُحتسب الأجهزة والمقاعد النشطة الإضافية خلال الشهر وتُفوتر بعده.",
+          "الأرصدة مدفوعة مسبقاً: 5 دولارات تشتري 1,000 رصيد. الرصيد الواحد يدفع ثمن إجراء ذكاء اصطناعي واحد أو دقيقة واحدة لوكيل سحابي فوق ما تتضمنه خطتك. الأرصدة صالحة لمدة 12 شهراً من الشراء ثم تنتهي. وهي ليست نقداً ولا تُحوَّل ولا تُسترد بعد الشراء إلا إذا أوجب القانون ذلك. وإذا استُرد ثمن شراء أرصدة أو عكسه مصرفك، يُزال الجزء غير المستخدم من تلك الأرصدة.",
+          "يمكنك تحديد حد شهري للإنفاق. تبدأ خطة Pro بحد 20 دولاراً شهرياً، ويحدد مسؤول الشركة حدّه. عند بلوغ الحد أو نفاد الأرصدة تتوقف مؤقتاً فقط إجابات الذكاء الاصطناعي والوكلاء السحابيون فوق حصتك. الشحن التلقائي يشتري أرصدة بقيمة 10 دولارات عندما ينخفض رصيدك عن دولارين، بحد أقصى 3 مرات شهرياً، ولا يعمل إلا إذا فعّلته.",
+          "التجربة الشخصية مدتها 14 يوماً ولا تحتاج إلى بطاقة، وتُمنح مرة واحدة لكل شخص وبريد إلكتروني وجهاز ووسيلة دفع. تجربة الشركات مدتها 14 يوماً وتحتاج إلى بطاقة، وتتحول عند انتهائها إلى خطة شركات مدفوعة (3 مقاعد على الأقل) ما لم تلغِها قبل ذلك؛ ونذكّرك في الأيام 7 و12 و14. تجربة واحدة لكل شركة ووسيلة دفع، ببريد عمل.",
+          "إذا تعذّر الدفع نعيد المحاولة لمدة 14 يوماً ويبقى كل شيء يعمل. بعدها تنتقل مساحة العمل إلى حدود الخطة المجانية مع بقاء الحماية مفعّلة. ولا نحذف البيانات بسبب عدم الدفع خلال 90 يوماً. وإذا اعترضت لدى مصرفك على دفعة، تتوقف الميزات المدفوعة مؤقتاً أثناء مراجعتنا.",
+          "إذا حظرنا حساباً لمخالفته هذه الشروط يُلغى اشتراكه فوراً دون استرداد أي مبلغ، بما في ذلك الأرصدة غير المستخدمة. وإذا أُلغي الحظر بعد التظلم نمنح رصيداً عن الجزء غير المستخدم من المدة بالتناسب.",
           "إذا انتقلت إلى خطة أدنى أو تعذّر الدفع فإن الأجهزة المسجّلة سابقاً تبقى محمية، ويُرفض تسجيل أجهزة جديدة حتى تصبح ضمن الحد. أما التدقيق الأقدم مما تسمح به الخطة الجديدة فيُخفى ولا يُحذف لمدة 30 يوماً ثم يُسقط. والوكلاء السحابيون الزائدون عن الحد يُوقفون مؤقتاً ولا يُحذفون.",
         ],
       },
