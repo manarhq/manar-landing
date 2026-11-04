@@ -8,7 +8,6 @@ import { links } from "@/lib/launch/links"
 import { planOrder, pricingText, type PlanCta } from "@/lib/launch/pricing"
 import { bookingHref } from "@/lib/site"
 
-import { LaunchCounter } from "./launch-counter"
 import { SectionHeading } from "./section-heading"
 
 export function Pricing({ locale, dict }: { locale: Locale; dict: Dictionary }) {
@@ -46,7 +45,6 @@ export function Pricing({ locale, dict }: { locale: Locale; dict: Dictionary }) 
                     </li>
                   ))}
                 </ul>
-                {id === "pro" ? <LaunchCounter locale={locale} className="mt-4 text-sm text-muted-foreground" /> : null}
                 {p.note ? <p className="mt-4 text-xs text-muted-foreground">{p.note}</p> : null}
                 {p.ctaKind === "talk" ? (
                   <Link href={href(p.ctaKind)} className={`${buttonVariants({ variant: "secondary", size: "lg" })} mt-6`}>
@@ -66,6 +64,34 @@ export function Pricing({ locale, dict }: { locale: Locale; dict: Dictionary }) 
         </ul>
 
         <p className="mt-6 text-sm text-muted-foreground">{t.vat}</p>
+
+        <h3 className="mt-14 text-xl font-semibold text-foreground">{t.examplesTitle}</h3>
+        <ul className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
+          {t.examples.map((e) => (
+            <li key={e.label} className="rounded-md border border-line bg-surface p-4">
+              <p className="text-sm text-muted-foreground">{e.label}</p>
+              <p className="ltr-fragment mt-2 text-2xl font-semibold tracking-tight text-foreground">{e.price}</p>
+              <p className="mt-2 text-xs text-muted-foreground">{e.detail}</p>
+            </li>
+          ))}
+        </ul>
+
+        <h3 id="pricing-faq" className="mt-14 text-xl font-semibold text-foreground">
+          {t.faqTitle}
+        </h3>
+        <div className="mt-5 divide-y divide-line rounded-md border border-line bg-surface">
+          {t.faq.map((f) => (
+            <details key={f.q} className="group p-4">
+              <summary className="cursor-pointer list-none font-medium text-foreground marker:hidden focus-visible:outline-2 focus-visible:outline-offset-2">
+                <span className="me-2 inline-block transition-transform group-open:rotate-90 rtl:group-open:-rotate-90" aria-hidden>
+                  ›
+                </span>
+                {f.q}
+              </summary>
+              <p className="mt-3 max-w-[70ch] text-sm text-pretty text-muted-foreground">{f.a}</p>
+            </details>
+          ))}
+        </div>
       </div>
     </section>
   )
