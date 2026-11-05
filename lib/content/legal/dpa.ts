@@ -1,3 +1,4 @@
+import { CONSOLE_HOST } from "../../hosts.ts"
 import type { Locale } from "../../i18n/config.ts"
 
 import type { LegalDoc } from "../schema.ts"
@@ -12,7 +13,7 @@ export const dpa: Record<Locale, LegalDoc> = {
   en: {
     title: "Data Processing Agreement",
     description: "The data processing terms for Manar Company and Government workspaces: Fixio's duties as processor, subprocessors, transfers, breach notice and deletion.",
-    updated: "2026-11-02",
+    updated: "2026-11-05",
     sections: [
       {
         id: "scope",
@@ -101,7 +102,7 @@ export const dpa: Record<Locale, LegalDoc> = {
               head: ["Subprocessor", "Purpose", "Where"],
               rows: [
                 ["Microsoft Azure", "Hosting, databases and email delivery", "UAE North"],
-                ["Microsoft Azure OpenAI", "AI features (risk explanations and the assistant), processing the content users send to them. Microsoft does not use this data to train its models", "Global (any Azure region); stored in UAE North"],
+                ["Microsoft Azure OpenAI", "AI features (risk explanations and the assistant), processing the content users send to them, which is redacted first (see AI features and where prompts are processed). Microsoft does not use this data to train its models", "Processed in any Azure region where the model runs, including outside the UAE; stored at rest in the UAE"],
                 ["Cloudflare", "Network delivery, DNS and security", "Global network, including outside the UAE"],
                 ["Microsoft and GitHub", "Sign-in, when a user chooses them", "Their own infrastructure"],
                 ["Stripe", "Payments and invoices for the workspace", "Stripe's infrastructure, including outside the UAE"],
@@ -110,6 +111,17 @@ export const dpa: Record<Locale, LegalDoc> = {
           },
           "PostHog (EU) receives only data for which Fixio is the controller, as the Privacy Policy explains, and is not a subprocessor for workspace data.",
           "Fixio binds each subprocessor by written terms that protect the data at least as well as this DPA, and stays responsible for its subprocessors. Fixio will give at least 30 days' notice by email to workspace owners before adding or replacing a subprocessor. The customer may object on reasonable data protection grounds within that time. If the parties cannot resolve the objection, the customer may end the affected subscription and receive a refund of fees paid for the unused period.",
+        ],
+      },
+      {
+        id: "ai-processing",
+        heading: "AI features and where prompts are processed",
+        blocks: [
+          "Manar's AI features, such as risk explanations, the console assistant, incident summaries and policy suggestions, send what a user asks, with the context needed to answer it, to Microsoft Azure OpenAI. Manar uses Azure OpenAI's Global deployment, so Microsoft may process these prompts in any Azure region, which can be outside the United Arab Emirates. Data at rest is stored in the UAE; only the processing of a request can happen elsewhere.",
+          "Before a prompt is sent, Manar's data loss prevention (DLP) step redacts sensitive data it detects, such as secrets, keys, tokens and personal identifiers. Redaction cannot catch everything, so the customer should not ask AI features to handle data it is not willing to have processed as this section describes. Microsoft does not use this data to train its models.",
+          "Allow, deny and approval decisions are made by deterministic rules and do not depend on these AI features.",
+          `A workspace owner or manager can switch external AI off for the whole workspace in the console, under Settings, then AI, using Allow external AI (${CONSOLE_HOST}/settings/ai). Manar then sends no AI requests from that workspace to Azure OpenAI.`,
+          "Government customers can ask for a self-hosted model on their own servers, or an in-region deployment, so that prompts stay in the customer's environment or in the UAE. This is a separate option agreed in writing with Fixio; it is not part of the standard Service.",
         ],
       },
       {
@@ -170,7 +182,7 @@ export const dpa: Record<Locale, LegalDoc> = {
   ar: {
     title: "اتفاقية معالجة البيانات",
     description: "شروط معالجة البيانات لمساحات عمل الشركات والجهات الحكومية في منار: التزامات Fixio بصفتها معالِجاً والمعالِجون الفرعيون والنقل والإبلاغ عن الاختراق والحذف.",
-    updated: "2026-11-02",
+    updated: "2026-11-05",
     sections: [
       {
         id: "scope",
@@ -259,7 +271,7 @@ export const dpa: Record<Locale, LegalDoc> = {
               head: ["المعالِج الفرعي", "الغرض", "الموقع"],
               rows: [
                 ["Microsoft Azure", "الاستضافة وقواعد البيانات وإرسال البريد", "UAE North"],
-                ["Microsoft Azure OpenAI", "ميزات الذكاء الاصطناعي (شرح المخاطر والمساعد)، بمعالجة المحتوى الذي يرسله المستخدمون إليها. لا تستخدم Microsoft هذه البيانات لتدريب نماذجها", "عالمي (أي منطقة Azure)، ويُخزَّن في UAE North"],
+                ["Microsoft Azure OpenAI", "ميزات الذكاء الاصطناعي (شرح المخاطر والمساعد)، بمعالجة المحتوى الذي يرسله المستخدمون إليها. لا تستخدم Microsoft هذه البيانات لتدريب نماذجها", "تُعالَج في أي منطقة Azure يعمل فيها النموذج، ومنها خارج الإمارات، وتُخزَّن في الإمارات"],
                 ["Cloudflare", "توصيل الشبكة وDNS والأمان", "شبكة عالمية تشمل خارج الإمارات"],
                 ["Microsoft وGitHub", "تسجيل الدخول، عندما يختارهما المستخدم", "بنيتهما التحتية"],
                 ["Stripe", "مدفوعات مساحة العمل وفواتيرها", "بنية Stripe التحتية، وتشمل خارج الإمارات"],
@@ -268,6 +280,17 @@ export const dpa: Record<Locale, LegalDoc> = {
           },
           "لا يتلقى PostHog (الاتحاد الأوروبي) إلا بيانات تكون Fixio المتحكّمة فيها، كما توضّح سياسة الخصوصية، وليس معالِجاً فرعياً لبيانات مساحة العمل.",
           "تُلزم Fixio كل معالِج فرعي بشروط مكتوبة تحمي البيانات بقدر لا يقل عن هذه الاتفاقية، وتبقى مسؤولة عن معالِجيها الفرعيين. وتبلغ Fixio مالكي مساحة العمل بالبريد قبل 30 يوماً على الأقل من إضافة معالِج فرعي أو استبداله. ويجوز للعميل الاعتراض لأسباب معقولة تتعلق بحماية البيانات خلال تلك المدة. وإذا تعذّر على الطرفين حل الاعتراض، يجوز للعميل إنهاء الاشتراك المتأثر واسترداد الرسوم المدفوعة عن المدة غير المستخدمة.",
+        ],
+      },
+      {
+        id: "ai-processing",
+        heading: "ميزات الذكاء الاصطناعي وأين تُعالَج الطلبات",
+        blocks: [
+          "ترسل ميزات الذكاء الاصطناعي في منار، مثل شرح المخاطر ومساعد لوحة التحكم وملخصات الحوادث واقتراحات السياسات، ما يطلبه المستخدم مع السياق اللازم للإجابة إلى Microsoft Azure OpenAI. تستخدم منار نشر Global في Azure OpenAI، لذلك قد تعالج Microsoft هذه الطلبات في أي منطقة Azure، ويمكن أن تكون خارج دولة الإمارات العربية المتحدة. أما البيانات المخزّنة فتبقى في الإمارات، ولا يحدث خارجها إلا معالجة الطلب.",
+          "قبل إرسال أي طلب، تحجب خطوة منع تسرب البيانات (DLP) في منار البيانات الحساسة التي تكتشفها، مثل الأسرار والمفاتيح والرموز والمعرّفات الشخصية. لا يمكن للحجب أن يلتقط كل شيء، لذلك ينبغي ألا يطلب العميل من ميزات الذكاء الاصطناعي معالجة بيانات لا يقبل معالجتها كما يصفه هذا القسم. ولا تستخدم Microsoft هذه البيانات لتدريب نماذجها.",
+          "قرارات السماح والرفض والموافقة تتخذها قواعد حتمية ولا تعتمد على ميزات الذكاء الاصطناعي هذه.",
+          `يمكن لمالك مساحة العمل أو مديرها إيقاف الذكاء الاصطناعي الخارجي لمساحة العمل كلها من لوحة التحكم، ضمن الإعدادات ثم الذكاء الاصطناعي، عبر خيار السماح بالذكاء الاصطناعي الخارجي (\u2066${CONSOLE_HOST}/settings/ai\u2069). عندها لا ترسل منار أي طلبات ذكاء اصطناعي من مساحة العمل هذه إلى Azure OpenAI.`,
+          "يمكن للعملاء الحكوميين طلب نموذج مستضاف ذاتياً على خوادمهم، أو نشر داخل المنطقة، بحيث تبقى الطلبات في بيئة العميل أو داخل الإمارات. وهذا خيار منفصل يُتفق عليه كتابةً مع Fixio، وليس جزءاً من الخدمة القياسية.",
         ],
       },
       {

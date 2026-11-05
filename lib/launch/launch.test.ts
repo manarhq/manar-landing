@@ -166,7 +166,7 @@ describe("legal drafts", () => {
       for (const p of legalPaths) {
         const strings = (v: unknown): string[] => (typeof v === "string" ? [v] : v && typeof v === "object" ? Object.values(v).flatMap(strings) : [])
         for (const s of strings(legalDoc(l, p))) assert.doesNotMatch(s, /[[\]]|\bTRN\b|licen[cs]e (number|no)/i, `${l}/${p}: ${s}`)
-        assert.equal(legalDoc(l, p).updated, p === "terms" ? "2026-11-04" : "2026-11-02", `${l}/${p}`)
+        assert.equal(legalDoc(l, p).updated, p === "terms" ? "2026-11-04" : p === "dpa" || p === "privacy" ? "2026-11-05" : "2026-11-02", `${l}/${p}`)
       }
       for (const p of ["privacy", "terms", "dpa"] as const) {
         assert.match(JSON.stringify(legalDoc(l, p)), /Fixio Technologies LLC SPC/, `${l}/${p}`)
