@@ -28,6 +28,10 @@ describe("nginx cache headers", { skip: !hasConf && "deploy/ is not in the image
   it("caches /fonts/ for a year, immutable", () => {
     assert.match(block("^~ /fonts/"), /Cache-Control "public, max-age=31536000, immutable"/)
   })
+
+  it("does not force that header onto errors (no `always`), so a missing font is not cached for a year", () => {
+    assert.doesNotMatch(block("^~ /fonts/"), /immutable"\s+always/)
+  })
 })
 
 describe("fingerprinted fonts", () => {

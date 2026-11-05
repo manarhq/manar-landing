@@ -211,10 +211,13 @@ the client IP for rate limiting; set it only when every request passes a proxy t
 - `public/photo/lighthouse-day.webp` (light theme) and `public/photo/lighthouse-night.webp` (dark theme): the
   "where it runs" photograph, same framing and aspect ratio, swapped by the `.dark` class. AI-generated for this
   site with Figma image generation; no third-party licence applies. Replace with commissioned photography when
-  available. next/image serves AVIF or WebP.
-- `public/fonts/`: IBM Plex Sans (variable, Latin) and IBM Plex Sans Arabic, self-hosted under the SIL Open
-  Font License 1.1 (`public/fonts/OFL.txt`). Faces and fallback metrics are in `app/fonts.css`; each locale
-  preloads only its own files (`lib/fonts.ts`).
+  available. The site does not use next/image; the photos are served as shipped (webp).
+- `public/fonts/`: Readex Pro (variable; Arabic, Latin and Latin Extended subsets) and JetBrains Mono (Latin 400),
+  self-hosted under the SIL Open Font License 1.1 (`OFL-readex-pro.txt`, `OFL-jetbrains-mono.txt`). File names end
+  in the first 8 hex of the file's sha256 (`readex-pro-latin-wght-normal.7074eeb9.woff2`) so nginx can cache them
+  as immutable; when a font changes, rename it and update `app/fonts.css` and `lib/fonts.ts` (a test checks the
+  hash). Faces and fallback metrics are in `app/fonts.css`; each locale preloads only its own files
+  (`lib/fonts.ts`).
 - `design/stitch/`: exported Stitch references (design input only, not site source; the copy in those files
   contains unverified claims and must not be reused as-is).
 
