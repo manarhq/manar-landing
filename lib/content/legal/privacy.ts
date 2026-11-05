@@ -14,7 +14,7 @@ export const privacy: Record<Locale, LegalDoc> = {
   en: {
     title: "Privacy Policy",
     description: "How Fixio handles personal data in Manar: what we collect, product improvement data, AI training, retention and your rights under the PDPL, GDPR and CCPA.",
-    updated: "2026-11-02",
+    updated: "2026-11-05",
     sections: [
       {
         id: "who-we-are",
@@ -173,7 +173,7 @@ export const privacy: Record<Locale, LegalDoc> = {
               head: ["Provider", "Purpose", "Data", "Where"],
               rows: [
                 ["Microsoft Azure", "Hosting, databases, and email delivery, including website request emails (Azure Communication Services, UAE)", "All Service data, form details, email addresses", "UAE North"],
-                ["Microsoft Azure OpenAI", "AI features (risk explanations and the assistant). Microsoft does not use this data to train its models", "The content you send to AI features", "Global (any Azure region); stored in UAE North"],
+                ["Microsoft Azure OpenAI", "AI features (risk explanations and the assistant). Microsoft does not use this data to train its models", "The content you send to AI features", "Global (any Azure region, including outside the UAE); stored in UAE North"],
                 ["Cloudflare", "Network delivery, DNS, security and the bot check (Turnstile)", "IP address and request details", "Global network, including outside the UAE"],
                 ["Stripe", "Card payments, invoices, tax", "Name, email, billing details, card details", "Stripe's infrastructure, including outside the UAE"],
                 ["PostHog (EU)", "Product improvement data, sent from our servers without cookies, and website analytics only with your consent", "Console and device events with a pseudonymous identifier, website page views and usage events", "European Union"],
@@ -181,6 +181,7 @@ export const privacy: Record<Locale, LegalDoc> = {
               ],
             },
           },
+          "AI features and where prompts go: when you use an AI feature of Manar, such as the assistant or a risk explanation, what you ask and the context needed to answer it are sent to Microsoft Azure OpenAI. Manar uses its Global deployment, so Microsoft may process it in any Azure region, including outside the UAE. Before sending, Manar redacts sensitive data it detects, such as secrets, keys, tokens and personal identifiers; redaction cannot catch everything. Microsoft does not use this data to train its models. You can switch AI features off: in the console, under Settings, then AI, turn off Allow external AI. Workspaces on Government plans can ask for a self-hosted or in-region option.",
           "We may also disclose data when the law requires it, or to a buyer of our business under the same protections as this policy.",
         ],
       },
@@ -272,7 +273,7 @@ export const privacy: Record<Locale, LegalDoc> = {
   ar: {
     title: "سياسة الخصوصية",
     description: "كيف تتعامل Fixio مع البيانات الشخصية في منار: ما نجمعه وبيانات تحسين المنتج وتدريب الذكاء الاصطناعي ومدة الحفظ وحقوقك وفق القوانين المعمول بها.",
-    updated: "2026-11-02",
+    updated: "2026-11-05",
     sections: [
       {
         id: "who-we-are",
@@ -431,7 +432,7 @@ export const privacy: Record<Locale, LegalDoc> = {
               head: ["المزوّد", "الغرض", "البيانات", "الموقع"],
               rows: [
                 ["Microsoft Azure", "الاستضافة وقواعد البيانات وإرسال البريد، ومنه بريد طلبات الموقع (Azure Communication Services، الإمارات)", "كل بيانات الخدمة وتفاصيل النماذج وعناوين البريد", "UAE North"],
-                ["Microsoft Azure OpenAI", "ميزات الذكاء الاصطناعي (شرح المخاطر والمساعد). لا تستخدم Microsoft هذه البيانات لتدريب نماذجها", "المحتوى الذي ترسله إلى ميزات الذكاء الاصطناعي", "عالمي (أي منطقة Azure)، ويُخزَّن في UAE North"],
+                ["Microsoft Azure OpenAI", "ميزات الذكاء الاصطناعي (شرح المخاطر والمساعد). لا تستخدم Microsoft هذه البيانات لتدريب نماذجها", "المحتوى الذي ترسله إلى ميزات الذكاء الاصطناعي", "عالمي (أي منطقة Azure، ومنها خارج الإمارات)، ويُخزَّن في UAE North"],
                 ["Cloudflare", "توصيل الشبكة وDNS والأمان وفحص الروبوتات (Turnstile)", "عنوان IP وتفاصيل الطلب", "شبكة عالمية تشمل خارج الإمارات"],
                 ["Stripe", "مدفوعات البطاقات والفواتير والضريبة", "الاسم والبريد وتفاصيل الفوترة وبيانات البطاقة", "بنية Stripe التحتية، وتشمل خارج الإمارات"],
                 ["PostHog (الاتحاد الأوروبي)", "بيانات تحسين المنتج، تُرسل من خوادمنا دون ملفات تعريف ارتباط، وتحليلات الموقع بموافقتك فقط", "أحداث لوحة التحكم والأجهزة مع معرّف مستعار، ومشاهدات صفحات الموقع وأحداث الاستخدام", "الاتحاد الأوروبي"],
@@ -439,6 +440,7 @@ export const privacy: Record<Locale, LegalDoc> = {
               ],
             },
           },
+          "ميزات الذكاء الاصطناعي وأين تذهب الطلبات: عند استخدامك ميزة ذكاء اصطناعي في منار، مثل المساعد أو شرح المخاطر، يُرسل ما تطلبه والسياق اللازم للإجابة إلى Microsoft Azure OpenAI. تستخدم منار نشر Global لديها، لذلك قد تعالجه Microsoft في أي منطقة Azure، ومنها خارج الإمارات. وقبل الإرسال تحجب منار البيانات الحساسة التي تكتشفها، مثل الأسرار والمفاتيح والرموز والمعرّفات الشخصية، ولا يمكن للحجب أن يلتقط كل شيء. ولا تستخدم Microsoft هذه البيانات لتدريب نماذجها. ويمكنك إيقاف ميزات الذكاء الاصطناعي: من لوحة التحكم، ضمن الإعدادات ثم الذكاء الاصطناعي، أوقف خيار السماح بالذكاء الاصطناعي الخارجي. ويمكن لمساحات العمل في خطط الحكومة طلب خيار مستضاف ذاتياً أو داخل المنطقة.",
           "وقد نفصح عن البيانات أيضاً عندما يطلب القانون ذلك، أو لمشترٍ لأعمالنا بالحماية نفسها التي تنص عليها هذه السياسة.",
         ],
       },
