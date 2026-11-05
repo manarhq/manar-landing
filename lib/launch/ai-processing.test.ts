@@ -11,7 +11,7 @@ describe("AI processing is stated plainly (decision 11, revised 5 Nov)", async (
       it(`${lang}/${page}: Azure OpenAI row says outside the UAE, and the AI text covers DLP, switch-off and Government`, () => {
         const text = flat(legalDoc(lang, page)).join("\n")
         if (lang === "en") {
-          assert.match(text, /including outside the UAE\); stored in UAE North/)
+          assert.match(text, /including outside the UAE; stored at rest in the UAE/)
           assert.match(text, /redacts sensitive data/)
           assert.match(text, /Allow external AI/)
           assert.match(text, /self-hosted/)
