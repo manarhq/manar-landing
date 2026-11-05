@@ -6,6 +6,6 @@
 
 /** The files each locale needs for its first paint. Arabic pages also show Latin (brand, code, numbers). */
 export const localeFontPreloads = {
-  en: ["/fonts/readex-pro-latin-wght-normal.woff2"],
-  ar: ["/fonts/readex-pro-arabic-wght-normal.woff2", "/fonts/readex-pro-latin-wght-normal.woff2"],
+  en: ["/fonts/readex-pro-latin-wght-normal.7074eeb9.woff2"],
+  ar: ["/fonts/readex-pro-arabic-wght-normal.b5815b71.woff2", "/fonts/readex-pro-latin-wght-normal.7074eeb9.woff2"],
 } as const
