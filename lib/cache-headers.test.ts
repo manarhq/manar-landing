@@ -1,11 +1,14 @@
 import assert from "node:assert/strict"
 import { createHash } from "node:crypto"
-import { readdirSync, readFileSync } from "node:fs"
+import { existsSync, readdirSync, readFileSync } from "node:fs"
 import { join } from "node:path"
 import { describe, it } from "node:test"
 
 const root = join(import.meta.dirname, "..")
-const conf = readFileSync(join(root, "deploy/nginx/manar.conf"), "utf8")
+const confPath = join(root, "deploy/nginx/manar.conf")
+// The image build runs `npm test` without deploy/ (.dockerignore); CI runs it on the full checkout.
+const hasConf = existsSync(confPath)
+const conf = hasConf ? readFileSync(confPath, "utf8") : ""
 
 /** The text of the last `location <selector> { ... }` block in the 443 server. */
 function block(selector: string): string {
@@ -14,7 +17,7 @@ function block(selector: string): string {
   return conf.slice(start, conf.indexOf("\n    }", start))
 }
 
-describe("nginx cache headers", () => {
+describe("nginx cache headers", { skip: !hasConf && "deploy/ is not in the image build context" }, () => {
   it("lets /media/ keep the app's immutable header (the catch-all forces max-age=0)", () => {
     const media = block("^~ /media/")
     assert.ok(!media.includes("max-age=0"))
